@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="MSG_PLEASE_FILL_IN_ALL_FIELDS">Please fill in all fields.</string>
+    <string name="MSG_PLEASE_WAIT">Please wait.</string>
+    <string name="SUBMIT">Submit</string>
+</resources>

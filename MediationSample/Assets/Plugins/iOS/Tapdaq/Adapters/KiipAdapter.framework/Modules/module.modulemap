@@ -1,0 +1,6 @@
+framework module KiipAdapter {
+  umbrella header "KiipAdapter.h"
+
+  export *
+  module * { export * }
+}

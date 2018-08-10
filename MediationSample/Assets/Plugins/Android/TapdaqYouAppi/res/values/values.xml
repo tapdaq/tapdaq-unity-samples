@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white_with_opacity">#4DFFFFFF</color>
+    <dimen name="video_player_circular_progress_bar_dim">30dp</dimen>
+    <dimen name="video_player_controls_margin">15dp</dimen>
+    <dimen name="video_player_controls_slide_button_text_padding">1dp</dimen>
+    <dimen name="video_player_learn_more_height_dim">30dp</dimen>
+    <dimen name="video_player_learn_more_text_dim">4sp</dimen>
+    <dimen name="video_player_learn_more_width_dim">100dp</dimen>
+    <dimen name="video_player_mute_dim">30dp</dimen>
+    <dimen name="video_player_privacy_dim_height">30dp</dimen>
+    <dimen name="video_player_privacy_dim_width">30dp</dimen>
+    <dimen name="video_player_privacy_slide_button_margin">1dp</dimen>
+    <dimen name="video_player_privacy_slide_button_margin_left">10dp</dimen>
+    <dimen name="video_player_privacy_slide_dim_height">30dp</dimen>
+    <dimen name="video_player_privacy_slide_dim_width">80dp</dimen>
+    <dimen name="video_player_privacy_slide_margin">30dp</dimen>
+    <dimen name="video_player_privacy_text_dim">5sp</dimen>
+    <dimen name="video_player_skip_image_dim">12dp</dimen>
+    <dimen name="video_player_skip_padding">5dp</dimen>
+    <dimen name="video_player_skip_text_dim">5sp</dimen>
+    <dimen name="video_player_skip_text_to_image_margin">5dp</dimen>
+    <string name="app_name">youAPPiAndroidSDK</string>
+</resources>

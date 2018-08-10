@@ -1,0 +1,6 @@
+framework module ZPlayAdapter {
+  umbrella header "ZPlayAdapter.h"
+
+  export *
+  module * { export * }
+}
