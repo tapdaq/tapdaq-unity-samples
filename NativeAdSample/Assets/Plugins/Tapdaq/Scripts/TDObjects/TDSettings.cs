@@ -8,7 +8,7 @@ namespace Tapdaq {
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_6.3.3";
+		public const string pluginVersion = "unity_6.3.4";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
