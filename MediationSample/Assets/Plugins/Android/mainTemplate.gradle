@@ -48,6 +48,11 @@ android {
         abortOnError false
     }
 
+    packagingOptions {
+        exclude 'R.txt'
+        exclude 'AndroidManifest.xml'
+    }
+
     aaptOptions {
         noCompress '.unity3d', '.ress', '.resource', '.obb'**STREAMING_ASSETS**
     }**SIGN**

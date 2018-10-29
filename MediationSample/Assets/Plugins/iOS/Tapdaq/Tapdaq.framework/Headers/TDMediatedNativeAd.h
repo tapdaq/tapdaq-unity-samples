@@ -49,7 +49,8 @@ typedef NS_ENUM(NSInteger, TDMediatedNativeAdOptions) {
 @property (strong, nonatomic, nullable) NSString *body;
 @property (strong, nonatomic, nullable) NSString *store;
 @property (strong, nonatomic, nullable) NSString *price;
-@property (strong, nonatomic, nullable) TDNativeAdImage *icon;
+@property (strong, nonatomic, nullable) TDNativeAdImage *icon DEPRECATED_MSG_ATTRIBUTE("icon has been deprecated. Please use -iconView instead. This method will be removed in future releases. Deprecated on 21/09/2018 version 6.4.0.");
+@property (strong, nonatomic, nullable) UIView *iconView;
 @property (strong, nonatomic, nullable) NSArray<TDNativeAdImage *> *images;
 @property (strong, nonatomic, nullable) NSDecimalNumber *starRating;
 @property (strong, nonatomic, nullable) NSString *advertiser;

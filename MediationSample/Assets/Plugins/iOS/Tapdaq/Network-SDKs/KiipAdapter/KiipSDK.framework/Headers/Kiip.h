@@ -99,11 +99,6 @@ typedef enum AgeGroup : NSUInteger {
 @property (assign, nonatomic) BOOL testMode;
 
 /**
-  The boolean value to enable/disable the location service. Default is NO.
-  */
-@property (assign, nonatomic) BOOL updateLocationMode;
-
-/**
  The boolean value to enable/disable the logs
  */
 @property (assign, nonatomic) BOOL debugMode;

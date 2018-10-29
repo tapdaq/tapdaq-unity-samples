@@ -55,6 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=autoLoad) BOOL autoLoad;
 
+@property (nonatomic) NSString *channelId;
+
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype) new NS_UNAVAILABLE;
 

@@ -92,7 +92,6 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 	}
 
 	private static void SetBuildProperties(PBXProject proj, string target) {
-		proj.SetBuildProperty(target, "ENABLE_BITCODE", "YES");
 		proj.SetBuildProperty(target, "LD_RUNPATH_SEARCH_PATHS", "$(inherited) @executable_path/Frameworks");
 		proj.SetBuildProperty(target, "IPHONEOS_DEPLOYMENT_TARGET", GetIOSDeploymentTarget(proj));
         proj.SetBuildProperty(target, "CLANG_ENABLE_MODULES", "YES");
@@ -107,6 +106,9 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
         proj.AddFrameworkToProject(target, "EventKit.framework", false);
         proj.AddFrameworkToProject(target, "EventKitUI.framework", false);
         proj.AddFrameworkToProject(target, "WatchConnectivity.framework", false);
+        proj.AddFrameworkToProject(target, "MobileCoreServices.framework", false);
+        proj.AddFrameworkToProject(target, "Social.framework", false);
+        proj.AddFrameworkToProject(target, "JavaScriptCore.framework", false);
         proj.AddFrameworkToProject(target, "libz.dylib", false);
         proj.AddFrameworkToProject(target, "libsqlite3.tbd", false);
         proj.AddFrameworkToProject(target, "libc++.tbd", false);

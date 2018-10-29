@@ -15,11 +15,8 @@ FOUNDATION_EXPORT double YouAppiVersionNumber;
 FOUNDATION_EXPORT const unsigned char YouAppiVersionString[];
 
 #if MOAT
-
 #import "YouAppiMoat/YouAppi.h"
-
 #else
-
 #import "YouAppi/YouAppi.h"
 #endif
 

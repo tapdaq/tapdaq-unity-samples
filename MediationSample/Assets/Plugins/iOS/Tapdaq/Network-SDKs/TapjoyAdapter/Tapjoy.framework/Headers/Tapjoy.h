@@ -13,6 +13,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TapjoyConnectConstants.h"
+#import "TapjoyAuctionConstants.h"
 #import "TJPlacement.h"
 
 #define TJC_DEPRECATION_WARNING(VERSION) __attribute__((deprecated("Go to dev.tapjoy.com for instructions on how to fix this warning")))
@@ -21,6 +22,7 @@
 
 typedef void (^currencyCompletion)(NSDictionary *parameters, NSError *error);
 typedef void (^networkCompletion)(BOOL success, NSError *error);
+typedef void (^urlCompletion)(NSURL *url, NSDate *expires, NSError *error);
 
 @interface TJCAdView : UIView <UIWebViewDelegate>
 @end
@@ -54,9 +56,10 @@ typedef void (^networkCompletion)(BOOL success, NSError *error);
 @property (nonatomic, copy) NSString *plugin;
 
 /** The currency multiplier value, used to adjust currency earned. */
-@property (nonatomic, assign) float currencyMultiplier;	
+@property (nonatomic, assign) float currencyMultiplier;
 
 @property (nonatomic, copy) NSString *appGroupID;
+
 @property (nonatomic, copy) NSString *store;
 @property (nonatomic, copy) NSString *analyticsApiKey;
 @property (nonatomic, copy) NSString *managedDeviceID;
@@ -117,6 +120,20 @@ typedef void (^networkCompletion)(BOOL success, NSError *error);
  * @return URL of Tapjoy support web page for specified currency
  */
 + (NSString*)getSupportURL:(NSString*)currencyID;
+
+/**
+ * Attempts to get an URL of Offerwall to show it on an external browser, i.e. Safari.
+ *
+ * @param placementName The name of the placement that is configured for Offerwall.
+ * @param completion The completion block that is invoked after the attempt has completed.
+ */
++ (void)getOfferwallURL:(NSString *)placementName completion:(urlCompletion)completion;
+
+/**
+ * This method returns a user token for programmatic mediation.
+ *
+ */
++ (NSString*)getUserToken;
 
 /**
  *
@@ -345,6 +362,14 @@ typedef void (^networkCompletion)(BOOL success, NSError *error);
  */
 + (NSString*)getVersion;
 
+/** Used by limited SDK only **/
+@property (nonatomic, copy) NSString *limitedSdkKey;
+@property (nonatomic, copy) NSString *limitedAppID;
+@property (nonatomic, copy) NSString *limitedSecretKey;
+@property (nonatomic, copy) NSString *limitedAppGroupID;
++ (BOOL)isLimitedConnected;
++ (void)limitedConnect:(NSString *)sdkKey;
+
 @end
 
 /**
@@ -477,6 +502,11 @@ typedef void (^networkCompletion)(BOOL success, NSError *error);
  */
 + (void)setVideoAdDelegate:(id<TJCVideoAdDelegate>)delegate;
 
+@end
+
+@protocol TJCTopViewControllerProtocol <NSObject>
+@required
+@property (nonatomic, assign) BOOL canRotate;
 @end
 
 #endif

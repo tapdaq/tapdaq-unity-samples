@@ -161,24 +161,27 @@ namespace Tapdaq {
 			instance._Init (TDStatus.UNKNOWN, TDStatus.UNKNOWN, TDStatus.UNKNOWN);
 		}
 
+        public static void InitWithConsent(TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)
+        {
+            instance._Init(isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser);
+        }
+
 		// Obsolete as of 13/06/2018. Plugin Version 6.2.4
-		[Obsolete ("Please, use 'InitWithConsent (int isUserSubjectToGDPR, int isConsentGiven)' method.")]
+        [Obsolete ("Please, use 'InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven)' method.")]
 		public static void InitWithConsent (bool isConsentGiven) {
 			instance._Init ((isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), TDStatus.UNKNOWN);
 		}
 
+        // Obsolete as of 24/09/2018. Plugin Version 6.4.0
+        [Obsolete("Please, use 'InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)' method.")]
 		public static void InitWithConsent (TDStatus isConsentGiven) {
 			instance._Init (isConsentGiven, isConsentGiven, TDStatus.UNKNOWN);
 		}
 
 		// Obsolete as of 13/06/2018. Plugin Version 6.2.4
-		[Obsolete ("Please, use 'InitWithConsent (int isUserSubjectToGDPR, int isConsentGiven, int isAgeRestrictedUser)' method.")]
+        [Obsolete ("Please, use 'InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)' method.")]
 		public static void InitWithConsent (bool isConsentGiven, bool isAgeRestrictedUser) {
 			instance._Init ((isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isAgeRestrictedUser ? TDStatus.TRUE : TDStatus.FALSE));
-		}
-
-		public static void InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser) {
-			instance._Init (isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser);
 		}
 
 		private void _Init (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser) {

@@ -28,7 +28,9 @@ public class TDDependencies : AssetPostprocessor {
 	
 
 	// DO NOT CHANGE THESE VALUES 
+    private static string minimumLifecycleVersion = "1.0.0+";
 	private static string minimumVunglePlayServicesVersion = "11.0.4+";
+
 
 	private static string minimumSupportLibraryVersion = "24.0.0+";
 	private static string minimumInMobiSupportLibraryVersion = "24.0.0+";
@@ -124,6 +126,13 @@ public class TDDependencies : AssetPostprocessor {
 		namedArgs: new Dictionary<string, object>() {
 			{"packageIds", new string[] { "extra-android-m2repository" } }
 		});
+
+        Google.VersionHandler.InvokeInstanceMethod(
+            svcSupport, "DependOn",
+            new object[] { "android.arch.lifecycle", "extensions", minimumLifecycleVersion },
+        namedArgs: new Dictionary<string, object>() {
+            {"packageIds", new string[] { "extra-android-m2repository" } }
+        });
 
 		//Required by AdMob
 		if (AssetDatabase.FindAssets ("TapdaqAdMobAdapter").Length > 0) {

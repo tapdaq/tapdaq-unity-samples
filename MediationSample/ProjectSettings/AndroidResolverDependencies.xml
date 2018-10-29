@@ -1,5 +1,6 @@
 <dependencies>
   <packages>
+    <package>android.arch.lifecycle:extensions:1.0.0+</package>
     <package>com.android.support:recyclerview-v7:26.0.0+</package>
     <package>com.android.support:support-v4:26.0.0+</package>
     <package>com.google.android.gms:play-services-ads:15.0.0+</package>
@@ -10,8 +11,10 @@
   </packages>
   <files>
     <file>Assets/Plugins/Android/android.arch.core.common-1.0.0.jar</file>
-    <file>Assets/Plugins/Android/android.arch.lifecycle.common-1.0.0.jar</file>
-    <file>Assets/Plugins/Android/android.arch.lifecycle.runtime-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/android.arch.core.runtime-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/android.arch.lifecycle.common-1.0.3.jar</file>
+    <file>Assets/Plugins/Android/android.arch.lifecycle.extensions-1.0.0.aar</file>
+    <file>Assets/Plugins/Android/android.arch.lifecycle.runtime-1.0.3.aar</file>
     <file>Assets/Plugins/Android/com.android.support.customtabs-26.1.0.aar</file>
     <file>Assets/Plugins/Android/com.android.support.recyclerview-v7-26.1.0.aar</file>
     <file>Assets/Plugins/Android/com.android.support.support-annotations-26.1.0.jar</file>

@@ -7,17 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-
 typedef NS_ENUM(NSInteger, viewType) {
     MEDIUM_RECTANGLE = 0,
     FLUID_RECTANGLE = 1
 };
 
-
+@class KPNativeRewardView;
 @protocol KPNativeViewDelegate
 @required
 
-- (void)removeView;
+- (void)removeView:(KPNativeRewardView *)nativeRewardView;
 
 @end;
 
