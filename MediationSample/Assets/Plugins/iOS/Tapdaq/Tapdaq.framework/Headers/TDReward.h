@@ -16,4 +16,5 @@
 @property (strong, nonatomic) NSString *tag;
 @property (strong, nonatomic) id customJson;
 @property (readonly, nonatomic) NSString *hashedUserId;
+@property (readonly, nonatomic) NSString *rewardId;
 @end

@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "TDMediationAdapter.h"
 #import "TDMediationBannerAdapter.h"
 #import "TDMediationNativeAdapter.h"
 #import "TDAdapter.h"

@@ -11,9 +11,19 @@
 
 static NSString *const kTapdaqLogPrefix = @"[TapdaqUnity]";
 
+// Helper method to create C string copy
+char* makeStringCopy (const char* string)
+{
+    if (string == NULL)
+        return NULL;
+    
+    char* res = (char*)malloc(strlen(string) + 1);
+    strcpy(res, string);
+    return res;
+}
+
 void _ConfigureTapdaq(const char* appIdChar,
                       const char* clientKeyChar,
-                      const char* enabledAdTypesChar,
                       const char* testDevicesChar,
                       bool isDebugMode,
                       bool autoReloadAds,
@@ -34,11 +44,6 @@ void _ConfigureTapdaq(const char* appIdChar,
         isValid = false;
     }
     
-    if (_isEmpty(enabledAdTypesChar)) {
-        NSLog(@"%@ No placements are registered", kTapdaqLogPrefix);
-        isValid = false;
-    }
-    
     if (!isValid) {
         NSLog(@"%@ Tapdaq did not initialise", kTapdaqLogPrefix);
         return;
@@ -46,13 +51,11 @@ void _ConfigureTapdaq(const char* appIdChar,
     
     NSString *appId = [[NSString stringWithUTF8String:appIdChar] copy];
     NSString *clientKey = [[NSString stringWithUTF8String:clientKeyChar] copy];
-    NSString *enabledAdTypes = [[NSString stringWithUTF8String:enabledAdTypesChar] copy];
     NSString *testDevices = [[NSString stringWithUTF8String:testDevicesChar] copy];
     NSString *version = [[NSString stringWithUTF8String:pluginVersion] copy];
     
     [[TapdaqUnityIOS sharedInstance] initWithApplicationId:appId
                                                  clientKey:clientKey
-                                            enabledAdTypes:enabledAdTypes
                                                testDevices:testDevices
                                                isDebugMode:isDebugMode
                                              autoReloadAds:autoReloadAds
@@ -84,11 +87,21 @@ bool _IsConsentGiven() {
 }
 
 void _SetAgeRestrictedUser(bool isAgeRestrictedUser) {
-    [[TapdaqUnityIOS sharedInstance] SetAgeRestrictedUser:isAgeRestrictedUser];
+    [[TapdaqUnityIOS sharedInstance] setAgeRestrictedUser:isAgeRestrictedUser];
 }
 
 bool _IsAgeRestrictedUser() {
     return (bool)[[TapdaqUnityIOS sharedInstance] isAgeRestrictedUser];
+}
+
+void _SetAdMobContentRating(const char * rating) {
+    NSString *ratingStr = [[NSString stringWithUTF8String:rating] copy];
+    [[TapdaqUnityIOS sharedInstance] setAdMobContentRating:ratingStr];
+}
+
+const char * _GetAdMobContentRating() {
+    NSString * ratingStr = [[[TapdaqUnityIOS sharedInstance] getAdMobContentRating] copy];
+    return makeStringCopy([ratingStr UTF8String]);
 }
 
 #pragma mark - Banner (Bridge)
@@ -253,92 +266,6 @@ void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar
     
 }
 
-#pragma mark - Native Ads (Bridge)
-
-void _LoadNativeAdvertForPlacementTag(const char* tag, const char* nativeAdType)
-{
-    bool isValid = true;
-    
-    if (_isEmpty(tag)) {
-        NSLog(@"%@ No tag given", kTapdaqLogPrefix);
-        isValid = false;
-    }
-    
-    if (_isEmpty(nativeAdType)) {
-        NSLog(@"%@ No nativeAdType given", kTapdaqLogPrefix);
-        isValid = false;
-    }
-    
-    if (!isValid) {
-        NSLog(@"%@ Failed to load native ad", kTapdaqLogPrefix);
-        return;
-    }
-    
-    [[TapdaqNativeAd sharedInstance] loadNativeAdvertForPlacementTag: tag nativeAdType: nativeAdType];
-}
-
-const char* _GetNativeAdWithTag (const char* tag, const char* nativeAdType) {
-    
-    bool isValid = true;
-    
-    if (_isEmpty(tag)) {
-        NSLog(@"%@ No tag given", kTapdaqLogPrefix);
-        isValid = false;
-    }
-    
-    if (_isEmpty(nativeAdType)) {
-        NSLog(@"%@ No nativeAdType given", kTapdaqLogPrefix);
-        isValid = false;
-    }
-    
-    if (!isValid) {
-        NSLog(@"%@ Failed to get native ad", kTapdaqLogPrefix);
-        return "";
-    }
-    
-    return [[TapdaqNativeAd sharedInstance] fetchNativeForAdWithTag:tag AdType:nativeAdType];
-}
-
-void _SendNativeClick(const char* uniqueId) {
-    
-    if (_isEmpty(uniqueId)) {
-        NSLog(@"%@ No uniqueId given, failed to send native click", kTapdaqLogPrefix);
-        return;
-    }
-    
-    [[TapdaqNativeAd sharedInstance] triggerClickForNativeAdvert:uniqueId];
-    
-}
-
-void _SendNativeImpression(const char* uniqueId) {
-    
-    if (_isEmpty(uniqueId)) {
-        NSLog(@"%@ No uniqueId given, failed to send native impression", kTapdaqLogPrefix);
-        return;
-    }
-    
-    [[TapdaqNativeAd sharedInstance] triggerImpressionForNativeAdvert:uniqueId];
-    
-}
-
-#pragma mark - More Apps
-
-void _ShowMoreApps() {
-    [[TapdaqMoreApps sharedInstance] show];
-}
-
-bool _IsMoreAppsReady() {
-    return [[TapdaqMoreApps sharedInstance] isReady];
-}
-
-void _LoadMoreApps() {
-    [[TapdaqMoreApps sharedInstance] load];
-}
-
-void _LoadMoreAppsWithConfig(const char* config) {
-    [[TapdaqMoreApps sharedInstance] loadWithConfig: config];
-}
-
 #pragma mark - Offerwall
 
 void _ShowOfferwall() {
@@ -430,7 +357,6 @@ bool _isEmpty(const char* str) {
 //Configure Tapdaq with credentials and ad settings
 - (void)initWithApplicationId:(NSString *)appID
                     clientKey:(NSString *)clientKey
-               enabledAdTypes:(NSString *)enabledAdTypes
                   testDevices:(NSString *)testDevices
                   isDebugMode:(bool)isDebugMode
                 autoReloadAds:(bool)autoReloadAds
@@ -439,8 +365,6 @@ bool _isEmpty(const char* str) {
                isConsentGiven:(int)isConsentGiven
           isAgeRestrictedUser:(int)isAgeRestrictedUser
 {
-    NSLog(@"enabledAdTypes: %@", enabledAdTypes);
-    
     TDProperties *properties = [[TDProperties alloc] init];
     [properties setPluginVersion:pluginVersion];
     properties.isDebugEnabled = isDebugMode;
@@ -454,110 +378,6 @@ bool _isEmpty(const char* str) {
     }
     properties.userSubjectToGDPR = isUserSubjectToGDPR;
     
-    if (enabledAdTypes && [enabledAdTypes length] > 0) {
-        
-        NSData *data = [enabledAdTypes dataUsingEncoding:NSUTF8StringEncoding];
-        
-        NSError *error = nil;
-        NSArray *arr = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-        
-        if (!error) {
-            
-            if (enabledAdTypes && [enabledAdTypes length] > 0) {
-                
-                NSDictionary *validAdTypes = @{
-                                               
-                                               @"TDAdTypeNone": @(0),
-                                               @"TDAdTypeInterstitial": @(1),
-                                               @"TDAdType1x1Large": @(2),
-                                               @"TDAdType1x1Medium": @(3),
-                                               @"TDAdType1x1Small": @(4),
-                                               
-                                               @"TDAdType1x2Large": @(5),
-                                               @"TDAdType1x2Medium": @(6),
-                                               @"TDAdType1x2Small": @(7),
-                                               
-                                               @"TDAdType2x1Large": @(8),
-                                               @"TDAdType2x1Medium": @(9),
-                                               @"TDAdType2x1Small": @(10),
-                                               
-                                               @"TDAdType2x3Large": @(11),
-                                               @"TDAdType2x3Medium": @(12),
-                                               @"TDAdType2x3Small": @(13),
-                                               
-                                               @"TDAdType3x2Large": @(14),
-                                               @"TDAdType3x2Medium": @(15),
-                                               @"TDAdType3x2Small": @(16),
-                                               
-                                               @"TDAdType1x5Large": @(17),
-                                               @"TDAdType1x5Medium": @(18),
-                                               @"TDAdType1x5Small": @(19),
-                                               
-                                               @"TDAdType5x1Large": @(20),
-                                               @"TDAdType5x1Medium": @(21),
-                                               @"TDAdType5x1Small": @(22),
-                                               
-                                               @"TDAdTypeVideo": @(23),
-                                               @"TDAdTypeRewardedVideo": @(24),
-                                               @"TDAdTypeBanner": @(25),
-                                               @"TDAdTypeOfferwall": @(26)
-                                               
-                                               };
-                
-                NSMutableDictionary *tagsWithAdTypes = [[NSMutableDictionary alloc] init];
-                
-                for (NSDictionary *dict in arr) {
-                    
-                    NSString *adTypeStr = [dict objectForKey:@"ad_type"];
-                    NSArray *placementTags = [dict objectForKey:@"placement_tags"];
-                    
-                    if ([placementTags count] > 0) {
-                        for (NSString *placementTag in placementTags) {
-                            
-                            // update tagsWithAdTypes
-                            NSNumber *combinedAdTypeNum = [tagsWithAdTypes objectForKey:placementTag];
-                            
-                            if (!combinedAdTypeNum) {
-                                combinedAdTypeNum = @(0);
-                            }
-                            
-                            TDAdTypes adTypesCombined = [combinedAdTypeNum integerValue];
-                            
-                            NSNumber *adTypeNum = [validAdTypes objectForKey:adTypeStr];
-                            NSInteger adTypeInt = [adTypeNum integerValue];
-                            
-                            adTypesCombined |= 1 << adTypeInt;
-                            
-                            combinedAdTypeNum = @(adTypesCombined);
-                            
-                            [tagsWithAdTypes setObject:combinedAdTypeNum forKey:placementTag];
-                            
-                        }
-                    }
-                    
-                }
-                
-                
-                for (id key in tagsWithAdTypes) {
-                    
-                    if ([key isKindOfClass:[NSString class]] && [[tagsWithAdTypes objectForKey:key] integerValue] > 0) {
-                        NSString *tag = (NSString *) key;
-                        TDAdTypes adTypes = (TDAdTypes) [[tagsWithAdTypes objectForKey:key] integerValue];
-                        
-                        if (tag && [tag length] > 0) {
-                            TDPlacement *placement = [[TDPlacement alloc] initWithAdTypes:adTypes forTag:tag];
-                            NSLog(@"placement: %@", placement);
-                            [properties registerPlacement:placement];
-                        }
-                        
-                    }
-                    
-                }
-                
-            }
-            
-        }
-    }
     
     [self setTestDevices: testDevices toProperties:properties];
     
@@ -594,7 +414,7 @@ bool _isEmpty(const char* str) {
     return [[Tapdaq sharedSession] isConsentGiven];
 }
 
-- (void) SetAgeRestrictedUser:(BOOL)isAgeRestrictedUser
+- (void) setAgeRestrictedUser:(BOOL)isAgeRestrictedUser
 {
     [[Tapdaq sharedSession] setIsAgeRestrictedUser:isAgeRestrictedUser];
 }
@@ -602,6 +422,16 @@ bool _isEmpty(const char* str) {
 - (BOOL) isAgeRestrictedUser
 {
     return [[Tapdaq sharedSession] isAgeRestrictedUser];
+}
+
+- (void) setAdMobContentRating:(NSString*)rating
+{
+    [[Tapdaq sharedSession] setAdMobContentRating:rating];
+}
+
+- (NSString*) getAdMobContentRating
+{
+    return [[Tapdaq sharedSession] adMobContentRating];
 }
 
 - (void) setTestDevices:(NSString *)testDevicesJson toProperties:(TDProperties *)properties

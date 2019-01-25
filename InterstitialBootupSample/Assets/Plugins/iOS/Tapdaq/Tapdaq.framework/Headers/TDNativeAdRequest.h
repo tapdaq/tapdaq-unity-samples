@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Tapdaq/TDAdRequest.h>
-#import <Tapdaq/TDMediatedNativeAd.h>
+#import "TDAdRequest.h"
+#import "TDMediatedNativeAd.h"
 
 @protocol TDAdRequestDelegate;
 

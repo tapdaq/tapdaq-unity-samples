@@ -23,6 +23,7 @@ FOUNDATION_EXPORT const unsigned char TapdaqVersionString[];
 #import <Tapdaq/TDProperties.h>
 #import <Tapdaq/TDPlacement.h>
 #import <Tapdaq/TDTestDevices.h>
+#import <Tapdaq/TapdaqDelegate.h>
 
 #import <Tapdaq/TDOrientationEnum.h>
 #import <Tapdaq/TDNativeAdUnitEnum.h>

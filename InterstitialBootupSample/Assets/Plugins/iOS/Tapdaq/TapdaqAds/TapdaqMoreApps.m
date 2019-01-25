@@ -22,15 +22,16 @@
 }
 
 - (BOOL)isReady {
-    return [[Tapdaq sharedSession] isMoreAppsReady];
+    return NO;
+    //    return [[Tapdaq sharedSession] isMoreAppsReady];
 }
 
 - (void)show {
-    [[Tapdaq sharedSession] showMoreApps];
+    //    [[Tapdaq sharedSession] showMoreApps];
 }
 
 - (void)load {
-    [[Tapdaq sharedSession] loadMoreApps];
+    //    [[Tapdaq sharedSession] loadMoreApps];
 }
 
 - (void)loadWithConfig:(const char *)moreAppsConfig {
@@ -41,7 +42,7 @@
     
     NSDictionary *configDictionary = [JsonHelper fromJsonString: configString];
     
-    [[Tapdaq sharedSession] loadMoreAppsWithConfig: [self configFromDictionary: configDictionary]];
+    //    [[Tapdaq sharedSession] loadMoreAppsWithConfig: [self configFromDictionary: configDictionary]];
 }
 
 - (int) intFromString:(NSString *) intString atPos:(int) position {

@@ -7,10 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TDMNetworkEnum.h"
 
 extern NSString *const TDErrorDomain;
 
 @interface TDError : NSError
-@property (strong, nonatomic) NSDictionary<TDMNetwork, NSError *> *subErrors;
+@property (strong, nonatomic) NSDictionary<NSString *, NSError *> *subErrors;
 @end

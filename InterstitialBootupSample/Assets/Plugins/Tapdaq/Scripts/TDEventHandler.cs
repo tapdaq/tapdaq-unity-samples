@@ -79,6 +79,13 @@ namespace Tapdaq {
 			TDCallbacks.instance.OnAdWillDisplay (adEvent);
 		}
 
+        void _didFailToDisplay(string jsonMessage)
+        {
+            TDDebugLogger.Log("_didFailToDisplay " + jsonMessage);
+            var adEvent = JsonConvert.DeserializeObject<TDAdEvent>(jsonMessage);
+            TDCallbacks.instance.OnAdDidFailToDisplay(adEvent);
+        }
+
 		// video
 		void _didComplete (string adType) {
 			TDDebugLogger.Log("_didComplete " + adType);

@@ -7,13 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TDMNetworkEnum.h"
 
 @interface TDTestDevices : NSObject
 
-@property (nonatomic) TDMNetwork network;
+@property (nonatomic) NSString *network;
 @property (nonatomic, strong) NSArray *testDevices;
 
-- (id)initWithNetwork:(TDMNetwork)network testDevices:(NSArray *)testDevices;
+- (id)initWithNetwork:(NSString *)network testDevices:(NSArray *)testDevices;
 
 @end

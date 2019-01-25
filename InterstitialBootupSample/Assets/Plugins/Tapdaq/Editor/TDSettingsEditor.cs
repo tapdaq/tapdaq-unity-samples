@@ -11,14 +11,6 @@ namespace TDEditor {
 		private TDSettings settings;
 
 		private bool showOther = false;
-		private bool showOfferwall = false;
-		private bool show1x1 = false;
-		private bool show1x2 = false;
-		private bool show2x1 = false;
-		private bool show2x3 = false;
-		private bool show3x2 = false;
-		private bool show1x5 = false;
-		private bool show5x1 = false;
 
 		private bool showTestDevices = false;
 
@@ -72,10 +64,6 @@ namespace TDEditor {
 			GUILayout.Space (14);
 
 			ShowTestDevices ();
-
-			GUILayout.Space(15);
-
-			DrawTagGroups ();
 
 			if (GUI.changed)
 				EditorUtility.SetDirty (settings);
@@ -148,69 +136,6 @@ namespace TDEditor {
 			});
 
 			DrawSeparator (2);
-		}
-
-		private void DrawTagGroups () {
-
-			GUILayout.Label ("Placement Tags", EditorStyles.boldLabel);
-
-			showOther = DrawBlock(showOther, "Static, Video & Rewarded Videos",
-				TDAdType.TDAdTypeInterstitial, TDAdType.TDAdTypeVideo, TDAdType.TDAdTypeRewardedVideo);
-
-			showOfferwall = EditorGUILayout.Foldout (showOfferwall, "Offerwall");
-
-			if (showOfferwall) {
-				ShowOfferwallSetting ();
-			}
-
-			GUILayout.Label ("Native Ad Types", EditorStyles.boldLabel);
-
-			show1x1 = DrawBlock (show1x1, "1x1",
-				TDAdType.TDAdType1x1Large, TDAdType.TDAdType1x1Medium, TDAdType.TDAdType1x1Small);
-
-			show1x2 = DrawBlock (show1x2, "1x2", 
-				TDAdType.TDAdType1x2Large, TDAdType.TDAdType1x2Medium, TDAdType.TDAdType1x2Small);
-
-			show2x1 = DrawBlock (show2x1, "2x1", 
-				TDAdType.TDAdType2x1Large, TDAdType.TDAdType2x1Medium, TDAdType.TDAdType2x1Small);
-
-			show2x3 = DrawBlock (show2x3, "2x3", 
-				TDAdType.TDAdType2x3Large, TDAdType.TDAdType2x3Medium, TDAdType.TDAdType2x3Small);
-
-			show3x2 = DrawBlock (show3x2, "3x2", 
-				TDAdType.TDAdType3x2Large, TDAdType.TDAdType3x2Medium, TDAdType.TDAdType3x2Small);
-
-			show1x5 = DrawBlock (show1x5, "1x5", 
-				TDAdType.TDAdType1x5Large, TDAdType.TDAdType1x5Medium, TDAdType.TDAdType1x5Small);
-
-			show5x1 = DrawBlock (show5x1, "5x1",
-				TDAdType.TDAdType5x1Large, TDAdType.TDAdType5x1Medium, TDAdType.TDAdType5x1Small);
-			
-		}
-
-		private bool DrawBlock(bool show, string blockName, params TDAdType[] types) {
-
-			DrawSeparator (3);
-
-			show = EditorGUILayout.Foldout (show, blockName, foldoutStyle);
-
-			if (show) {
-				foreach (var t in types) {
-					var index = (int)t;
-					var tags = settings.tags;
-
-					tags [index] = EditorGUILayout.TextField (t.ToString (), tags [index]);
-				}
-			}
-
-			return show;
-		}
-
-		private void ShowOfferwallSetting() {
-			var offerwallIndex = (int)TDAdType.TDAdTypeOfferwall;
-			var useDefaultTag = (settings.tags [offerwallIndex] == AdTags.DefaultTag);
-			settings.tags [offerwallIndex] = 
-				EditorGUILayout.Toggle ("Use offerwall", useDefaultTag) ? AdTags.DefaultTag : "";
 		}
 
 		private void DrawSeparator(int height) {

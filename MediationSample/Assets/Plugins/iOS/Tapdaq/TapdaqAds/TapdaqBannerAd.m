@@ -34,12 +34,14 @@ static NSString *const kTDUnityBannerSkyscraper = @"TDMBannerSkyscraper";
 {
     TDMBannerSize bannerSize = [self bannerSizeFromString:sizeStr];
     
-    [[Tapdaq sharedSession] loadBanner:bannerSize];
+    [[Tapdaq sharedSession] loadBannerWithSize:bannerSize completion:^(UIView *banner) {
+        self.bannerView = banner;
+    }];
 }
 
 - (BOOL)isReady
 {
-    return [[Tapdaq sharedSession] isBannerReady];
+    return self.bannerView != nil;
 }
 
 - (void)show
@@ -51,7 +53,6 @@ static NSString *const kTDUnityBannerSkyscraper = @"TDMBannerSkyscraper";
 - (void)show:(const char *)position
 {
     NSString * posString = [NSString stringWithUTF8String: position];
-    self.bannerView = [[Tapdaq sharedSession] getBanner];
     
     if (self.bannerView != nil) {
         CGSize bannerSize = self.bannerView.frame.size;

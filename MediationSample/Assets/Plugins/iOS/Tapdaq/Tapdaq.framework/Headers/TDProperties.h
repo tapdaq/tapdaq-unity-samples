@@ -10,7 +10,6 @@
 
 #import "TDOrientationEnum.h"
 #import "TDAdTypeEnum.h"
-#import "TDPlacement.h"
 #import "TDTestDevices.h"
 #import "TDLogLevel.h"
 
@@ -61,29 +60,16 @@ typedef NS_ENUM(NSInteger, TDSubjectToGDPR) {
 @property (assign, nonatomic) BOOL isAgeRestrictedUser;
 
 /**
+ * AdMob Ad content filtering options.
+ */
+@property (strong, nonatomic) NSString *adMobContentRating;
+
+/**
  * An new instance with default values;
  */
 + (instancetype)defaultProperties;
 
-/**
- To use placement tags, you must create a TDPlacement object and register it.
- If you do not register a placement tag but attempt to use a custom one elsewhere, adverts will not display.
- 
- @param placement The TDPlacement object to be registered
- */
-- (BOOL)registerPlacement:(TDPlacement *)placement;
-
-/**
- To use placement tags, you must create a TDPlacement object and register it.
- If you do not register a placement tag but attempt to use a custom one elsewhere, adverts will not display.
- 
- @param placements An NSArray of TDPlacement objects to be registered
- */
-- (BOOL)registerPlacements:(NSArray *)placements;
-
 - (BOOL)registerTestDevices:(TDTestDevices *)testDevices;
-
-- (NSArray *)registeredPlacements;
 
 - (NSArray *)registeredTestDevices;
 

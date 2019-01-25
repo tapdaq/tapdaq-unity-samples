@@ -35,14 +35,6 @@ namespace Tapdaq {
 			
 			if (adType == "OFFERWALL")
 				return TDAdType.TDAdTypeOfferwall;
-			
-			if (IsNativeAdEvent()) {
-				var nativeType = GetNativeEventType ();
-				return TDEnumHelper.GetAdTypeFromNativeType (nativeType);
-			}
-
-			if (IsMoreAppsEvent())
-				return TDAdType.TDAdTypeNone;
 
 			return TDAdType.TDAdTypeNone;
 		}
@@ -63,48 +55,8 @@ namespace Tapdaq {
 			return GetTypeOfEvent() == TDAdType.TDAdTypeBanner;
 		}
 
-		public bool IsNativeAdEvent() {
-			return adType == "NATIVE_AD";
-		}
-
-		public bool IsMoreAppsEvent() {
-			return adType == "MORE_APPS";
-		}
-
 		public bool IsOfferwallEvent() {
 			return adType == "OFFERWALL";
 		}
-
-		public TDNativeAdType GetNativeEventType() {
-			
-			if (IsNativeAdEvent() && message != null) {
-
-				var nativeAdMessage = JsonConvert.DeserializeObject<TDNativeAdMessage> (message);
-
-				if (nativeAdMessage != null) {
-					return TDEnumHelper.GetEnumFromString<TDNativeAdType>(nativeAdMessage.nativeType);
-				}
-			}
-
-			return TDNativeAdType.TDNativeAdTypeNone;
-		}
-
-		public string GetNativeEventMessage() {
-			if (IsNativeAdEvent() && message != null) {
-
-				var nativeAdMessage = JsonConvert.DeserializeObject<TDNativeAdMessage> (message);
-
-				if (nativeAdMessage != null) {
-					return nativeAdMessage.messageText;
-				}
-			}
-			return null;
-		}
-	}
-
-	[Serializable]
-	public class TDNativeAdMessage {
-		public string nativeType;
-		public string messageText;
 	}
 }

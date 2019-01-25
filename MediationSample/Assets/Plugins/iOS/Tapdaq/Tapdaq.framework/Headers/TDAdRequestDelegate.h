@@ -26,6 +26,7 @@ typedef NS_ENUM(NSUInteger, TDNativeAdType);
  */
 @protocol TDDisplayableAdRequestDelegate <TDAdRequestDelegate>
 @optional
+- (void)adRequest:(TDAdRequest * _Nonnull)adRequest didFailToDisplayWithError:(TDError * _Nullable)error;
 - (void)willDisplayAdRequest:(TDAdRequest * _Nonnull)adRequest;
 - (void)didDisplayAdRequest:(TDAdRequest * _Nonnull)adRequest;
 - (void)didCloseAdRequest:(TDAdRequest * _Nonnull)adRequest;
@@ -46,7 +47,6 @@ typedef NS_ENUM(NSUInteger, TDNativeAdType);
 @optional
 - (void)adRequest:(TDAdRequest * _Nonnull)adRequest didValidateReward:(TDReward * _Nonnull)reward;
 - (void)adRequest:(TDAdRequest * _Nonnull)adRequest didFailToValidateReward:(TDReward * _Nonnull)reward;
-- (void)didFailToValidateRewardAdRequest:(TDAdRequest * _Nonnull)adRequest __attribute__((deprecated("didFailToValidateRewardAdRequest: has been deprecated. Please use adRequest:didFailToValidateReward: instead. This method will be removed in future releases.")));;
 @end
 
 /**

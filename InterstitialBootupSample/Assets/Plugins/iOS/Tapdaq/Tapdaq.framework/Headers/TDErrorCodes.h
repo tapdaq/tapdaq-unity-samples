@@ -18,6 +18,8 @@ typedef enum {
     TDErrorCodeNoPlacementTagAvailable = 120,
     TDErrorCodeFailedToLoad = 130,
     TDErrorCodeNoAdLoadedForPlacement = 200,
+    TDErrorCodeUnknownAdType = 210,
+    TDErrorCodeAdExpired = 220,
     
     TDErrorCodeCrossPromoNoAdAvailable = 300,
     TDErrorCodeCrossPromoFrequencyCapReached = 301,

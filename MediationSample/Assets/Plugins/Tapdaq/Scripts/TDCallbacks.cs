@@ -32,6 +32,8 @@ namespace Tapdaq {
 
 		public static event Action<TDAdEvent> AdDidDisplay;
 
+        public static event Action<TDAdEvent> AdDidFailToDisplay;
+
 		public static event Action<TDAdEvent> AdClicked;
 
 		public static event Action<TDAdEvent> AdClosed;
@@ -98,6 +100,12 @@ namespace Tapdaq {
 		public void OnAdWillDisplay (TDAdEvent adEvent) {
 			Invoke (AdWillDisplay, adEvent);
 		}
+
+
+        public void OnAdDidFailToDisplay(TDAdEvent adEvent)
+        {
+            Invoke(AdDidFailToDisplay, adEvent);
+        }
 
 		public void OnTapdaqConfigLoaded() {
 			Invoke (TapdaqConfigLoaded);

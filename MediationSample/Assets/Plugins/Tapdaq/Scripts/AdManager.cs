@@ -1,10 +1,5 @@
-﻿using AOT;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Runtime.InteropServices;
-using System.Linq;
 using UnityEngine;
 
 namespace Tapdaq {
@@ -29,8 +24,7 @@ namespace Tapdaq {
 		
 		//================================= Interstitials ==================================================
 		[DllImport ("__Internal")]
-		private static extern void _ConfigureTapdaq(string appIdChar, string clientKeyChar, 
-			string enabledAdTypesChar, string testDevicesChar, bool isDebugMode, bool autoReloadAds,
+		private static extern void _ConfigureTapdaq(string appIdChar, string clientKeyChar, string testDevicesChar, bool isDebugMode, bool autoReloadAds,
 			string pluginVersion, int isUserSubjectToGDPR, int isConsentGiven, int isAgeRestrictedUser);
 
 		[DllImport ("__Internal")]
@@ -56,6 +50,13 @@ namespace Tapdaq {
 		
 		[DllImport ("__Internal")]
 		private static extern bool _IsAgeRestrictedUser();
+
+        [DllImport ("__Internal")]
+        private static extern void _SetAdMobContentRating(string rating);
+        
+        [DllImport ("__Internal")]
+        private static extern string _GetAdMobContentRating();
+
 
 		// interstitial
 		[DllImport ("__Internal")]
@@ -100,35 +101,6 @@ namespace Tapdaq {
 
 		[DllImport ("__Internal")]
 		private static extern bool _IsRewardedVideoReadyWithTag(string tag);
-
-
-		//================================== Natives =================================================
-
-		[DllImport ("__Internal")]
-		public static extern void _LoadNativeAdvertForPlacementTag(string tag, string nativeType);
-
-		[DllImport ("__Internal")]
-		private static extern System.IntPtr _GetNativeAdWithTag (string tag, string nativeAdType);
-
-		[DllImport ("__Internal")]
-		private static extern void _SendNativeClick(string uniqueId);
-
-		[DllImport ("__Internal")]
-		private static extern void _SendNativeImpression(string uniqueId);
-
-		//////////  Show More Apps
-
-		[DllImport ("__Internal")]
-		private static extern void _ShowMoreApps();
-
-		[DllImport ("__Internal")]
-		private static extern bool _IsMoreAppsReady();
-
-		[DllImport ("__Internal")]
-		private static extern void _LoadMoreApps();
-
-		[DllImport ("__Internal")]
-		private static extern void _LoadMoreAppsWithConfig(string config);
 
 		//////////  Show Offerwall
 
@@ -212,18 +184,16 @@ namespace Tapdaq {
 			LogUnsupportedPlatform ();
 
 			LogMessage (TDLogSeverity.debug, "TapdaqSDK/Initializing");
-			var adTags = settings.tags.GetTagsJson();
-			TDDebugLogger.Log ("tags:\n" + adTags);
 
 			#if UNITY_IPHONE
 			var testDevices = new TestDevicesList (settings.testDevices, TestDeviceType.iOS).ToString ();
 			TDDebugLogger.Log ("testDevices:\n" + testDevices);
-			CallIosMethod(() => _ConfigureTapdaq(appID, clientKey, adTags, testDevices, 
+			CallIosMethod(() => _ConfigureTapdaq(appID, clientKey, testDevices, 
 			settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser));
 			#elif UNITY_ANDROID
 			var testDevices = new TestDevicesList (settings.testDevices, TestDeviceType.Android).ToString ();
 			TDDebugLogger.Log ("testDevices:\n" + testDevices);
-			CallAndroidStaticMethod("InitiateTapdaq", appID, clientKey, adTags, testDevices,
+			CallAndroidStaticMethod("InitiateTapdaq", appID, clientKey, testDevices,
 			                        settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser);
 			#endif
 		}
@@ -397,41 +367,24 @@ namespace Tapdaq {
 			return result;
 		}
 
-		// More Apps
-        public static void LoadMoreApps()
-        {
+        public static void SetAdMobContentRating(String rating) {
             #if UNITY_IPHONE
-            CallIosMethod(_LoadMoreApps);
+            CallIosMethod(() => _SetAdMobContentRating(rating));
             #elif UNITY_ANDROID
-            CallAndroidStaticMethod("LoadMoreApps", "{}");
-            #endif
-        }
-        public static void LoadMoreAppsWithConfig(TDMoreAppsConfig config)
-        {
-            #if UNITY_IPHONE
-            CallIosMethod(() => _LoadMoreAppsWithConfig(config.ToString()));
-            #elif UNITY_ANDROID
-            CallAndroidStaticMethod("LoadMoreApps", config.ToString());
+            CallAndroidStaticMethod("SetAdMobContentRating", rating);
             #endif
         }
 
-		public static void ShowMoreApps () {
-			#if UNITY_IPHONE
-			CallIosMethod(_ShowMoreApps);
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("ShowMoreApps");
-			#endif
-		}
-
-		public static bool IsMoreAppsReady () {
-			bool ready = false;
-			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsMoreAppsReady());
-			#elif UNITY_ANDROID
-			ready = GetAndroidStatic<bool>("IsMoreAppsReady");
-			#endif
-			return ready;
-		}
+        public static string GetAdMobContentRating()
+        {
+            string result = null;
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _GetAdMobContentRating());
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<String>("GetAdMobContentRating");
+            #endif
+            return result;
+        }
 
 		// interstitial
         public static void LoadInterstitial(string tag = TAPDAQ_PLACEMENT_DEFAULT)
@@ -621,73 +574,6 @@ namespace Tapdaq {
 			#endif
 		}
 
-		// native ad
-
-		[Obsolete ("Please, use 'GetNativeAd(TDNativeAdType adType, string tag)' method.")]
-		public static TDNativeAd GetNativeAd (TDNativeAdType adType) {
-            return GetNativeAd(adType, TAPDAQ_PLACEMENT_DEFAULT);
-		}
-
-		public static TDNativeAd GetNativeAd (TDNativeAdType adType, string tag) {
-
-			var nativeAdJson = "{}";
-
-			#if UNITY_IPHONE
-			nativeAdJson = Marshal.PtrToStringAnsi(_GetNativeAdWithTag(tag, adType.ToString()));
-			#elif UNITY_ANDROID
-			nativeAdJson = GetAndroidStatic<string>("GetNativeAdWithTag", adType.ToString (), tag);
-			#else
-			return null;
-			#endif
-
-			return TDNativeAd.CreateNativeAd (nativeAdJson);
-		}
-
-		public static void LoadNativeAdvertForTag(string tag, TDNativeAdType nativeType) {
-			#if UNITY_IPHONE
-			_LoadNativeAdvertForPlacementTag (tag, nativeType.ToString());
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("LoadNativeAd", nativeType.ToString(), tag);
-			#endif
-		}
-
-		[Obsolete ("Please, use 'LoadNativeAdvertForAdType(string tag, TDNativeAdType adType)' method.")]
-		public static void LoadNativeAdvertForAdType(TDNativeAdType nativeType) {
-            LoadNativeAdvertForTag (TAPDAQ_PLACEMENT_DEFAULT, nativeType);
-		}
-
-		public static bool IsNativeAdReady(TDNativeAdType adType) {
-			bool ready = false;
-			#if UNITY_ANDROID
-			ready = GetAndroidStatic<bool>("IsNativeAdReady", adType.ToString());
-			#endif
-			return ready;
-		}
-
-		public static bool IsNativeAdReady(TDNativeAdType adType, string tag) {
-			bool ready = false;
-			#if UNITY_ANDROID
-			ready = GetAndroidStatic<bool>("IsNativeAdReady", adType.ToString(), tag);
-			#endif
-			return ready;
-		}
-
-		public static void SendNativeImpression (TDNativeAd ad) {
-			#if UNITY_IPHONE
-			CallIosMethod(() => _SendNativeImpression(ad.uniqueId)); // todo change to Id
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("SendNativeImpression", ad.uniqueId); // todo change to Id
-			#endif
-		}
-
-		public static void SendNativeClick (TDNativeAd ad) {
-			#if UNITY_IPHONE
-			CallIosMethod(() => _SendNativeClick(ad.uniqueId)); // todo change to Id
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("SendNativeClick", ad.uniqueId); // todo change to Id
-			#endif
-		}
-
 		// Obsolete as of 31/05/2018. Plugin Version 6.2.3
 		[Obsolete ("For Android use 'SendIAP_Android(String in_app_purchase_data, String in_app_purchase_signature, String name, double price, String currency, String locale)' \n" +
 		           "For iOS use 'SendIAP_iOS(String transactionId, String productId, String name, double price, String currency, String locale)' methods.")]
@@ -718,9 +604,9 @@ namespace Tapdaq {
 			return Marshal.PtrToStringAnsi(_GetRewardId(tag));
 			#elif UNITY_ANDROID
 			return GetAndroidStatic<string>("GetRewardId", tag);
-			#endif
+            #endif
 
-			return null;
+            return null;
 		}
 	}
 }

@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace Tapdaq {
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_6.4.1";
+		public const string pluginVersion = "unity_7.0.1";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
@@ -17,8 +16,6 @@ namespace Tapdaq {
 
 		public bool isDebugMode = false;
 		public bool autoReloadAds = false;
-
-		public AdTags tags = new AdTags ();
 
 		[SerializeField]
 		public List<TestDevice> testDevices = new List<TestDevice>();
@@ -84,77 +81,6 @@ namespace Tapdaq {
 
 		public string GetFacebookListJson() {
 			return JsonConvert.SerializeObject (facebookDevices);
-		}
-	}
-
-	[Serializable]
-	public class AdTags {
-
-		public static string DefaultTag = "default";
-
-		[SerializeField]
-		private string[] tags = new string[Enum.GetValues (typeof(TDAdType)).Length];
-
-		public string this[int index]
-		{
-			get
-			{
-				if (index >= tags.Count()) {
-					UpdateTagsLength ();
-				}
-				return tags [index];
-			}
-			set
-			{
-				if (index >= tags.Count()) {
-					UpdateTagsLength ();
-				}
-				tags [index] = value;
-			}
-		}
-
-		public int Length {
-			get { return tags.Length; }
-		}
-
-		private void UpdateTagsLength() {
-			if (tags.Count() < Enum.GetValues (typeof(TDAdType)).Length) {
-
-				var newTags = new string[Enum.GetValues (typeof(TDAdType)).Length];
-				for (int i = 0; i < tags.Count(); i++) {
-					newTags [i] = tags [i];
-				}
-				tags = newTags;
-			}
-		}
-
-		public Dictionary<TDAdType, string> GetTags () {
-
-			var toReturn = new Dictionary<TDAdType, string> ();
-
-			for (int i = 1; i < tags.Length; i++) {
-				if(!string.IsNullOrEmpty(tags[i]) )
-					toReturn.Add ((TDAdType)i, tags[i]);
-			}
-
-			return toReturn;
-		}
-
-		public string GetTagsJson() {
-			var lists = GetTags().Select(pair => new TagsList(pair.Key, pair.Value)).ToArray();
-			return JsonConvert.SerializeObject(lists);
-		}
-	}
-
-	[Serializable]
-	public class TagsList {
-
-		public string ad_type;
-		public List<string> placement_tags;
-
-		public TagsList(TDAdType adType, string tags) {
-			ad_type = adType.ToString ();
-			placement_tags = tags.Split (new []{ "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
 		}
 	}
 }

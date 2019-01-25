@@ -7,13 +7,11 @@
 //
 #import <Foundation/Foundation.h>
 #import <Tapdaq/Tapdaq.h>
-#import "TapdaqNativeAd.h"
 
 void _LaunchMediationDebugger();
 
 void _ConfigureTapdaq(const char* appIdChar,
                       const char* clientKeyChar,
-                      const char* enabledAdTypesChar,
                       const char* testDevices,
                       bool isDebugMode,
                       bool autoReloadAds,
@@ -32,6 +30,9 @@ bool _IsConsentGiven();
 
 void _SetAgeRestrictedUser(bool isAgeRestrictedUser);
 bool _IsAgeRestrictedUser();
+
+void _SetAdMobContentRating(const char* rating);
+const char* _GetAdMobContentRating();
 
 // banner
 
@@ -71,35 +72,9 @@ bool _IsRewardedVideoReadyWithTag(const char *tagChar);
 
 void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar);
 
-// native ad
-
-void _LoadNativeAdvertForPlacementTag(const char* tag, const char* nativeAdType);
-
-void _LoadNativeAdvertForAdType(const char* nativeAdType);
-
-void _FetchNative(const char* adTypeInt);
-
-void _FetchNativeAdWithTag (const char *tag, const char* nativeAdType);
-
-void _SendNativeClick(const char *uniqueId);
-
-void _SendNativeImpression(const char *uniqueId);
-
 void _LaunchMediationDebugger();
 
 bool _isEmpty(const char *str);
-
-
-// more apps
-
-void _ShowMoreApps();
-
-bool _IsMoreAppsReady();
-
-void _LoadMoreApps();
-
-void _LoadMoreAppsWithConfig(const char* config);
-
 
 // offerwall
 
@@ -123,7 +98,6 @@ const char *_GetRewardId(const char* tag);
 
 - (void)initWithApplicationId:(NSString *)appID
                     clientKey:(NSString *)clientKey
-               enabledAdTypes:(NSString *)enabledAdTypes
                   testDevices:(NSString *)testDevices
                   isDebugMode:(bool)isDebugMode
                 autoReloadAds:(bool)autoReloadAds
@@ -142,7 +116,11 @@ const char *_GetRewardId(const char* tag);
 
 - (BOOL) isConsentGiven;
 
-- (void) SetAgeRestrictedUser:(BOOL)isAgeRestrictedUser;
+- (void) setAgeRestrictedUser:(BOOL)isAgeRestrictedUser;
 
 - (BOOL) isAgeRestrictedUser;
+
+- (void) setAdMobContentRating:(NSString *)rating;
+
+- (NSString *) getAdMobContentRating;
 @end

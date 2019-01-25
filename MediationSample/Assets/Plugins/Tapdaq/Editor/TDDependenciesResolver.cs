@@ -24,13 +24,12 @@ public class TDDependencies : AssetPostprocessor {
 	public static object svcSupport;
 
 	// This value may be set as low as 11.0.0+ ****
-	private static string minimumPlayServicesVersion = "15.0.0+"; 
-	
+	private static string minimumPlayServicesVersion = "16.0.0+";
 
-	// DO NOT CHANGE THESE VALUES 
-    private static string minimumLifecycleVersion = "1.0.0+";
+
+    // DO NOT CHANGE THESE VALUES 
+    private static string minimumLifecycleVersion = "1.+";
 	private static string minimumVunglePlayServicesVersion = "11.0.4+";
-
 
 	private static string minimumSupportLibraryVersion = "24.0.0+";
 	private static string minimumInMobiSupportLibraryVersion = "24.0.0+";

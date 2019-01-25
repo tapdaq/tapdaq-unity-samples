@@ -4,7 +4,6 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using System.Text.RegularExpressions;
 using System;
-using System.Collections;
 using Tapdaq;
 
 
@@ -13,10 +12,8 @@ using TDEditor.iOS.Xcode;
 
 public class TapdaqBuildPostprocessor : MonoBehaviour{
 	private static string FrameworksPath = "Frameworks/Plugins/";
-	private static string FrameworksDir = "iOS";
-	private static string ResourcesPath = "/Plugins/iOS/";
+	private static string FrameworksDir = "iOS/";
 	private const string BuildPathKey = "IOSBuildProjectPath";
-
 	[MenuItem ("Tapdaq/Run iOS Build Postprocess", false, 2222)]
 	private static void RunIOSPostProcessManually()	{
 		var path = EditorPrefs.GetString (BuildPathKey, null);
@@ -37,20 +34,24 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 	}
 
 	private static void processExistingiOSPaths (string targetPath)  {
+        if (!Directory.Exists(targetPath + "/" + FrameworksPath)) {
+            FrameworksPath = "Frameworks/";
+            FrameworksDir = "";
+        }
+
 		foreach (string dirPath in Directory.GetDirectories(targetPath + "/" + FrameworksPath)) {
 			var dirName = Path.GetFileName(dirPath);
 			if (String.Compare(dirName, "ios", true) == 0) {
-				
-				FrameworksDir = dirName;
+				FrameworksDir = dirName + "/";
 			}
 		}
 	}
-	
+
 
 	[PostProcessBuild(101)]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string pathToBuiltProject) {
 		if (buildTarget != BuildTarget.iOS) return;
-		
+               
 		EditorPrefs.SetString (BuildPathKey, pathToBuiltProject);
 
             var path = PBXProject.GetPBXProjectPath(pathToBuiltProject);
@@ -62,8 +63,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 	        var proj = new PBXProject();
 	        proj.ReadFromString(File.ReadAllText(path));
 	        var target = proj.TargetGuidByName("Unity-iPhone");
-
-
+   
 			processExistingiOSPaths(pathToBuiltProject);
 			SetBuildProperties(proj, target);
 
@@ -118,34 +118,39 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
         if (AssetDatabase.FindAssets ("YouAppiAdapter.framework").Length > 0) {
 			proj.SetBuildProperty (target, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "YES");
 			proj.SetBuildProperty (target, "DEFINES_MODULE", "YES");
+            proj.SetBuildProperty (target, "ENABLE_BITCODE", "NO");
 		}
 	}
 
 	private static void AddLibraries(PBXProject proj, string target, string projectPath) {
-		foreach(var name in Enum.GetNames(typeof(TapdaqAdapter))) {
+        bool shouldUseNewFolderStructure = !Directory.Exists(projectPath + "/" + FrameworksPath + FrameworksDir + "Tapdaq");
+ 		foreach(var name in Enum.GetNames(typeof(TapdaqAdapter))) {
 			if (name.Equals("YouAppiAdapter")) {
-                proj.EmbedFramework (target, FrameworksPath + FrameworksDir +"/Tapdaq/Network-SDKs/YouAppiAdapter/YouAppiMoat.framework");
+                proj.EmbedFramework (target, FrameworksPath + FrameworksDir +(shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/YouAppiAdapter/") +"YouAppiMoat.framework");
 			}
 		}
 
 		if (AssetDatabase.FindAssets ("Tapjoy.framework").Length > 0) {
 			if (!proj.ContainsFileByProjectPath ("TapjoyResources.bundle")) {
                 var fullPath = FrameworksPath + FrameworksDir 
-                    + "/Tapdaq/Network-SDKs/TapjoyAdapter/Tapjoy.framework/Resources/TapjoyResources.bundle";
+                    + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/TapjoyAdapter/") + "Tapjoy.framework/Resources/TapjoyResources.bundle";
+                if (!Directory.Exists(fullPath)) {
+                    Debug.Log("TapjoyResources.bundle does not exist");
+                }
 				proj.AddFileToBuild (target, proj.AddFile (fullPath, "TapjoyResources.bundle", PBXSourceTree.Source));
 			}
 		}
 
         if (AssetDatabase.FindAssets ("MoPubSDKFramework.framework").Length > 0) {
 			if (!proj.ContainsFileByProjectPath ("MoPub.bundle")) {
-                var fullPathMoPub = FrameworksPath + FrameworksDir + "/Tapdaq/Network-SDKs/MoPubAdapter/MoPub.bundle";
+                var fullPathMoPub = FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/MoPubAdapter/") +  "MoPub.bundle";
                 proj.AddFileToBuild (target, proj.AddFile (fullPathMoPub, "MoPub.bundle", PBXSourceTree.Source));
 			}
 		}
 
         if (AssetDatabase.FindAssets ("PlayableAds.framework").Length > 0) {
 			if (!proj.ContainsFileByProjectPath ("ZplayMuteListener.bundle")) {
-                var fullPath = FrameworksPath + FrameworksDir + "/Tapdaq/Network-SDKs/ZPlayAdapter/PlayableAds.framework/Resources/ZplayMuteListener.bundle";
+                var fullPath = FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/ZPlayAdapter/") +  "PlayableAds.framework/Resources/ZplayMuteListener.bundle";
 				proj.AddFileToBuild (target, proj.AddFile (fullPath, "ZplayMuteListener.bundle", PBXSourceTree.Source));
 			}
 		}

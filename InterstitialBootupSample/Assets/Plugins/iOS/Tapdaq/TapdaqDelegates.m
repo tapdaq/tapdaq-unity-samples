@@ -1,6 +1,5 @@
 #import "TapdaqDelegates.h"
 #import "JsonHelper.h"
-#import "TapdaqNativeAd.h"
 
 @implementation TapdaqDelegates
 
@@ -14,16 +13,18 @@
     return sharedInstance;
 }
 
-- (NSDictionary *)errorDictWithError:(TDError *)error {
+- (NSDictionary *)errorDictWithError:(NSError *)error {
     if (error != nil) {
         NSMutableDictionary *subErrorDicts = [NSMutableDictionary dictionary];
-        for (NSString *subErrorKey in error.subErrors.allKeys) {
-            NSError *subError = error.subErrors[subErrorKey];
-            NSDictionary *dict = @{
-                                   @"code": @(subError.code),
-                                   @"message": (subError.localizedDescription == nil ? @"" : subError.localizedDescription)
-                                   };
-            subErrorDicts[subErrorKey] = dict;
+        if ([error isKindOfClass:TDError.class]) {
+            for (NSString *subErrorKey in [(TDError *)error subErrors].allKeys) {
+                NSError *subError = [(TDError *)error subErrors][subErrorKey];
+                NSDictionary *dict = @{
+                                       @"code": @(subError.code),
+                                       @"message": (subError.localizedDescription == nil ? @"" : subError.localizedDescription)
+                                       };
+                subErrorDicts[subErrorKey] = dict;
+            }
         }
         return @{
                  @"code": @(error.code),
@@ -39,7 +40,7 @@
     [self send:methodName adType:adType tag:tag message:message error:nil];
 }
 
-- (void) send:(NSString *) methodName adType:(NSString *) adType tag:(NSString *) tag message: (NSString *) message error:(TDError *)error
+- (void) send:(NSString *) methodName adType:(NSString *) adType tag:(NSString *) tag message: (NSString *) message error:(NSError *)error
 {
     NSMutableDictionary* dict = [@{
                                    @"adType": adType,
@@ -52,7 +53,7 @@
     [self send: methodName dictionary: dict];
 }
 
-- (void) send:(NSString *) methodName error:(TDError *)error
+- (void) send:(NSString *) methodName error:(NSError *)error
 {
     NSDictionary * errorDict = [self errorDictWithError:error];
     [self send: methodName dictionary: errorDict != nil ? errorDict : @{}];
@@ -124,6 +125,11 @@
     [self send: @"_didDisplay" adType: @"INTERSTITIAL" tag: placementTag message: @""];
 }
 
+- (void)didFailToDisplayInterstitialForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"INTERSTITIAL" tag: placementTag message: @"" error:error];
+}
+
 - (void)didCloseInterstitialForPlacementTag: (NSString *) placementTag
 {
     [self send: @"_didClose" adType: @"INTERSTITIAL" tag: placementTag message: @""];
@@ -156,6 +162,11 @@
     [self send: @"_didDisplay" adType: @"VIDEO" tag: placementTag message: @""];
 }
 
+- (void)didFailToDisplayVideoForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"VIDEO" tag: placementTag message: @"" error:error];
+}
+
 - (void)didCloseVideoForPlacementTag:(NSString *)placementTag
 {
     [self send: @"_didClose" adType: @"VIDEO" tag: placementTag message: @""];
@@ -186,6 +197,11 @@
 - (void)didDisplayRewardedVideoForPlacementTag:(NSString *)placementTag
 {
     [self send: @"_didDisplay" adType: @"REWARD_AD" tag: placementTag message: @""];
+}
+
+- (void)didFailToDisplayRewardedVideoForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"REWARD_AD" tag: placementTag message: @"" error:error];
 }
 
 - (void)didCloseRewardedVideoForPlacementTag:(NSString *)placementTag
@@ -223,72 +239,6 @@
     [self send: @"_didVerify" dictionary: dict];
 }
 
-#pragma mark Native delegate methods
-
-- (void)didLoadNativeAdvertForPlacementTag:(NSString *)placementTag
-                                    adType:(TDNativeAdType)nativeAdType
-{
-    NSDictionary* nativeMessageDict = @{
-                                        @"nativeType": [[TapdaqNativeAd sharedInstance] getStringFromAdType:  nativeAdType]
-                                        };
-    [self send: @"_didLoad" adType: @"NATIVE_AD" tag: placementTag message: [JsonHelper toJsonString: nativeMessageDict]];
-}
-
-- (void)didFailToLoadNativeAdvertForPlacementTag:(NSString *)placementTag
-                                          adType:(TDNativeAdType)nativeAdType
-{
-    NSDictionary* nativeMessageDict = @{
-                                        @"nativeType": [[TapdaqNativeAd sharedInstance] getStringFromAdType:  nativeAdType]
-                                        };
-    [self send: @"_didFailToLoad" adType: @"NATIVE_AD" tag: placementTag message: [JsonHelper toJsonString: nativeMessageDict]];
-}
-
-#pragma mark MoreApps delegate methods
-
-- (void)didLoadMoreApps
-{
-    NSDictionary* dict = @{
-                           @"adType": @"MORE_APPS"
-                           };
-    [self send:@"_didLoad" dictionary: dict];
-}
-
-- (void)didFailToLoadMoreAppsWithError:(TDError *)error
-{
-    NSMutableDictionary* dict = [@{
-                                   @"adType": @"MORE_APPS"
-                                   } mutableCopy];
-    if (error != nil) {
-        dict[@"error"] = [self errorDictWithError:error];
-    }
-    [self send:@"_didFailToLoad" dictionary: dict];
-}
-
-- (void)willDisplayMoreApps
-{
-    NSDictionary* dict = @{
-                           @"adType": @"MORE_APPS"
-                           };
-    [self send:@"_willDisplay" dictionary: dict];
-}
-
-- (void)didDisplayMoreApps
-{
-    NSDictionary* dict = @{
-                           @"adType": @"MORE_APPS"
-                           };
-    [self send:@"_didDisplay" dictionary: dict];
-}
-
-- (void)didCloseMoreApps
-{
-    NSDictionary* dict = @{
-                           @"adType": @"MORE_APPS"
-                           };
-    [self send:@"_didClose" dictionary: dict];
-}
-
-
 #pragma mark Offerwall delegate methods
 
 - (void)didLoadOfferwall
@@ -324,6 +274,11 @@
                            @"adType": @"OFFERWALL"
                            };
     [self send:@"_didDisplay" dictionary: dict];
+}
+
+- (void)didFailToDisplayOfferwallForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"OFFERWALL" tag: placementTag message: @"" error:error];
 }
 
 - (void)didCloseOfferwall

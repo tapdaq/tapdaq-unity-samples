@@ -39,6 +39,13 @@ typedef void (^TDAdRequestCompletion)(TDAdRequest * _Nonnull request, TDError * 
 @property (strong, nonatomic, nullable) NSString *hashedUserId;
 
 /**
+ * A reward object to award to a user.
+ *
+ * Supported Ad types: TDAdTypeRewardedVideo
+ */
+@property (readonly, nonatomic, nullable) TDReward *reward;
+
+/**
  * Delegate that will received all events associated with this ad request.
  */
 @property (weak, nonatomic, nullable) id<TDAdRequestDelegate>delegate;

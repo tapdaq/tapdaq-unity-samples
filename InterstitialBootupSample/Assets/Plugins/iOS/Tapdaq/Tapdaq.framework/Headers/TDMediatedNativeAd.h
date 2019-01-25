@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, TDMediatedNativeAdOptions) {
 @property (strong, nonatomic, nullable) NSDecimalNumber *starRating;
 @property (strong, nonatomic, nullable) NSString *advertiser;
 @property (strong, nonatomic, nullable) UIView *mediaView;
-@property (readonly, nonatomic, nonnull) TDPTag placementTag;
+@property (readonly, nonatomic, nonnull) NSString *placementTag;
 
 - (void)setAdView:(UIView * _Nonnull)adView;
 - (void)registerView:(UIView * _Nonnull)view type:(TDMediatedNativeAdViewType)type;

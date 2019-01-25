@@ -7,10 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-typedef NSString * TDMNetwork;
+static NSString *const kTDMNetworkUnknown = @"unknown";
+static NSString *const kTDMNetworkTapdaq = @"tapdaq";
 
-static TDMNetwork const kTDMNetworkUnknown = @"unknown";
-static TDMNetwork const kTDMNetworkTapdaq = @"tapdaq";
-
-static TDMNetwork const TDMFacebookAudienceNetwork = @"facebook";
-static TDMNetwork const TDMAdMob = @"admob";
+static NSString *const TDMFacebookAudienceNetwork = @"facebook";
+static NSString *const TDMAdMob = @"admob";
