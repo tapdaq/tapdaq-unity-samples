@@ -63,7 +63,7 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
 /**
   This is a method to initialize an FBRewardedVideoAd matching the given placement id.
 
- - Parameter placementID: The id of the ad placement. You can create your placement id from Facebook developers page.
+ @param placementID The id of the ad placement. You can create your placement id from Facebook developers page.
  */
 - (instancetype)initWithPlacementID:(NSString *)placementID;
 
@@ -111,7 +111,7 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
 /**
   Presents the rewarded video ad modally from the specified view controller.
 
- - Parameter rootViewController: The view controller that will be used to present the rewarded video ad.
+ @param rootViewController The view controller that will be used to present the rewarded video ad.
 
 
  You can implement `rewardedVideoAdDidClick:` and `rewardedVideoAdWillClose:`
@@ -122,8 +122,8 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
 /**
   Presents the rewarded video ad modally from the specified view controller.
 
- - Parameter rootViewController: The view controller that will be used to present the rewarded video ad.
- - Parameter flag: Pass YES to animate the presentation; otherwise, pass NO.
+ @param rootViewController The view controller that will be used to present the rewarded video ad.
+ @param flag Pass YES to animate the presentation; otherwise, pass NO.
 
 
  You can implement `rewardedVideoAdDidClick:` and `rewardedVideoAdWillClose:`
@@ -145,14 +145,14 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
 /**
   Sent after an ad has been clicked by the person.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdDidClick:(FBRewardedVideoAd *)rewardedVideoAd;
 
 /**
   Sent when an ad has been successfully loaded.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdDidLoad:(FBRewardedVideoAd *)rewardedVideoAd;
 
@@ -160,22 +160,22 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
   Sent after an FBRewardedVideoAd object has been dismissed from the screen, returning control
  to your application.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdDidClose:(FBRewardedVideoAd *)rewardedVideoAd;
 
 /**
   Sent immediately before an FBRewardedVideoAd object will be dismissed from the screen.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdWillClose:(FBRewardedVideoAd *)rewardedVideoAd;
 
 /**
   Sent after an FBRewardedVideoAd fails to load the ad.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
- - Parameter error: An error object containing details of the error.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
+ @param error An error object containing details of the error.
  */
 - (void)rewardedVideoAd:(FBRewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error;
 
@@ -183,21 +183,21 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
   Sent after the FBRewardedVideoAd object has finished playing the video successfully.
  Reward the user on this callback.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdVideoComplete:(FBRewardedVideoAd *)rewardedVideoAd;
 
 /**
   Sent immediately before the impression of an FBRewardedVideoAd object will be logged.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdWillLogImpression:(FBRewardedVideoAd *)rewardedVideoAd;
 
 /**
   Sent if server call to publisher's reward endpoint returned HTTP status code 200.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdServerRewardDidSucceed:(FBRewardedVideoAd *)rewardedVideoAd;
 
@@ -205,7 +205,7 @@ FB_CLASS_EXPORT FB_SUBCLASSING_RESTRICTED
   Sent if server call to publisher's reward endpoint did not return HTTP status code 200
  or if the endpoint timed out.
 
- - Parameter rewardedVideoAd: An FBRewardedVideoAd object sending the message.
+ @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
 - (void)rewardedVideoAdServerRewardDidFail:(FBRewardedVideoAd *)rewardedVideoAd;
 

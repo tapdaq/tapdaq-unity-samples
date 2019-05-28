@@ -6,11 +6,6 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
 
   <application>
-
-    <activity android:name="com.adcolony.sdk.AdColonyAdViewActivity"
-    	android:configChanges="keyboardHidden|orientation|screenSize"
-    	android:hardwareAccelerated="true"/>
-
     <activity android:name="com.adcolony.sdk.AdColonyInterstitialActivity"
     	android:configChanges="keyboardHidden|orientation|screenSize"
     	android:hardwareAccelerated="true"/>

@@ -1,6 +1,0 @@
-framework module YouAppiAdapter {
-  umbrella header "YouAppiAdapter.h"
-
-  export *
-  module * { export * }
-}

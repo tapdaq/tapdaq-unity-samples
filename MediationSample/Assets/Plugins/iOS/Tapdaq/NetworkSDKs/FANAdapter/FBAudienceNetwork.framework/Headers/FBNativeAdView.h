@@ -34,6 +34,8 @@ typedef NS_ENUM(NSInteger, FBNativeAdViewType) {
     FBNativeAdViewTypeGenericHeight300 = 3,
     /// Fixed height view, 400 points
     FBNativeAdViewTypeGenericHeight400 = 4,
+    /// Dynamic height, will be rendered to make the best use of the size set.
+    FBNativeAdViewTypeDynamic = 6,
 };
 
 /**
@@ -48,17 +50,29 @@ FB_CLASS_EXPORT
 @property (nonatomic, assign, readonly) FBNativeAdViewType type;
 
 /**
+ This is a method to create a native ad template using the given native ad and using default ad view attributes.
+ @param nativeAd The native ad to use to create this view.
+ */
++ (instancetype)nativeAdViewWithNativeAd:(FBNativeAd *)nativeAd;
+
+/**
+ This is a method to create a native ad template using the given native ad and ad view attributes.
+ @param nativeAd The native ad to use to create this view.
+ */
++ (instancetype)nativeAdViewWithNativeAd:(FBNativeAd *)nativeAd withAttributes:(FBNativeAdViewAttributes *)attributes;
+
+/**
  This is a method to create a native ad template using the given placement id and type.
- - Parameter nativeAd: The native ad to use to create this view.
- - Parameter type: The type of this native ad template. For more information, consult FBNativeAdViewType.
+ @param nativeAd The native ad to use to create this view.
+ @param type The type of this native ad template. For more information, consult FBNativeAdViewType.
  */
 + (instancetype)nativeAdViewWithNativeAd:(FBNativeAd *)nativeAd withType:(FBNativeAdViewType)type;
 
 /**
  This is a method to create a native ad template using the given placement id and type.
- - Parameter nativeAd: The native ad to use to create this view.
- - Parameter type: The type of this native ad template. For more information, consult FBNativeAdViewType.
- - Parameter attributes: The attributes to render this native ad template with.
+ @param nativeAd The native ad to use to create this view.
+ @param type The type of this native ad template. For more information, consult FBNativeAdViewType.
+ @param attributes The attributes to render this native ad template with.
  */
 + (instancetype)nativeAdViewWithNativeAd:(FBNativeAd *)nativeAd withType:(FBNativeAdViewType)type withAttributes:(FBNativeAdViewAttributes *)attributes;
 
@@ -69,7 +83,7 @@ FB_CLASS_EXPORT
 /**
  Returns default attributes for a given type.
 
- - Parameter type: The type for this layout.
+ @param type The type for this layout.
  */
 + (instancetype)defaultAttributesForType:(FBNativeAdViewType)type;
 

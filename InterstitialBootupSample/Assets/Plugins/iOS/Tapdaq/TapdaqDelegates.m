@@ -17,13 +17,18 @@
     if (error != nil) {
         NSMutableDictionary *subErrorDicts = [NSMutableDictionary dictionary];
         if ([error isKindOfClass:TDError.class]) {
-            for (NSString *subErrorKey in [(TDError *)error subErrors].allKeys) {
-                NSError *subError = [(TDError *)error subErrors][subErrorKey];
-                NSDictionary *dict = @{
-                                       @"code": @(subError.code),
-                                       @"message": (subError.localizedDescription == nil ? @"" : subError.localizedDescription)
-                                       };
-                subErrorDicts[subErrorKey] = dict;
+            for (NSString *networkName in [(TDError *)error subErrors].allKeys) {
+                NSArray *errors = [(TDError *)error subErrors][networkName];
+                NSMutableArray *networkErrors = NSMutableArray.array;
+                
+                for (NSError *networkError in errors) {
+                    NSDictionary *dict = @{
+                                           @"code": @(networkError.code),
+                                           @"message": (networkError.localizedDescription == nil ? @"" : networkError.localizedDescription)
+                                           };
+                    [networkErrors addObject:dict];
+                }
+                subErrorDicts[networkName] = networkErrors;
             }
         }
         return @{

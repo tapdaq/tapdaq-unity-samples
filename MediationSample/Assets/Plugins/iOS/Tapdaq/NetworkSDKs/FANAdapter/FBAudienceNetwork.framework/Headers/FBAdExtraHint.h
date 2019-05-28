@@ -77,9 +77,9 @@ extern FBAdExtraHintKeyword const FBAdExtraHintKeywordVideoComputerGames;
 FB_CLASS_EXPORT
 @interface FBAdExtraHint : NSObject
 
-@property (nonatomic, copy, nullable) NSString *UISpec;
 @property (nonatomic, copy, nullable) NSString *contentURL;
 @property (nonatomic, copy, nullable) NSString *extraData;
+@property (nonatomic, copy, nullable) NSString *mediationData;
 
 - (instancetype)initWithKeywords:(NSArray<FBAdExtraHintKeyword> *)keywords;
 

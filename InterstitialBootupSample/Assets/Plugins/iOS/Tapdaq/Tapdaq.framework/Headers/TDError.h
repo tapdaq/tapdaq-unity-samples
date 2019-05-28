@@ -11,5 +11,5 @@
 extern NSString *const TDErrorDomain;
 
 @interface TDError : NSError
-@property (strong, nonatomic) NSDictionary<NSString *, NSError *> *subErrors;
+@property (strong, nonatomic) NSDictionary<NSString *, NSArray<NSError *> *> *subErrors;
 @end

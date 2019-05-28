@@ -32,6 +32,8 @@ typedef enum {
     TDErrorCodeAdapterTimeout = 1011,
     TDErrorCodeAdapterNetworkNotInitialised = 1100,
     TDErrorCodeAdUnitSuspended = 1012,
+    TDErrorCodeAdapterAdAlreadyShown = 1002,
+    TDErrorCodeNoBidPayload = 1201,
     
     TDErrorCodeAdapterAppLovinFailedToLoad = 12000,
     TDErrorCodeAdapterChartboostFailedToLoad = 13000,

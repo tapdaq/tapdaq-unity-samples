@@ -10,7 +10,6 @@
 #import "TDAdapter.h"
 #import "TDMediationBannerAdapter.h"
 #import "TDMediationNativeAdapter.h"
-#import "TDMFBSDKConstants.h"
 
 @interface TDFANAdapter : TDAdapter <TDMediationBannerAdapter, TDMediationNativeAdapter>
 @end

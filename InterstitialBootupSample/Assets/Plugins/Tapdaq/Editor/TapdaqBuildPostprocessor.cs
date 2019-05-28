@@ -165,9 +165,10 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 		var rootDict = plist.root;
 
 		if(AssetDatabase.FindAssets("AdColonyAdapter.framework").Length > 0) {
-			rootDict.SetString("NSMotionUsageDescription", "Interactive ad controls");
-			rootDict.SetString("NSPhotoLibraryUsageDescription", "Taking selfies");
-			rootDict.SetString("NSCalendarsUsageDescription", "Adding events");
+			rootDict.SetString("NSMotionUsageDescription", "Some ad content may require access to accelerometer for interactive ad experience.");
+			rootDict.SetString("NSPhotoLibraryUsageDescription", "Some ad content may require access to the photo library.");
+			rootDict.SetString("NSCalendarsUsageDescription", "Some ad content may create a calendar event.");
+			rootDict.SetString("NSCameraUsageDescription", "Some ad content may access camera to take picture.");
 		}
 
 		var transportSecurityKey = "NSAppTransportSecurity";

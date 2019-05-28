@@ -58,10 +58,6 @@ typedef NS_ENUM(NSInteger, FBNativeAdsCachePolicy) {
  */
 @property (nonatomic, copy, readonly) NSString *placementID;
 /**
- Typed access to the ad star rating. See `FBAdStarRating` for details.
- */
-@property (nonatomic, assign, readonly) struct FBAdStarRating starRating FB_DEPRECATED;
-/**
  Typed access to the headline that the advertiser entered when they created their ad. This is usually the ad's main title.
  */
 @property (nonatomic, copy, readonly, nullable) NSString *headline;
@@ -132,8 +128,6 @@ typedef NS_ENUM(NSInteger, FBNativeAdsCachePolicy) {
  */
 @property (nonatomic, getter=isAdValid, readonly) BOOL adValid;
 
-@property (nonatomic, copy, readonly, nullable, getter=getAdNetwork) NSString *adNetwork;
-
 @property (nonatomic, getter=isRegistered, readonly) BOOL registered;
 /**
  FBAdExtraHint to provide extra info
@@ -158,7 +152,7 @@ typedef NS_ENUM(NSInteger, FBNativeAdsCachePolicy) {
  You can implement `nativeAdDidLoad:` and `nativeAd:didFailWithError:` methods
  of `FBNativeAdDelegate` if you would like to be notified as loading succeeds or fails.
 
- - Parameter mediaCachePolicy: controls which media (images, video, etc) from the native ad are cached before the native ad calls nativeAdLoaded on its delegate. The default is to cache everything.
+ @param mediaCachePolicy controls which media (images, video, etc) from the native ad are cached before the native ad calls nativeAdLoaded on its delegate. The default is to cache everything.
  Note that impression is not logged until the media for the ad is visible on screen (Video or Image for FBNativeAd / Icon for FBNativeBannerAd) and setting this to anything else than FBNativeAdsCachePolicyAll
  will delay the impression call.
  */
@@ -167,21 +161,34 @@ typedef NS_ENUM(NSInteger, FBNativeAdsCachePolicy) {
 /**
  Begins loading the FBNativeAd content from a bid payload attained through a server side bid.
 
- - Parameter bidPayload: The payload of the ad bid. You can get your bid payload from Facebook bidder endpoint.
+ @param bidPayload The payload of the ad bid. You can get your bid payload from Facebook bidder endpoint.
  */
 - (void)loadAdWithBidPayload:(NSString *)bidPayload;
 
 /**
  Begins loading the FBNativeAd content from a bid payload attained through a server side bid.
 
- - Parameter bidPayload: The payload of the ad bid. You can get your bid payload from Facebook bidder endpoint.
+ @param bidPayload The payload of the ad bid. You can get your bid payload from Facebook bidder endpoint.
 
- - Parameter mediaCachePolicy: controls which media (images, video, etc) from the native ad are cached before the native ad calls nativeAdLoaded on its delegate. The default is to cache everything.
+ @param mediaCachePolicy controls which media (images, video, etc) from the native ad are cached before the native ad calls nativeAdLoaded on its delegate. The default is to cache everything.
  Note that impression is not logged until the media for the ad is visible on screen (Video or Image for FBNativeAd / Icon for FBNativeBannerAd) and setting this to anything else than FBNativeAdsCachePolicyAll
  will delay the impression call.
  */
 - (void)loadAdWithBidPayload:(NSString *)bidPayload
             mediaCachePolicy:(FBNativeAdsCachePolicy)mediaCachePolicy;
+
+/**
+ Creates a new instance of a FBNativeAdBase from a bid payload. The actual subclass returned will depend on the contents of the payload.
+
+ @param placementId The placement ID of the ad.
+
+ @param bidPayload The bid payload received from the server.
+
+ @param error An out value that returns any error encountered during init.
+ */
++ (nullable instancetype)nativeAdWithPlacementId:(NSString *)placementId
+                                      bidPayload:(NSString *)bidPayload
+                                           error:(NSError * __autoreleasing *)error;
 
 @end
 

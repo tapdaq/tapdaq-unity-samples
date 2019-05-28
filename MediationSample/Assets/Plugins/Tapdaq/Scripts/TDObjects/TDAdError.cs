@@ -8,7 +8,7 @@ namespace Tapdaq
 	{
 		public int code;
 		public string message;
-		public Dictionary<String, TDAdError> subErrors;
+		public Dictionary<String, List<TDAdError>> subErrors;
 	}
 }
 
