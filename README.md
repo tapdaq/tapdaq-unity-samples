@@ -14,18 +14,6 @@ Includes only networks which support static interstitials
 ### Notes
 - Built using Unity 5.5.5
 
-## NativeAds
-Includes only Tapdaq SDK.
-
-### Notes
-- Built using Unity 5.5.5
-
-## MoreApps
-Includes only Tapdaq SDK
-
-### Notes
-- Built using Unity 5.5.5
-
 ## Need help?
 
 If you are having any problems integrating, feel free to contact us on [support@tapdaq.com](mailto:support@tapdaq.com) and we will be more than happy to help.
