@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Tapdaq;
 
 public class MediationSample : MonoBehaviour {
@@ -67,4 +68,8 @@ public class MediationSample : MonoBehaviour {
 	public void ShowDebugger() {
 		AdManager.LaunchMediationDebugger ();
 	}
+
+    public void SetPlacementName(InputField placementField) {
+		mTag = placementField.text;
+    }
 }
