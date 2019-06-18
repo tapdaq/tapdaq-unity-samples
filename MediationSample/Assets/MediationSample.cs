@@ -6,7 +6,7 @@ using Tapdaq;
 
 public class MediationSample : MonoBehaviour {
 
-	private string mTag = "main_menu";
+	private string mTag = "default";
 
 	// Use this for initialization
 	void Start () {
