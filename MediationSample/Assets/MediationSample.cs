@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Tapdaq;
@@ -99,11 +98,10 @@ public class MediationSample : MonoBehaviour {
 	// Error logging
 	private void LogError(TDAdError e) {
         Debug.Log("Code: " + e.code + " Message: " + e.message);
-        foreach(KeyValuePair<String, List<TDAdError>> entry in e.subErrors) {
+        foreach(KeyValuePair<string, List<TDAdError>> entry in e.subErrors) {
             Debug.Log("Code: " + e.code + "Message: " + e.message);
         }
 	}
-
 
 	// Load Ads
 	public void LoadStaticInterstitial() {
