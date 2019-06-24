@@ -7,6 +7,10 @@ using Tapdaq;
 public class MediationSample : MonoBehaviour {
 
 	private string mTag = "default";
+	public Button showStaticBtn;
+	public Button showVideoBtn;
+	public Button showRVBtn;
+	public Button showBannerBtn;
 
 	// Use this for initialization
 	void Start () {
@@ -57,6 +61,17 @@ public class MediationSample : MonoBehaviour {
 
 	private void AdAvailable(TDAdEvent e) {
 		Debug.Log("AdAvailable Type: " + e.adType + " - Tag: " + e.tag);
+
+		// Enable show button
+		if (e.adType == "INTERSTITIAL") {
+			showStaticBtn.interactable = true;
+		} else if (e.adType == "BANNER") {
+			showBannerBtn.interactable = true;
+		} else if (e.adType == "VIDEO") {
+			showVideoBtn.interactable = true;
+		} else if (e.adType == "REWARD_AD") {
+			showRVBtn.interactable = true;
+		}
 	}	
 
     private void AdNotAvailable(TDAdEvent e) {
@@ -65,6 +80,18 @@ public class MediationSample : MonoBehaviour {
 
 	private void AdWillDisplay(TDAdEvent e) {
 		Debug.Log("AdWillDisplay Type: " + e.adType + " - Tag: " + e.tag);
+
+		// Disable show button
+		if (e.adType == "INTERSTITIAL") {
+			showStaticBtn.interactable = false;
+		} else if (e.adType == "BANNER") {
+			showBannerBtn.interactable = false;
+		} else if (e.adType == "VIDEO") {
+			showVideoBtn.interactable = false;
+		} else if (e.adType == "REWARD_AD") {
+			showRVBtn.interactable = false;
+		}
+
 	}
 
 	private void AdDidDisplay(TDAdEvent e) {
