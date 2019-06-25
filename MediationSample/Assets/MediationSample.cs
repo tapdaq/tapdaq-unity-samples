@@ -56,6 +56,7 @@ public class MediationSample : MonoBehaviour {
 	}
 
     private void FailedToLoadConfig(TDAdError e) {
+		Debug.Log("TapdaqConfidFailedToLoad");
 		LogError(e);
 	}
 
@@ -75,6 +76,7 @@ public class MediationSample : MonoBehaviour {
 	}	
 
     private void AdNotAvailable(TDAdEvent e) {
+		Debug.Log("AdNotAvailable");
 		LogError(e.error);
 	}
 
@@ -99,6 +101,7 @@ public class MediationSample : MonoBehaviour {
 	}
 
 	private void AdDidFailToDisplay(TDAdEvent e) {	
+		Debug.Log("AdDidFailToDisplay");
 		LogError(e.error);
 	}
 
@@ -111,6 +114,7 @@ public class MediationSample : MonoBehaviour {
 	}
 
 	private void AdError(TDAdEvent e) {
+		Debug.Log("AdError");
 		LogError(e.error);
 	}
 
