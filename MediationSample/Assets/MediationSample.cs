@@ -124,9 +124,9 @@ public class MediationSample : MonoBehaviour {
 
 	// Error logging
 	private void LogError(TDAdError e) {
-        Debug.Log("Code: " + e.code + " Message: " + e.message);
+        Debug.Log("Code: " + e.code + " - Message: " + e.message);
         foreach(KeyValuePair<string, List<TDAdError>> entry in e.subErrors) {
-            Debug.Log("Code: " + e.code + "Message: " + e.message);
+            Debug.Log("Code: " + e.code + " - Message: " + e.message);
         }
 	}
 
