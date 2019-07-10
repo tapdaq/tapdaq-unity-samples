@@ -8,12 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import <Tapdaq/TDOrientationEnum.h>
-#import <Tapdaq/TDNativeAdUnitEnum.h>
-#import <Tapdaq/TDNativeAdSizeEnum.h>
+#import <Tapdaq/TDOrientation.h>
 
 #import <Tapdaq/TDAdTypeEnum.h>
-#import <Tapdaq/TDNativeAdTypeEnum.h>
 #import <Tapdaq/TDMNetworkEnum.h>
 #import <Tapdaq/TDMBannerSizeEnum.h>
 #import <Tapdaq/TDReward.h>
@@ -23,7 +20,6 @@
 @protocol TDAdRequestDelegate;
 
 @class TDAdvert;
-@class TDNativeAdvert;
 @class TDInterstitialAdvert;
 @class TDPlacement;
 @class TDMoreAppsConfig;
@@ -38,6 +34,8 @@
 
 @property (nonatomic, weak) id <TapdaqDelegate> delegate;
 
+@property (nonatomic) NSString *userId;
+@property (nonatomic) BOOL forwardUserId;
 @property (nonatomic) TDSubjectToGDPR userSubjectToGDPR;
 @property (nonatomic) BOOL isConsentGiven;
 @property (nonatomic) BOOL isAgeRestrictedUser;
@@ -119,18 +117,18 @@
 
 - (void)showRewardedVideoForPlacementTag:(NSString *)placementTag;
 
-- (void)showRewardedVideoForPlacementTag:(NSString *)placementTag hashedUserId:(NSString *)hashedUserId;
+- (void)showRewardedVideoForPlacementTag:(NSString *)placementTag hashedUserId:(NSString *)hashedUserId __attribute__((deprecated("showRewardedVideoForPlacementTag:hashedUserId: has been deprecated. Please use showRewardedVideoForPlacementTag: instead. To set user ID plese use userId property of TDProperties class or Tapdaq interface. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
 
     
 #pragma mark Offerwall
 
-- (void)loadOfferwallWithDelegate:(id<TDAdRequestDelegate>)delegate;
+- (void)loadOfferwallWithDelegate:(id<TDAdRequestDelegate>)delegate __attribute__((deprecated("loadOfferwallWithDelegate: has been deprecated. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
 
-- (void)loadOfferwall;
+- (void)loadOfferwall __attribute__((deprecated("loadOfferwall has been deprecated. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
     
-- (BOOL)isOfferwallReady;
+- (BOOL)isOfferwallReady __attribute__((deprecated("isOfferwallReady has been deprecated.This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
     
-- (void)showOfferwall;
+- (void)showOfferwall __attribute__((deprecated("showOfferwall has been deprecated. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
 
 #pragma mark Mediated native ads
 

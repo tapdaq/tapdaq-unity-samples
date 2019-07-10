@@ -30,7 +30,9 @@ void _ConfigureTapdaq(const char* appIdChar,
                       const char* pluginVersion,
                       int isUserSubjectToGDPR,
                       int isConsentGiven,
-                      int isAgeRestrictedUser) {
+                      int isAgeRestrictedUser,
+                      const char* userIdChar,
+                      bool forwardUserId) {
     
     bool isValid = true;
     
@@ -54,6 +56,12 @@ void _ConfigureTapdaq(const char* appIdChar,
     NSString *testDevices = [[NSString stringWithUTF8String:testDevicesChar] copy];
     NSString *version = [[NSString stringWithUTF8String:pluginVersion] copy];
     
+    NSString *userId = nil;
+    
+    if (!_isEmpty(userIdChar)) {
+        userId = [[NSString stringWithUTF8String:userIdChar] copy];
+    }
+    
     [[TapdaqUnityIOS sharedInstance] initWithApplicationId:appId
                                                  clientKey:clientKey
                                                testDevices:testDevices
@@ -62,7 +70,9 @@ void _ConfigureTapdaq(const char* appIdChar,
                                              pluginVersion:version
                                        isUserSubjectToGDPR:isUserSubjectToGDPR
                                             isConsentGiven:isConsentGiven
-                                       isAgeRestrictedUser:isAgeRestrictedUser];
+                                       isAgeRestrictedUser:isAgeRestrictedUser
+                                                    userId:userId
+                                       shouldForwardUserId:forwardUserId];
     
 }
 
@@ -102,6 +112,27 @@ void _SetAdMobContentRating(const char * rating) {
 const char * _GetAdMobContentRating() {
     NSString * ratingStr = [[[TapdaqUnityIOS sharedInstance] getAdMobContentRating] copy];
     return makeStringCopy([ratingStr UTF8String]);
+}
+
+void _SetUserId(const char * userId) {
+    NSString *userStr = nil;
+    if (!_isEmpty(userId)) {
+        userStr = [[NSString stringWithUTF8String:userId] copy];
+    }
+    [[TapdaqUnityIOS sharedInstance] setUserId:userStr];
+}
+
+const char * _GetUserId() {
+    NSString * userIdStr = [[[TapdaqUnityIOS sharedInstance] getUserId] copy];
+    return makeStringCopy([userIdStr UTF8String]);
+}
+
+void _SetForwardUserId(bool forwardUserId) {
+    [[TapdaqUnityIOS sharedInstance] setForwardUserId:forwardUserId];
+}
+
+bool _ShouldForwardUserId() {
+    return (bool)[[TapdaqUnityIOS sharedInstance] shouldForwardUserId];
 }
 
 #pragma mark - Banner (Bridge)
@@ -364,12 +395,17 @@ bool _isEmpty(const char* str) {
           isUserSubjectToGDPR:(int)isUserSubjectToGDPR
                isConsentGiven:(int)isConsentGiven
           isAgeRestrictedUser:(int)isAgeRestrictedUser
+                       userId:(NSString *)userId
+                shouldForwardUserId:(bool)forwardUserId
 {
     TDProperties *properties = [[TDProperties alloc] init];
     [properties setPluginVersion:pluginVersion];
     properties.isDebugEnabled = isDebugMode;
     properties.logLevel = isDebugMode ? TDLogLevelDebug : TDLogLevelInfo;
     [properties setAutoReloadAds:autoReloadAds];
+    properties.userId = userId;
+    properties.forwardUserId = forwardUserId;
+
     if (isConsentGiven != 2) {
         properties.isConsentGiven = (BOOL)isConsentGiven;
     }
@@ -432,6 +468,26 @@ bool _isEmpty(const char* str) {
 - (NSString*) getAdMobContentRating
 {
     return [[Tapdaq sharedSession] adMobContentRating];
+}
+
+- (void) setUserId:(NSString*)userId
+{
+     [[Tapdaq sharedSession] setUserId:userId];
+}
+
+- (NSString*) getUserId
+{
+    return [[Tapdaq sharedSession] userId];
+}
+
+- (void) setForwardUserId:(BOOL)forwardUserId
+{
+   [[Tapdaq sharedSession] setForwardUserId:forwardUserId];
+}
+
+- (BOOL) shouldForwardUserId
+{
+   return [[Tapdaq sharedSession] forwardUserId];
 }
 
 - (void) setTestDevices:(NSString *)testDevicesJson toProperties:(TDProperties *)properties

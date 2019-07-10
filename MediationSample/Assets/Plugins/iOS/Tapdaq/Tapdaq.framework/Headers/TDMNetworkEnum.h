@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 static NSString *const kTDMNetworkUnknown = @"unknown";
-static NSString *const kTDMNetworkTapdaq = @"tapdaq";
 
 static NSString *const TDMFacebookAudienceNetwork = @"facebook";
 static NSString *const TDMAdMob = @"admob";

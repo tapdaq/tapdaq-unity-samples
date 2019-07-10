@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "TDOrientationEnum.h"
 #import "TDAdTypeEnum.h"
 #import "TDTestDevices.h"
 #import "TDLogLevel.h"
@@ -43,6 +42,16 @@ typedef NS_ENUM(NSInteger, TDSubjectToGDPR) {
  * Default level is TDLogLevelInfo
  */
 @property (assign, nonatomic) TDLogLevel logLevel;
+
+/**
+ * Property identifing the user.
+ */
+@property (strong, nonatomic) NSString *userId;
+
+/**
+ * If the to YES userId property will be forwarded to ad networks.
+ */
+@property (assign, nonatomic) BOOL forwardUserId;
 
 /**
  * User is subject to EU GDPR laws.

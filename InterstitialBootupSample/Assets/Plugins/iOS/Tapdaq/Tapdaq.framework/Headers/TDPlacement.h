@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "TDAdTypeEnum.h"
-#import "TDNativeAdTypeEnum.h"
 
 // Default.
 extern NSString *const TDPTagDefault;
@@ -51,12 +50,4 @@ extern NSString *const TDPTagQuit;
 - (instancetype)initWithDefaultPlacementForAdTypes:(TDAdTypes)adTypes;
 
 + (BOOL)isValidTag:(NSString *)tag;
-@end
-
-@interface TDPlacement (NativeAds)
-+ (instancetype)defaultPlacementForNativeAdType:(TDNativeAdType)nativeAdType;
-+ (instancetype)placementWithNativeAdType:(TDNativeAdType)nativeAdType tag:(NSString *)tag;
-
-- (instancetype)initWithNativeAdType:(TDNativeAdType)nativeAdType forTag:(NSString *)tag;
-- (instancetype)initWithDefaultPlacementForNativeAdType:(TDNativeAdType)nativeAdType;
 @end

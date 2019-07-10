@@ -91,16 +91,32 @@ public class TDDependencies : AssetPostprocessor {
 		string playServicesVersion = minimumPlayServicesVersion;
 		string supportLibraryVersion = minimumSupportLibraryVersion;
 
-		if (AssetDatabase.FindAssets ("TapdaqInMobiAdapter").Length > 0) {
-			supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumInMobiSupportLibraryVersion);
+        if (AssetDatabase.FindAssets("TapdaqFANAdapter").Length > 0)
+        {
+            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumFANSupportLibraryVersion);
+        }
+
+        if (AssetDatabase.FindAssets ("TapdaqInMobiAdapter").Length > 0) {
+            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumInMobiSupportLibraryVersion);
+        }
+
+		if (AssetDatabase.FindAssets ("TapdaqMoPubAdapter").Length > 0) {
+            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumSupportLibraryVersion);
 		}
-		if (AssetDatabase.FindAssets ("TapdaqFANAdapter").Length > 0) {
-			supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumFANSupportLibraryVersion);
-		}
+
+        if (AssetDatabase.FindAssets("TapdaqReceptivAdapter").Length > 0)
+        {
+            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumSupportLibraryVersion);
+        }
+
 		if (AssetDatabase.FindAssets ("TapdaqVungleAdapter").Length > 0) {
 			playServicesVersion = getHighestVersion(playServicesVersion, minimumVunglePlayServicesVersion);
 			supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumVungleSupportLibraryVersion);
 		}
+
+        if (AssetDatabase.FindAssets ("TapdaqZPlayAdapter").Length > 0) {
+            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumSupportLibraryVersion);
+        }
 
 		//Required by Tapdaq
 		if(IsPlayServicesVersion15orHigher()) {
@@ -118,13 +134,6 @@ public class TDDependencies : AssetPostprocessor {
 				{"packageIds", new string[] { "extra-google-m2repository" } }
 			});
 		}
-
-		Google.VersionHandler.InvokeInstanceMethod(
-			svcSupport, "DependOn",
-			new object[] { "com.android.support", "support-v4", supportLibraryVersion },
-		namedArgs: new Dictionary<string, object>() {
-			{"packageIds", new string[] { "extra-android-m2repository" } }
-		});
 
         Google.VersionHandler.InvokeInstanceMethod(
             svcSupport, "DependOn",
@@ -165,6 +174,13 @@ public class TDDependencies : AssetPostprocessor {
 				namedArgs: new Dictionary<string, object>() {
 				{"packageIds", new string[] { "extra-android-m2repository" } }
 			});
+
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport, "DependOn",
+                new object[] { "com.android.support", "support-v4", supportLibraryVersion },
+                namedArgs: new Dictionary<string, object>() {
+                {"packageIds", new string[] { "extra-android-m2repository" } }
+            });
 		}
 
 		//Required by FAN
@@ -177,6 +193,26 @@ public class TDDependencies : AssetPostprocessor {
 			});
 		}
 
+        if (AssetDatabase.FindAssets("TapdaqMoPubAdapter").Length > 0)
+        {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport, "DependOn",
+                new object[] { "com.android.support", "support-v4", supportLibraryVersion },
+                namedArgs: new Dictionary<string, object>() {
+                {"packageIds", new string[] { "extra-android-m2repository" } }
+            });
+        }
+
+        if (AssetDatabase.FindAssets("TapdaqReceptivAdapter").Length > 0)
+        {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport, "DependOn",
+                new object[] { "com.android.support", "support-v4", supportLibraryVersion },
+                namedArgs: new Dictionary<string, object>() {
+                {"packageIds", new string[] { "extra-android-m2repository" } }
+            });
+        }
+
 		if (AssetDatabase.FindAssets ("TapdaqVungleAdapter").Length > 0) {
 			Google.VersionHandler.InvokeInstanceMethod (
 				svcSupport, "DependOn",
@@ -185,6 +221,15 @@ public class TDDependencies : AssetPostprocessor {
 				{ "packageIds", new string[] { "extra-google-m2repository" } }
 			});
 		}
+
+        if(AssetDatabase.FindAssets("TapdaqZPlayAdapter").Length > 0) {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport, "DependOn",
+                new object[] { "com.android.support", "support-v4", supportLibraryVersion },
+                namedArgs: new Dictionary<string, object>() {
+                {"packageIds", new string[] { "extra-android-m2repository" } }
+            });
+        }
 	}
 	#endif
 

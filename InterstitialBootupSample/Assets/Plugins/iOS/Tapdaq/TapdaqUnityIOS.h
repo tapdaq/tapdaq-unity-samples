@@ -18,7 +18,9 @@ void _ConfigureTapdaq(const char* appIdChar,
                       const char* pluginVersion,
                       int isUserSubjectToGDPR,
                       int isConsentGiven,
-                      int isAgeRestrictedUser);
+                      int isAgeRestrictedUser,
+                      const char* userIdChar,
+                      bool forwardUserId);
 
 bool _IsInitialised();
 
@@ -33,6 +35,12 @@ bool _IsAgeRestrictedUser();
 
 void _SetAdMobContentRating(const char* rating);
 const char* _GetAdMobContentRating();
+
+void _SetUserId(const char* userId);
+const char* _GetUserId();
+
+void _SetForwardUserId(bool forwardUserId);
+bool _ShouldForwardUserId();
 
 // banner
 
@@ -104,7 +112,9 @@ const char *_GetRewardId(const char* tag);
                 pluginVersion:(NSString *)pluginVersion
           isUserSubjectToGDPR:(int)isUserSubjectToGDPR
                isConsentGiven:(int)isConsentGiven
-          isAgeRestrictedUser:(int)isAgeRestrictedUser;
+          isAgeRestrictedUser:(int)isAgeRestrictedUser
+                       userId:(NSString*)userId
+          shouldForwardUserId:(bool)forwardUserId;
 
 -(BOOL) IsInitialised;
 
@@ -123,4 +133,12 @@ const char *_GetRewardId(const char* tag);
 - (void) setAdMobContentRating:(NSString *)rating;
 
 - (NSString *) getAdMobContentRating;
+
+- (void) setUserId:(NSString *)userId;
+
+- (NSString *) getUserId;
+
+- (void) setForwardUserId:(BOOL)forwardUserId;
+
+- (BOOL) shouldForwardUserId;
 @end

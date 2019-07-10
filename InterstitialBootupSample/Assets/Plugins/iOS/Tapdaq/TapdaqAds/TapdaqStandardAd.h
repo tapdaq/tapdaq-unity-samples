@@ -33,11 +33,5 @@
 
 @end
 
-@interface TapdaqMoreApps : NSObject<TapdaqStandardAd>
-
-- (void)loadWithConfig:(const char *)moreAppsConfig;
-
-@end
-
 @interface TapdaqOfferwall : NSObject<TapdaqStandardAd>
 @end

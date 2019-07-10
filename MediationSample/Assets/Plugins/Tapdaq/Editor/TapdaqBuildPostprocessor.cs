@@ -182,6 +182,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 		appTransportSecurity.SetBoolean ("NSAllowsArbitraryLoads", true);
 
 		if(AssetDatabase.FindAssets("AdMobAdapter.framework").Length > 0) {
+            rootDict.SetString("GADApplicationIdentifier", TDSettings.getInstance().admob_appid_ios);
 			//appTransportSecurity.SetBoolean("NSAllowsArbitraryLoadsForMedia", true);
 			//appTransportSecurity.SetBoolean("NSAllowsArbitraryLoadsInWebContent", true);
 		}

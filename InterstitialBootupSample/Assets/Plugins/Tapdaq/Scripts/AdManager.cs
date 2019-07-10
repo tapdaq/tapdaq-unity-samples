@@ -25,7 +25,7 @@ namespace Tapdaq {
 		//================================= Interstitials ==================================================
 		[DllImport ("__Internal")]
 		private static extern void _ConfigureTapdaq(string appIdChar, string clientKeyChar, string testDevicesChar, bool isDebugMode, bool autoReloadAds,
-			string pluginVersion, int isUserSubjectToGDPR, int isConsentGiven, int isAgeRestrictedUser);
+                                                    string pluginVersion, int isUserSubjectToGDPR, int isConsentGiven, int isAgeRestrictedUser, string userIdChar, bool forwardUserId);
 
 		[DllImport ("__Internal")]
 		private static extern bool _IsInitialised();
@@ -57,6 +57,17 @@ namespace Tapdaq {
         [DllImport ("__Internal")]
         private static extern string _GetAdMobContentRating();
 
+        [DllImport ("__Internal")]
+        private static extern void _SetUserId(string userId);
+        
+        [DllImport ("__Internal")]
+        private static extern string _GetUserId();
+
+        [DllImport ("__Internal")]
+        private static extern void _SetForwardUserId(bool forwardUserId);
+
+        [DllImport ("__Internal")]
+        private static extern bool _ShouldForwardUserId();
 
 		// interstitial
 		[DllImport ("__Internal")]
@@ -129,34 +140,35 @@ namespace Tapdaq {
 
 		#endregion
 
-		public static void Init () {
-			instance._Init (TDStatus.UNKNOWN, TDStatus.UNKNOWN, TDStatus.UNKNOWN);
+        public static void Init (TDStatus isUserSubjectToGDPR = TDStatus.UNKNOWN, TDStatus isConsentGiven = TDStatus.UNKNOWN, TDStatus isAgeRestrictedUser = TDStatus.UNKNOWN, string userId = null, bool shouldForwardUserId = false) {
+            instance._Init (isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser, userId, shouldForwardUserId);
 		}
 
+        [Obsolete ("Please use 'Init' with optional parameters")]
         public static void InitWithConsent(TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)
         {
-            instance._Init(isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser);
+            instance._Init(isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser, null, false);
         }
 
 		// Obsolete as of 13/06/2018. Plugin Version 6.2.4
         [Obsolete ("Please, use 'InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven)' method.")]
 		public static void InitWithConsent (bool isConsentGiven) {
-			instance._Init ((isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), TDStatus.UNKNOWN);
+            instance._Init ((isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), TDStatus.UNKNOWN, null, false);
 		}
 
         // Obsolete as of 24/09/2018. Plugin Version 6.4.0
         [Obsolete("Please, use 'InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)' method.")]
 		public static void InitWithConsent (TDStatus isConsentGiven) {
-			instance._Init (isConsentGiven, isConsentGiven, TDStatus.UNKNOWN);
+            instance._Init (isConsentGiven, isConsentGiven, TDStatus.UNKNOWN, null, false);
 		}
 
 		// Obsolete as of 13/06/2018. Plugin Version 6.2.4
         [Obsolete ("Please, use 'InitWithConsent (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)' method.")]
 		public static void InitWithConsent (bool isConsentGiven, bool isAgeRestrictedUser) {
-			instance._Init ((isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isAgeRestrictedUser ? TDStatus.TRUE : TDStatus.FALSE));
+            instance._Init ((isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE), (isAgeRestrictedUser ? TDStatus.TRUE : TDStatus.FALSE), null, false);
 		}
 
-		private void _Init (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser) {
+        private void _Init (TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser, string userId, bool shouldForwardUserId) {
 			if (!settings) {
 				settings = TDSettings.getInstance();
 			}
@@ -177,10 +189,10 @@ namespace Tapdaq {
 			LogMessage(TDLogSeverity.debug, "TapdaqSDK/Application ID -- " + applicationId);
 			LogMessage(TDLogSeverity.debug, "TapdaqSDK/Client Key -- " + clientKey);
 
-			Initialize (applicationId, clientKey, isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser);
+            Initialize (applicationId, clientKey, isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser, userId, shouldForwardUserId);
 		}
 
-		private void Initialize (string appID, string clientKey, TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser) {
+        private void Initialize (string appID, string clientKey, TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser, string userId, bool shouldForwardUserId) {
 			LogUnsupportedPlatform ();
 
 			LogMessage (TDLogSeverity.debug, "TapdaqSDK/Initializing");
@@ -189,12 +201,12 @@ namespace Tapdaq {
 			var testDevices = new TestDevicesList (settings.testDevices, TestDeviceType.iOS).ToString ();
 			TDDebugLogger.Log ("testDevices:\n" + testDevices);
 			CallIosMethod(() => _ConfigureTapdaq(appID, clientKey, testDevices, 
-			settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser));
+                                                 settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser, userId, shouldForwardUserId));
 			#elif UNITY_ANDROID
 			var testDevices = new TestDevicesList (settings.testDevices, TestDeviceType.Android).ToString ();
 			TDDebugLogger.Log ("testDevices:\n" + testDevices);
 			CallAndroidStaticMethod("InitiateTapdaq", appID, clientKey, testDevices,
-			                        settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser);
+                                    settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser, userId, shouldForwardUserId);
 			#endif
 		}
 
@@ -386,6 +398,46 @@ namespace Tapdaq {
             return result;
         }
 
+        public static void SetUserId(String userId)
+        {
+            #if UNITY_IPHONE
+            CallIosMethod(() => _SetUserId(userId));
+            #elif UNITY_ANDROID
+            CallAndroidStaticMethod("SetUserId", userId);
+            #endif
+        }
+
+        public static string GetUserId()
+        {
+            string result = null;
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _GetUserId());
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<String>("GetUserId");
+            #endif
+            return result;
+        }
+
+        public static void SetForwardUserId(bool forwardUserId)
+        {
+            #if UNITY_IPHONE
+            CallIosMethod(() => _SetForwardUserId(forwardUserId));
+            #elif UNITY_ANDROID
+            CallAndroidStaticMethod("SetForwardUserId", forwardUserId);
+            #endif
+        }
+
+        public static bool ShouldForwardUserId()
+        {
+            bool result = false;
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _ShouldForwardUserId());
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<bool>("ShouldForwardUserId");
+            #endif
+            return result;
+        }
+
 		// interstitial
         public static void LoadInterstitial(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
@@ -523,6 +575,7 @@ namespace Tapdaq {
             LoadRewardedVideo(tag);
         }
 
+        [Obsolete("UserId should now be set on Init or using SetUserId")]
         public static void ShowRewardVideo (string tag = TAPDAQ_PLACEMENT_DEFAULT, string hashedUserId = null) {
 			#if UNITY_IPHONE
             CallIosMethod(() => _ShowRewardedVideoWithTag (tag, hashedUserId));
@@ -530,6 +583,11 @@ namespace Tapdaq {
             CallAndroidStaticMethod("ShowRewardedVideo", tag, hashedUserId);
 			#endif
 		}
+
+        public static void ShowRewardVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+        {
+            ShowRewardVideo(tag);
+        }
 
         public static bool IsRewardedVideoReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			bool ready = false;
@@ -547,6 +605,7 @@ namespace Tapdaq {
 			return IsRewardedVideoReady(tag);
 		}
 
+        [Obsolete ("Offerwall no longer supported")]
 		public static bool IsOfferwallReady() {
 			bool ready = false;
 			#if UNITY_IPHONE
@@ -557,6 +616,7 @@ namespace Tapdaq {
 			return ready;
 		}
 
+        [Obsolete("Offerwall no longer supported")]
         public static void LoadOfferwall()
         {
             #if UNITY_IPHONE
@@ -566,6 +626,7 @@ namespace Tapdaq {
             #endif
         }
 
+        [Obsolete("Offerwall no longer supported")]
 		public static void ShowOfferwall() {
 			#if UNITY_IPHONE
 			CallIosMethod(_ShowOfferwall);

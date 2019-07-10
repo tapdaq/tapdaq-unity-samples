@@ -21,11 +21,6 @@ typedef enum {
     TDErrorCodeUnknownAdType = 210,
     TDErrorCodeAdExpired = 220,
     
-    TDErrorCodeCrossPromoNoAdAvailable = 300,
-    TDErrorCodeCrossPromoFrequencyCapReached = 301,
-    TDErrorCodeCrossPromoFailedToDownloadCreative = 340,
-    TDErrorCodeCrossPromoFailedToSaveCreative = 341,
-    
     TDErrorCodeAdapterFailedToLoad = 1000,
     TDErrorCodeAdapterAdIdMissing = 1001,
     TDErrorCodeAdapterBannerSizeUnsupported= 1010,

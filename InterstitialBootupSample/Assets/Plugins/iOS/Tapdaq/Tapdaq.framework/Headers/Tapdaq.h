@@ -25,19 +25,12 @@ FOUNDATION_EXPORT const unsigned char TapdaqVersionString[];
 #import <Tapdaq/TDTestDevices.h>
 #import <Tapdaq/TapdaqDelegate.h>
 
-#import <Tapdaq/TDOrientationEnum.h>
-#import <Tapdaq/TDNativeAdUnitEnum.h>
-#import <Tapdaq/TDNativeAdSizeEnum.h>
+#import <Tapdaq/TDOrientation.h>
 #import <Tapdaq/TDAdTypeEnum.h>
 #import <Tapdaq/TDMNetworkEnum.h>
 
-#import <Tapdaq/TDNativeAdvert.h>
-#import <Tapdaq/TDInterstitialAdvert.h>
-#import <Tapdaq/TDCreative.h>
-#import <Tapdaq/TDAspectRatio.h>
 #import <Tapdaq/TDResolutionEnum.h>
 
-#import <Tapdaq/TDMoreAppsConfig.h>
 #import <Tapdaq/TDLogLevel.h>
 #import <Tapdaq/TDReward.h>
 

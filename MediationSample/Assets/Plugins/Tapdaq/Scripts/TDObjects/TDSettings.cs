@@ -7,12 +7,14 @@ namespace Tapdaq {
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_7.1.2";
+		public const string pluginVersion = "unity_7.2.1";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
 		public string android_applicationID = "";
 		public string android_clientKey = "";
+
+        public string admob_appid_ios = "";
 
 		public bool isDebugMode = false;
 		public bool autoReloadAds = false;

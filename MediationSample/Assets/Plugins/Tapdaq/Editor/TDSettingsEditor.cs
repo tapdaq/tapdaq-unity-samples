@@ -48,6 +48,10 @@ namespace TDEditor {
 			settings.ios_applicationID = EditorGUILayout.TextField ("iOS Application ID", settings.ios_applicationID);
 			settings.ios_clientKey = EditorGUILayout.TextField ("iOS Client Key", settings.ios_clientKey);
 
+            GUILayout.Space(15);
+
+            settings.admob_appid_ios = EditorGUILayout.TextField("AdMob AppId (iOS)", settings.admob_appid_ios);
+
 			GUILayout.Space(20);
 
 			settings.android_applicationID = EditorGUILayout.TextField ("Android Application ID", settings.android_applicationID);

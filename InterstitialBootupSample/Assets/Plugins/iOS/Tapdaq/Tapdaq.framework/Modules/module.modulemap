@@ -1,6 +1,15 @@
 framework module Tapdaq {
-  umbrella header "Tapdaq.h"
-
-  export *
-  module * { export * }
+    umbrella header "Tapdaq.h"
+    
+    export *
+    module * {
+        export *
+    }
+    
+    link framework "AdSupport"
+    link framework "AVFoundation"
+    link framework "CoreMedia"
+    link framework "Foundation"
+    link framework "StoreKit"
+    link framework "UIKit"
 }
