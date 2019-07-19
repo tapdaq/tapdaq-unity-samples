@@ -576,7 +576,7 @@ namespace Tapdaq {
         }
 
         [Obsolete("UserId should now be set on Init or using SetUserId")]
-        public static void ShowRewardVideo (string tag = TAPDAQ_PLACEMENT_DEFAULT, string hashedUserId = null) {
+        public static void ShowRewardVideo (string tag, string hashedUserId) {
 			#if UNITY_IPHONE
             CallIosMethod(() => _ShowRewardedVideoWithTag (tag, hashedUserId));
 			#elif UNITY_ANDROID
@@ -586,7 +586,7 @@ namespace Tapdaq {
 
         public static void ShowRewardVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
-            ShowRewardVideo(tag);
+            ShowRewardVideo(tag, null);
         }
 
         public static bool IsRewardedVideoReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
