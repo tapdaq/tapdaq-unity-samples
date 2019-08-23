@@ -41,6 +41,8 @@
 @property (nonatomic) BOOL isAgeRestrictedUser;
 @property (nonatomic) NSString *adMobContentRating;
 
+@property (readonly, nonatomic) TDProperties *properties;
+
 #pragma mark Singleton
 /**
  The singleton Tapdaq object, use this for all method calls
