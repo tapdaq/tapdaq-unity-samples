@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Tapdaq;
+using Newtonsoft.Json;
 
 public class MediationSample : MonoBehaviour {
 
 	private string mTag = "default";
+    public Button initialiseBtn;
 	public Button showStaticBtn;
 	public Button showVideoBtn;
 	public Button showRVBtn;
+    public Button showRVWithUserIdBtn;
 	public Button showBannerBtn;
+    public Button hideBannerBtn;
+    public Dropdown bannerDropdown;
+    public Text logText;
 
 	// Use this for initialization
 	void Start () {
-		AdManager.Init ();		
+			
 	}
 
 	// Subscribe to Tapdaq events
 	private void OnEnable () {
-		TDCallbacks.TapdaqConfigLoaded += LoadConfig;
+        TDCallbacks.TapdaqConfigLoaded += LoadedConfig;
 		TDCallbacks.TapdaqConfigFailedToLoad += FailedToLoadConfig;
 		TDCallbacks.AdAvailable += AdAvailable;
 		TDCallbacks.AdNotAvailable += AdNotAvailable;
@@ -30,12 +36,11 @@ public class MediationSample : MonoBehaviour {
 		TDCallbacks.AdClosed += AdClosed;
 		TDCallbacks.AdError += AdError;
 		TDCallbacks.RewardVideoValidated += RewardVideoValidated;
-		TDCallbacks.CustomEvent += CustomEvent;
 	}
 
 	// Unsubscribe from Tapdaq events
 	private void OnDisable () {
-		TDCallbacks.TapdaqConfigLoaded -= LoadConfig;
+        TDCallbacks.TapdaqConfigLoaded -= LoadedConfig;
 		TDCallbacks.TapdaqConfigFailedToLoad -= FailedToLoadConfig;
 		TDCallbacks.AdAvailable -= AdAvailable;
 		TDCallbacks.AdNotAvailable -= AdNotAvailable;
@@ -46,133 +51,190 @@ public class MediationSample : MonoBehaviour {
 		TDCallbacks.AdClosed -= AdClosed;
 		TDCallbacks.AdError -= AdError;
 		TDCallbacks.RewardVideoValidated -= RewardVideoValidated;
-		TDCallbacks.CustomEvent -= CustomEvent;
 	}
 
+    public void OnClickInitialise() {
+        logMessage("OnClickInitialise");
+        TDStatus consentStatus = (AdManager.IsConsentGiven() ? TDStatus.TRUE : TDStatus.FALSE);
+        TDStatus ageRestrictedUserStatus = (AdManager.IsAgeRestrictedUser() ? TDStatus.TRUE : TDStatus.FALSE);
+        string userId = AdManager.GetUserId();
+
+        AdManager.Init (AdManager.IsUserSubjectToGDPR(), consentStatus, ageRestrictedUserStatus, userId, AdManager.ShouldForwardUserId());
+    }
+
     //Callback handlers
-	private void LoadConfig() {
-		//SDK BOOT COMPLETE
-		Debug.Log("Tapdaq config loaded");
+	private void LoadedConfig() {
+        //SDK BOOT COMPLETE
+        logMessage("LoadedConfig");
 	}
 
     private void FailedToLoadConfig(TDAdError e) {
-		Debug.Log("TapdaqConfidFailedToLoad");
-		LogError(e);
+        logMessage("FailedToLoadConfig: " + stringifyError(e));
 	}
 
 	private void AdAvailable(TDAdEvent e) {
-		Debug.Log("AdAvailable Type: " + e.adType + " - Tag: " + e.tag);
+        logMessage("AdAvailable Type: " + e.adType + " - Tag: " + e.tag);
 
-		// Enable show button
-		if (e.adType == "INTERSTITIAL") {
-			showStaticBtn.interactable = true;
-		} else if (e.adType == "BANNER") {
-			showBannerBtn.interactable = true;
-		} else if (e.adType == "VIDEO") {
-			showVideoBtn.interactable = true;
-		} else if (e.adType == "REWARD_AD") {
-			showRVBtn.interactable = true;
-		}
+        updateUI();
 	}	
 
     private void AdNotAvailable(TDAdEvent e) {
-		Debug.Log("AdNotAvailable");
-		LogError(e.error);
+        logMessage("AdNotAvailable: " + stringifyError(e.error));
 	}
 
 	private void AdWillDisplay(TDAdEvent e) {
-		Debug.Log("AdWillDisplay Type: " + e.adType + " - Tag: " + e.tag);
-
-		// Disable show button
-		if (e.adType == "INTERSTITIAL") {
-			showStaticBtn.interactable = false;
-		} else if (e.adType == "BANNER") {
-			showBannerBtn.interactable = false;
-		} else if (e.adType == "VIDEO") {
-			showVideoBtn.interactable = false;
-		} else if (e.adType == "REWARD_AD") {
-			showRVBtn.interactable = false;
-		}
-
+        logMessage("AdWillDisplayType: " + e.adType + " - Tag: " + e.tag);
 	}
 
 	private void AdDidDisplay(TDAdEvent e) {
-		Debug.Log("AdDidDisplay Type: " + e.adType + " - Tag: " + e.tag);
+        logMessage("AdDidDisplay Type: " + e.adType + " - Tag: " + e.tag);
 	}
 
-	private void AdDidFailToDisplay(TDAdEvent e) {	
-		Debug.Log("AdDidFailToDisplay");
-		LogError(e.error);
+	private void AdDidFailToDisplay(TDAdEvent e) {
+        logMessage("AdDidFailToDisplay: " + stringifyError(e.error));
 	}
 
 	private void AdClicked(TDAdEvent e) {
-		Debug.Log("AdClicked Type: " + e.adType + " - Tag: " + e.tag);
+        logMessage("AdClicked Type: " + e.adType + " - Tag: " + e.tag);
 	}
 
 	private void AdClosed(TDAdEvent e) {
-		Debug.Log("AdClosed Type: " + e.adType + " - Tag: " + e.tag);
+        logMessage("AdClosed Type: " + e.adType + " - Tag: " + e.tag);
+
+        updateUI();
 	}
 
 	private void AdError(TDAdEvent e) {
-		Debug.Log("AdError");
-		LogError(e.error);
+        logMessage("AdError: " + stringifyError(e.error));
 	}
 
     private void RewardVideoValidated(TDVideoReward e) {
-		Debug.Log("RewardValidated name: " + e.RewardName + " - Tag: " + e.Tag + " - amount: " + e.RewardAmount);
-	}
-
-    private void CustomEvent(Dictionary<string, object> dictionary) {
-		Debug.Log("CustomEvent dictionary:" + dictionary);
-	}
-
-	// Error logging
-	private void LogError(TDAdError e) {
-        Debug.Log("Code: " + e.code + " - Message: " + e.message);
-        foreach(KeyValuePair<string, List<TDAdError>> entry in e.subErrors) {
-            Debug.Log("Code: " + e.code + " - Message: " + e.message);
-        }
+        logMessage("RewardVideoValidated isValud: " + e.RewardValid + " - name: " + e.RewardName + " - Tag: " + e.Tag + " - amount: " + e.RewardAmount + " - CustomJson: " + JsonConvert.SerializeObject(e.RewardJson));
 	}
 
 	// Load Ads
-	public void LoadStaticInterstitial() {
+    public void LoadStaticInterstitial() {
+        logMessage("LoadStaticInterstitial");
 		AdManager.LoadInterstitial (mTag);
 	}
 
-	public void LoadVideoInterstitial() {
+    public void LoadVideoInterstitial() {
+        logMessage("LoadVideoInterstitial");
 		AdManager.LoadVideo (mTag);
 	}
 
-	public void LoadRewardedVideoInterstitial() {
+    public void LoadRewardedVideoInterstitial() {
+        logMessage("LoadRewardedVideoInterstitial");
 		AdManager.LoadRewardedVideo (mTag);
 	}
 
 	public void LoadBanner() {
-		AdManager.RequestBanner (TDMBannerSize.TDMBannerStandard);
+        string bannerSize = bannerDropdown.options[bannerDropdown.value].text;
+        logMessage("LoadBanner " + bannerSize);
+        TDMBannerSize size;
+        if(bannerSize.Equals("Standard")) {
+            size = TDMBannerSize.TDMBannerStandard;
+        } else if (bannerSize.Equals("Medium"))
+        {
+            size = TDMBannerSize.TDMBannerMedium;
+        }
+        else if (bannerSize.Equals("Large"))
+        {
+            size = TDMBannerSize.TDMBannerLarge;
+        }
+        else if (bannerSize.Equals("Full"))
+        {
+            size = TDMBannerSize.TDMBannerFull;
+        }
+        else if (bannerSize.Equals("Leaderboard"))
+        {
+            size = TDMBannerSize.TDMBannerLeaderboard;
+        }
+        else if (bannerSize.Equals("Smart Portrait"))
+        {
+            size = TDMBannerSize.TDMBannerSmartPortrait;
+        } else if (bannerSize.Equals("Smart Landscape"))
+        {
+            size = TDMBannerSize.TDMBannerSmartPortrait;
+        } else {
+            size = TDMBannerSize.TDMBannerStandard;
+        }
+        AdManager.RequestBanner (size);
 	}
 
-	public void ShowStaticInterstitial() {
+    public void ShowStaticInterstitial() {
+        logMessage("ShowStaticInterstitial");
 		AdManager.ShowInterstitial (mTag);
 	}
 
-	public void ShowVideoInterstitial() {
+    public void ShowVideoInterstitial() {
+        logMessage("ShowVideoInterstitial");
 		AdManager.ShowVideo (mTag);
 	}
 
-	public void ShowRewardedVideoInterstitial() {
+    public void ShowRewardedVideoInterstitial() {
+        logMessage("ShowRewardedVideoInterstitial");
 		AdManager.ShowRewardVideo (mTag);
 	}
 
-	public void ShowBanner() {
-		AdManager.ShowBanner (TDBannerPosition.Bottom);
+    public void ShowRewardedVideoInterstitialWithUserId()
+    {
+        logMessage("ShowRewardedVideoInterstitial");
+        AdManager.ShowRewardVideo(mTag, AdManager.GetUserId());
+    }
+
+    public void ShowBanner() {
+        logMessage("ShowBanner");
+        if(AdManager.IsBannerReady()) {
+            AdManager.ShowBanner(TDBannerPosition.Bottom);
+            showBannerBtn.interactable = false;
+            hideBannerBtn.interactable = true;
+        } else {
+            logMessage("Banner is not ready");
+        }
 	}
 
-	public void ShowDebugger() {
+    public void HideBanner()
+    {
+        logMessage("HideBanner");
+
+        AdManager.HideBanner();
+        hideBannerBtn.interactable = false;
+    }
+
+    public void ShowDebugger() {
+        logMessage("ShowDebugger");
 		AdManager.LaunchMediationDebugger ();
 	}
 
     public void SetPlacementName(InputField placementField) {
+        logMessage("SetPlacementName " + placementField.text);
 		mTag = placementField.text;
+        updateUI();
+    }
+
+    private void logMessage(string message) {
+        Debug.Log(message);
+        logText.text = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + message + "\n" + logText.text;
+    }
+
+    private void updateUI() {
+        showStaticBtn.interactable = AdManager.IsInterstitialReady(mTag);
+        showBannerBtn.interactable = AdManager.IsBannerReady();
+        showVideoBtn.interactable = AdManager.IsVideoReady(mTag);
+        showRVBtn.interactable = showRVWithUserIdBtn.interactable = AdManager.IsRewardedVideoReady(mTag);
+    }
+
+    private string stringifyError(TDAdError e) {
+        string str = e.code + " - " + e.message;
+        foreach (KeyValuePair<string, List<TDAdError>> entry in e.subErrors)
+        {
+            str += "\n" + entry.Key;
+            foreach(TDAdError subError in entry.Value) {
+                str += "\n" + subError.code + " - " + subError.message;
+            }
+        }
+        return str;
     }
 }
 
