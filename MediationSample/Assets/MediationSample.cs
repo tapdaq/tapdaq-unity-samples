@@ -187,19 +187,17 @@ public class MediationSample : MonoBehaviour {
         logMessage("ShowBanner");
         if(AdManager.IsBannerReady()) {
             AdManager.ShowBanner(TDBannerPosition.Bottom);
-            showBannerBtn.interactable = false;
-            hideBannerBtn.interactable = true;
         } else {
             logMessage("Banner is not ready");
         }
+        updateUI();
 	}
 
     public void HideBanner()
     {
         logMessage("HideBanner");
-
         AdManager.HideBanner();
-        hideBannerBtn.interactable = false;
+        updateUI();
     }
 
     public void ShowDebugger() {
@@ -219,10 +217,10 @@ public class MediationSample : MonoBehaviour {
     }
 
     private void updateUI() {
-        showStaticBtn.interactable = AdManager.IsInterstitialReady(mTag);
-        showBannerBtn.interactable = AdManager.IsBannerReady();
-        showVideoBtn.interactable = AdManager.IsVideoReady(mTag);
-        showRVBtn.interactable = showRVWithUserIdBtn.interactable = AdManager.IsRewardedVideoReady(mTag);
+        showStaticBtn.image.color = (AdManager.IsInterstitialReady(mTag) ? Color.green : Color.red);
+        showBannerBtn.image.color = (AdManager.IsBannerReady() ? Color.green : Color.red);
+        showVideoBtn.image.color = (AdManager.IsVideoReady(mTag) ? Color.green : Color.red);
+        showRVBtn.image.color = showRVWithUserIdBtn.image.color = (AdManager.IsRewardedVideoReady(mTag) ? Color.green : Color.red);
     }
 
     private string stringifyError(TDAdError e) {
