@@ -113,16 +113,6 @@ namespace Tapdaq {
 		[DllImport ("__Internal")]
 		private static extern bool _IsRewardedVideoReadyWithTag(string tag);
 
-		//////////  Show Offerwall
-
-		[DllImport ("__Internal")]
-		private static extern void _ShowOfferwall();
-
-		[DllImport ("__Internal")]
-		private static extern bool _IsOfferwallReady();
-
-		[DllImport ("__Internal")]
-		private static extern void _LoadOfferwall();
 
 		/////////// Stats
 		[DllImport ("__Internal")]
@@ -609,7 +599,6 @@ namespace Tapdaq {
 		public static bool IsOfferwallReady() {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsOfferwallReady());
 			#elif UNITY_ANDROID
 			ready = GetAndroidStatic<bool>("IsOfferwallReady");
 			#endif
@@ -620,7 +609,6 @@ namespace Tapdaq {
         public static void LoadOfferwall()
         {
             #if UNITY_IPHONE
-            CallIosMethod(_LoadOfferwall);
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("LoadOfferwall");
             #endif
@@ -629,7 +617,6 @@ namespace Tapdaq {
         [Obsolete("Offerwall no longer supported")]
 		public static void ShowOfferwall() {
 			#if UNITY_IPHONE
-			CallIosMethod(_ShowOfferwall);
 			#elif UNITY_ANDROID
 			CallAndroidStaticMethod("ShowOfferwall");
 			#endif

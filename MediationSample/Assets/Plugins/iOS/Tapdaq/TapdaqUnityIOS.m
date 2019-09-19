@@ -297,20 +297,6 @@ void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar
     
 }
 
-#pragma mark - Offerwall
-
-void _ShowOfferwall() {
-    [[TapdaqOfferwall sharedInstance] show];
-}
-
-bool _IsOfferwallReady() {
-    return [[TapdaqOfferwall sharedInstance] isReady];
-}
-
-void _LoadOfferwall() {
-    return [[TapdaqOfferwall sharedInstance] load];
-}
-
 #pragma mart - Stats
 
 void _SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale) {
