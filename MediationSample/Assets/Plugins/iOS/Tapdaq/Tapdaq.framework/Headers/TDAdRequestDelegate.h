@@ -58,15 +58,6 @@ typedef NS_ENUM(NSUInteger, TDNativeAdType);
 @end
 
 /**
- * Implementing this protocol allows listening to offerwall related events from ad requests.
- */
-@protocol TDOfferwallAdRequestDelegate <TDAdRequestDelegate>
-@optional
-- (void)adRequest:(TDAdRequest * _Nonnull)adRequest didReceiveOfferwallCredits:(NSDictionary * _Nullable)creditInfo;
-- (void)didFailToReceiveOfferwallCreditsAdRequest:(TDAdRequest * _Nonnull)adRequest;
-@end
-
-/**
  * Implementing this protocol allows listening to native ads related events from ad requests.
  */
 @protocol TDNativeAdRequestDelegate <TDAdRequestDelegate>

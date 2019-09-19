@@ -121,16 +121,6 @@
 
 - (void)showRewardedVideoForPlacementTag:(NSString *)placementTag hashedUserId:(NSString *)hashedUserId __attribute__((deprecated("showRewardedVideoForPlacementTag:hashedUserId: has been deprecated. Please use showRewardedVideoForPlacementTag: instead. To set user ID plese use userId property of TDProperties class or Tapdaq interface. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
 
-    
-#pragma mark Offerwall
-
-- (void)loadOfferwallWithDelegate:(id<TDAdRequestDelegate>)delegate __attribute__((deprecated("loadOfferwallWithDelegate: has been deprecated. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
-
-- (void)loadOfferwall __attribute__((deprecated("loadOfferwall has been deprecated. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
-    
-- (BOOL)isOfferwallReady __attribute__((deprecated("isOfferwallReady has been deprecated.This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
-    
-- (void)showOfferwall __attribute__((deprecated("showOfferwall has been deprecated. This method will be removed in future releases. Deprecated on 09/07/2019 version 7.2.0.")));
 
 #pragma mark Mediated native ads
 
