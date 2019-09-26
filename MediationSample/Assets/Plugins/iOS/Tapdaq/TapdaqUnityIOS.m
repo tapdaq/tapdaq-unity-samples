@@ -76,6 +76,10 @@ void _ConfigureTapdaq(const char* appIdChar,
     
 }
 
+void _SetDelegate() {
+    [[TapdaqUnityIOS sharedInstance] setDelegate];
+}
+
 bool _IsInitialised() {
     return  [[TapdaqUnityIOS sharedInstance] IsInitialised];
 }
@@ -400,17 +404,17 @@ bool _isEmpty(const char* str) {
     }
     properties.userSubjectToGDPR = isUserSubjectToGDPR;
     
-    
     [self setTestDevices: testDevices toProperties:properties];
     
     [[Tapdaq sharedSession] setApplicationId:appID
                                    clientKey:clientKey
                                   properties:properties];
     
-    [(Tapdaq *)[Tapdaq sharedSession] setDelegate: [TapdaqDelegates sharedInstance]];
-    
-    
     [[Tapdaq sharedSession] launch];
+}
+    
+- (void) setDelegate {
+    [[Tapdaq sharedSession] setDelegate: [TapdaqDelegates sharedInstance]];
 }
 
 - (BOOL) IsInitialised

@@ -32,10 +32,6 @@ namespace Tapdaq {
 			
 			if (adType == "REWARD_AD")
 				return TDAdType.TDAdTypeRewardedVideo;
-			
-			if (adType == "OFFERWALL")
-				return TDAdType.TDAdTypeOfferwall;
-
 			return TDAdType.TDAdTypeNone;
 		}
 
@@ -53,10 +49,6 @@ namespace Tapdaq {
 
 		public bool IsBannerEvent()  {
 			return GetTypeOfEvent() == TDAdType.TDAdTypeBanner;
-		}
-
-		public bool IsOfferwallEvent() {
-			return adType == "OFFERWALL";
 		}
 	}
 }

@@ -32,6 +32,3 @@
 - (void)show:(const char *)position;
 
 @end
-
-@interface TapdaqOfferwall : NSObject<TapdaqStandardAd>
-@end

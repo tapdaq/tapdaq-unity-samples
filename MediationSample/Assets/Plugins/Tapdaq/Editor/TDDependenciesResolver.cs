@@ -165,6 +165,17 @@ public class TDDependencies : AssetPostprocessor {
 					{ "packageIds", new string[] { "extra-google-m2repository" } }
 				});
 		}
+
+        //Required by Chartboost
+        if (AssetDatabase.FindAssets("TapdaqChartboostAdapter").Length > 0)
+        {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport, "DependOn",
+                new object[] { "com.google.android.gms", "play-services-base", playServicesVersion },
+            namedArgs: new Dictionary<string, object>() {
+                {"packageIds", new string[] { "extra-android-m2repository" } }
+            });
+        }
 			
 		//Required by InMobi
 		if(AssetDatabase.FindAssets("TapdaqInMobiAdapter").Length > 0) {

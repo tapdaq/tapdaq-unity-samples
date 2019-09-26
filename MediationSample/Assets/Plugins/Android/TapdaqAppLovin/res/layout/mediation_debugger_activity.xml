@@ -14,5 +14,6 @@
         android:scrollingCache="true"
         android:smoothScrollbar="true"
         android:divider="@color/applovin_sdk_listViewBackground"
+        android:dividerHeight="1dp"
         android:background="@android:color/white" />
 </LinearLayout>

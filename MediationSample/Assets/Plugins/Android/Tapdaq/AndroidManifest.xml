@@ -7,15 +7,6 @@
   <application>
       <!-- Debug Views -->
       <activity android:name="com.tapdaq.sdk.TMTestActivity"  android:configChanges="orientation|screenSize" />
-      <activity android:name="com.tapdaq.sdk.TMTestNativeActivity" android:configChanges="orientation|screenSize"/>
-      
-      <!-- Cross Promo -->
-      <activity android:name="com.tapdaq.adapters.tapdaq.TMInterstitialActivity" android:configChanges="orientation|screenSize"/>
-      <activity android:name="com.tapdaq.adapters.tapdaq.TMVideoInterstitialActivity" android:configChanges="orientation|screenSize"/>
-      
-      <!-- More Apps -->
-      <activity android:name="com.tapdaq.adapters.tapdaq.TMMoreAppsActivity"/>
-
   </application>
 
   <!--- Tapdaq Required -->

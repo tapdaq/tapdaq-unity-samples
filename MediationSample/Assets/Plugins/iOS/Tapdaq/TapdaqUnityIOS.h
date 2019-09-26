@@ -22,6 +22,8 @@ void _ConfigureTapdaq(const char* appIdChar,
                       const char* userIdChar,
                       bool forwardUserId);
 
+void _SetDelegate();
+
 bool _IsInitialised();
 
 void _SetUserSubjectToGDPR(int userSubjectToGDPR);
@@ -107,6 +109,8 @@ const char *_GetRewardId(const char* tag);
           isAgeRestrictedUser:(int)isAgeRestrictedUser
                        userId:(NSString*)userId
           shouldForwardUserId:(bool)forwardUserId;
+    
+- (void) setDelegate;
 
 -(BOOL) IsInitialised;
 
