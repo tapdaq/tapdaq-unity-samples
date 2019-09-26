@@ -27,6 +27,9 @@ namespace Tapdaq {
 		private static extern void _ConfigureTapdaq(string appIdChar, string clientKeyChar, string testDevicesChar, bool isDebugMode, bool autoReloadAds,
                                                     string pluginVersion, int isUserSubjectToGDPR, int isConsentGiven, int isAgeRestrictedUser, string userIdChar, bool forwardUserId);
 
+        [DllImport ("__Internal")]
+        private static extern void _SetDelegate();
+
 		[DllImport ("__Internal")]
 		private static extern bool _IsInitialised();
 
@@ -113,17 +116,6 @@ namespace Tapdaq {
 		[DllImport ("__Internal")]
 		private static extern bool _IsRewardedVideoReadyWithTag(string tag);
 
-		//////////  Show Offerwall
-
-		[DllImport ("__Internal")]
-		private static extern void _ShowOfferwall();
-
-		[DllImport ("__Internal")]
-		private static extern bool _IsOfferwallReady();
-
-		[DllImport ("__Internal")]
-		private static extern void _LoadOfferwall();
-
 		/////////// Stats
 		[DllImport ("__Internal")]
 		private static extern void _SendIAP(string transactionId, string productId, string name, double price, string currency, string locale);
@@ -173,8 +165,6 @@ namespace Tapdaq {
 				settings = TDSettings.getInstance();
 			}
 
-			TDEventHandler.instance.Init ();
-
 			var applicationId = "";
 			var clientKey = "";
 
@@ -210,22 +200,25 @@ namespace Tapdaq {
 			#endif
 		}
 
-		#region Platform specific method calling
+        #region Platform specific method calling
 
-		#if UNITY_IPHONE 
+#if UNITY_IPHONE
 
 		private static void CallIosMethod(Action action) {
+            TDEventHandler.instance.Init();
+
 			LogUnsupportedPlatform ();
 			if(Application.platform == RuntimePlatform.IPhonePlayer) {
 				if(AdManager.instance != null && action != null) {
+                    _SetDelegate();
 					action.Invoke();
 				}
 			}
 		}
 
-		#elif UNITY_ANDROID
+#elif UNITY_ANDROID
 
-		private static T GetAndroidStatic<T>(string methodName, params object[] paramList) {
+        private static T GetAndroidStatic<T>(string methodName, params object[] paramList) {
 			LogUnsupportedPlatform();
 			if(Application.platform == RuntimePlatform.Android) {
 				try {
@@ -246,6 +239,8 @@ namespace Tapdaq {
 
 		private static void CallAndroidStaticMethodFromClass(string className, 
 			string methodName, bool logException, params object[] paramList) {
+            TDEventHandler.instance.Init();
+
 			LogUnsupportedPlatform();
 			if(Application.platform == RuntimePlatform.Android) {
 				try {
@@ -599,41 +594,12 @@ namespace Tapdaq {
 			return ready;
 		}
 
-		[Obsolete ("Please, use 'IsRewardedVideoReady(string tag)' method.")]
-		public static bool IsRewardedVideoReadyWithTag(string tag) {
-			LogObsoleteWithTagMethod("IsRewardedVideoReady");
-			return IsRewardedVideoReady(tag);
-		}
-
-        [Obsolete ("Offerwall no longer supported")]
-		public static bool IsOfferwallReady() {
-			bool ready = false;
-			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsOfferwallReady());
-			#elif UNITY_ANDROID
-			ready = GetAndroidStatic<bool>("IsOfferwallReady");
-			#endif
-			return ready;
-		}
-
-        [Obsolete("Offerwall no longer supported")]
-        public static void LoadOfferwall()
+        [Obsolete("Please, use 'IsRewardedVideoReady(string tag)' method.")]
+        public static bool IsRewardedVideoReadyWithTag(string tag)
         {
-            #if UNITY_IPHONE
-            CallIosMethod(_LoadOfferwall);
-            #elif UNITY_ANDROID
-            CallAndroidStaticMethod("LoadOfferwall");
-            #endif
+            LogObsoleteWithTagMethod("IsRewardedVideoReady");
+            return IsRewardedVideoReady(tag);
         }
-
-        [Obsolete("Offerwall no longer supported")]
-		public static void ShowOfferwall() {
-			#if UNITY_IPHONE
-			CallIosMethod(_ShowOfferwall);
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("ShowOfferwall");
-			#endif
-		}
 
 		// Obsolete as of 31/05/2018. Plugin Version 6.2.3
 		[Obsolete ("For Android use 'SendIAP_Android(String in_app_purchase_data, String in_app_purchase_signature, String name, double price, String currency, String locale)' \n" +

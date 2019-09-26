@@ -76,6 +76,10 @@ void _ConfigureTapdaq(const char* appIdChar,
     
 }
 
+void _SetDelegate() {
+    [[TapdaqUnityIOS sharedInstance] setDelegate];
+}
+
 bool _IsInitialised() {
     return  [[TapdaqUnityIOS sharedInstance] IsInitialised];
 }
@@ -297,20 +301,6 @@ void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar
     
 }
 
-#pragma mark - Offerwall
-
-void _ShowOfferwall() {
-    [[TapdaqOfferwall sharedInstance] show];
-}
-
-bool _IsOfferwallReady() {
-    return [[TapdaqOfferwall sharedInstance] isReady];
-}
-
-void _LoadOfferwall() {
-    return [[TapdaqOfferwall sharedInstance] load];
-}
-
 #pragma mart - Stats
 
 void _SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale) {
@@ -414,17 +404,17 @@ bool _isEmpty(const char* str) {
     }
     properties.userSubjectToGDPR = isUserSubjectToGDPR;
     
-    
     [self setTestDevices: testDevices toProperties:properties];
     
     [[Tapdaq sharedSession] setApplicationId:appID
                                    clientKey:clientKey
                                   properties:properties];
     
-    [(Tapdaq *)[Tapdaq sharedSession] setDelegate: [TapdaqDelegates sharedInstance]];
-    
-    
     [[Tapdaq sharedSession] launch];
+}
+    
+- (void) setDelegate {
+    [[Tapdaq sharedSession] setDelegate: [TapdaqDelegates sharedInstance]];
 }
 
 - (BOOL) IsInitialised

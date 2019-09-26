@@ -18,8 +18,6 @@ typedef NS_OPTIONS(NSUInteger, TDAdTypes) {
     TDAdTypeRewardedVideo= 1 << 24,
     TDAdTypeBanner       = 1 << 25,
     
-    TDAdTypeOfferwall    = 1 << 26,
-    
     TDAdTypeMediatedNative = 1 << 27
 
 };

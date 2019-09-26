@@ -72,23 +72,6 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 			SetPListProperties(pathToBuiltProject);
 
             File.WriteAllText(path, proj.WriteToString());
-
-			RenameMRAIDSource (pathToBuiltProject);
-
-	}
-
-	private static void RenameMRAIDSource (string buildPath) {
-		// Unity will try to compile anything with the ".js" extension. Since mraid.js is not intended
-		// for Unity, it'd break the build. So we store the file with a masked extension and after the
-		// build rename it to the correct one.
-
-        string[] maskedFiles = Directory.GetFiles (buildPath, "*.prevent_unity_compilation", SearchOption.AllDirectories);
-
-
-		foreach (string maskedFile in maskedFiles) {
-            string unmaskedFile = maskedFile.Replace (".prevent_unity_compilation", ".js");
-			File.Move(maskedFile, unmaskedFile);
-		}
 	}
 
 	private static void SetBuildProperties(PBXProject proj, string target) {
@@ -113,6 +96,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
         proj.AddFrameworkToProject(target, "libsqlite3.tbd", false);
         proj.AddFrameworkToProject(target, "libc++.tbd", false);
         proj.AddFrameworkToProject(target, "libxml2.tbd", false);
+        proj.AddFrameworkToProject(target, "libresolv.9.tbd", false);
 
 
         if (AssetDatabase.FindAssets ("YouAppiAdapter.framework").Length > 0) {
@@ -138,13 +122,6 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
                     Debug.Log("TapjoyResources.bundle does not exist");
                 }
 				proj.AddFileToBuild (target, proj.AddFile (fullPath, "TapjoyResources.bundle", PBXSourceTree.Source));
-			}
-		}
-
-        if (AssetDatabase.FindAssets ("MoPubSDKFramework.framework").Length > 0) {
-			if (!proj.ContainsFileByProjectPath ("MoPub.bundle")) {
-                var fullPathMoPub = FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/MoPubAdapter/") +  "MoPub.bundle";
-                proj.AddFileToBuild (target, proj.AddFile (fullPathMoPub, "MoPub.bundle", PBXSourceTree.Source));
 			}
 		}
 

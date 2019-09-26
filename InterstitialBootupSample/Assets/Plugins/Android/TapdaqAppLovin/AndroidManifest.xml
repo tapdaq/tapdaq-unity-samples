@@ -8,21 +8,21 @@
 
   <application>
       <activity
-        android:name="com.applovin.adview.AppLovinInterstitialActivity"
-        android:configChanges="orientation|screenSize"
-        android:hardwareAccelerated="true" />
+      android:name="com.applovin.adview.AppLovinInterstitialActivity"
+      android:configChanges="orientation|screenSize"
+      android:hardwareAccelerated="true"
+      android:screenOrientation="behind" />
       <activity
-        android:name="com.applovin.impl.adview.AppLovinOrientationAwareInterstitialActivity"
-        android:configChanges="orientation|screenSize"
-        android:hardwareAccelerated="true"
-        android:screenOrientation="behind" />
+      android:name="com.applovin.sdk.AppLovinWebViewActivity"
+      android:configChanges="keyboardHidden|orientation|screenSize" />
       <activity
-        android:name="com.applovin.sdk.AppLovinWebViewActivity"
-        android:configChanges="keyboardHidden|orientation|screenSize" />
+      android:name="com.applovin.mediation.MaxDebuggerActivity"
+      android:configChanges="keyboardHidden|orientation|screenSize"
+      android:theme="@style/com.applovin.mediation.MaxDebuggerActivity.Theme" />
       <activity
-        android:name="com.applovin.mediation.MaxDebuggerActivity"
-        android:configChanges="keyboardHidden|orientation|screenSize"
-        android:theme="@style/com.applovin.mediation.MaxDebuggerActivity.Theme" />
+      android:name="com.applovin.mediation.MaxDebuggerDetailActivity"
+      android:configChanges="keyboardHidden|orientation|screenSize"
+      android:theme="@style/com.applovin.mediation.MaxDebuggerActivity.Theme" />
   </application>
 
 </manifest>

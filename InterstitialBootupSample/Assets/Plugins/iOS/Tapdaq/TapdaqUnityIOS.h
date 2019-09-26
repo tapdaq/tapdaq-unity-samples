@@ -22,6 +22,8 @@ void _ConfigureTapdaq(const char* appIdChar,
                       const char* userIdChar,
                       bool forwardUserId);
 
+void _SetDelegate();
+
 bool _IsInitialised();
 
 void _SetUserSubjectToGDPR(int userSubjectToGDPR);
@@ -84,14 +86,6 @@ void _LaunchMediationDebugger();
 
 bool _isEmpty(const char *str);
 
-// offerwall
-
-void _ShowOfferwall();
-
-bool _IsOfferwallReady();
-
-void _LoadOfferwall();
-
 // stats
 
 void _SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale);
@@ -115,6 +109,8 @@ const char *_GetRewardId(const char* tag);
           isAgeRestrictedUser:(int)isAgeRestrictedUser
                        userId:(NSString*)userId
           shouldForwardUserId:(bool)forwardUserId;
+    
+- (void) setDelegate;
 
 -(BOOL) IsInitialised;
 

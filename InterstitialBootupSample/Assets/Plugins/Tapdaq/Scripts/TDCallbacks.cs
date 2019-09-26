@@ -46,8 +46,6 @@ namespace Tapdaq {
 
 		public static event Action<TDVideoReward> RewardVideoValidated;
 
-		public static event Action<Dictionary<string, object>> CustomEvent;
-
 		// Obsolete events
 
 		[Obsolete("Use events 'AdWillDisplay' and 'AdDidDisplay' instead.")]
@@ -117,10 +115,6 @@ namespace Tapdaq {
 
 		public void OnRewardedVideoValidated(TDVideoReward reward) {
 			Invoke (RewardVideoValidated, reward);
-		}
-
-		public void OnCustomEvent(Dictionary<string, object> dictionary) {
-			Invoke (CustomEvent, dictionary);
 		}
 	}
 }

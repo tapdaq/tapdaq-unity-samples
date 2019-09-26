@@ -15,7 +15,6 @@
 @protocol TDClickableAdRequestDelegate;
 @protocol TDRewardedVideoAdRequestDelegate;
 @protocol TDBannerAdRequestDelegate;
-@protocol TDOfferwallAdRequestDelegate;
 
 
 @class TDReward;

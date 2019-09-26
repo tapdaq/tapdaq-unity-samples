@@ -183,22 +183,4 @@
  */
 - (void)rewardValidationFailed:(TDReward *)reward;
 
-
-#pragma mark Offerwall delegate methods
-
-- (void)didLoadOfferwall;
-
-- (void)didFailToLoadOfferwallWithError:(TDError *)error;
-
-- (void)willDisplayOfferwall;
-
-- (void)didDisplayOfferwall;
-
-- (void)didFailToDisplayOfferwallWithError:(TDError *)error;
-
-- (void)didCloseOfferwall;
-
-- (void)didReceiveOfferwallCredits:(NSDictionary *)creditInfo;
-
-- (void)didFailToReceiveOfferwallCredits;
 @end

@@ -135,18 +135,5 @@ namespace Tapdaq {
 			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdAvailable (adEvent);
 		}
-
-		//native
-		void _didFailToFetchNative(string message) {
-			TDDebugLogger.Log ("_didFailToFetchNative " + message);
-			TDCallbacks.instance.OnAdError (new TDAdEvent("NATIVE_AD", message));
-		}
-
-		// offerwall
-		void _didCustomEvent(string jsonMessage) {
-			var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>> (jsonMessage);
-			TDDebugLogger.Log ("keys - " + dictionary.Keys.Count);
-			TDCallbacks.instance.OnCustomEvent (dictionary);
-		}
 	}
 }

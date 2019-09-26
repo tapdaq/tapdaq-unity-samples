@@ -4,8 +4,7 @@
 		TDAdTypeInterstitial,
 		TDAdTypeVideo,
 		TDAdTypeRewardedVideo,
-		TDAdTypeBanner,
-		TDAdTypeOfferwall
+		TDAdTypeBanner
 	}
 
 	public enum TDMBannerSize {
@@ -44,10 +43,10 @@
 		HyprMXAdapter,
 		InMobiAdapter,
 		IronSourceAdapter,
-		KiipAdapter,
-		MoPubAdapter,
-		ReceptivAdapter,
+        MaioAdapter,
+        MintegralAdapter,
 		TapjoyAdapter,
+        TikTokAdapter,
 		UnityAdsAdapter,
 		VungleAdapter,
 		YouAppiAdapter,
