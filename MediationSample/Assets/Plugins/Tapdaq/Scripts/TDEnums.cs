@@ -34,25 +34,6 @@
 		Top
 	}
 
-	public enum TapdaqAdapter {
-		AdColonyAdapter,
-		AdMobAdapter,
-		AppLovinAdapter,
-		ChartboostAdapter,
-		FANAdapter,
-		HyprMXAdapter,
-		InMobiAdapter,
-		IronSourceAdapter,
-        MaioAdapter,
-        MintegralAdapter,
-		TapjoyAdapter,
-        TikTokAdapter,
-		UnityAdsAdapter,
-		VungleAdapter,
-		YouAppiAdapter,
-		ZPlayAdapter
-	}
-
 	public enum TDStatus {
 		FALSE = 0,
 		TRUE = 1,

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Tapdaq {
+
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_7.3.2";
+		public const string pluginVersion = "unity_7.4.0";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
@@ -15,20 +16,34 @@ namespace Tapdaq {
 		public string android_clientKey = "";
 
         public string admob_appid_ios = "";
+        public string admob_appid_android = "";
 
-		public bool isDebugMode = false;
+        public bool isDebugMode = false;
 		public bool autoReloadAds = false;
+
+        public bool useCocoapodsMaven = false;
+
+		[SerializeField]
+		public List<TDNetwork> networks = new List<TDNetwork>(TDNetwork.Networks.ToArray());
 
 		[SerializeField]
 		public List<TestDevice> testDevices = new List<TestDevice>();
 
-		public static TDSettings getInstance() {
+        public static TDSettings getInstance() {
 			if (instance == null) {
-				instance = Resources.LoadAll<TDSettings> ("Tapdaq")[0];
+				TDSettings[] settings = Resources.LoadAll<TDSettings> ("Tapdaq");
+                if(settings != null && settings.Length > 0)
+                {
+                    instance = settings[0];
+                } else
+                {
+                    return new TDSettings();
+                }
 			}
-			return instance;
+            return instance;
 		}
 	}
+
 
 	public enum TestDeviceType {
 		Android,

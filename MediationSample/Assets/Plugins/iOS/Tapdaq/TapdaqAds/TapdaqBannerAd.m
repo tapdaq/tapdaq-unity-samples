@@ -10,7 +10,6 @@ static NSString *const kTDUnityBannerFull = @"TDMBannerFull";
 static NSString *const kTDUnityBannerLeaderboard = @"TDMBannerLeaderboard";
 static NSString *const kTDUnityBannerSmartPortrait = @"TDMBannerSmartPortrait";
 static NSString *const kTDUnityBannerSmartLandscape = @"TDMBannerSmartLandscape";
-static NSString *const kTDUnityBannerSkyscraper = @"TDMBannerSkyscraper";
 
 #pragma mark - Banner Native
 @interface TapdaqBannerAd ()
@@ -108,8 +107,6 @@ static NSString *const kTDUnityBannerSkyscraper = @"TDMBannerSkyscraper";
         bannerSize = TDMBannerSmartPortrait;
     } else if ([sizeStr isEqualToString:kTDUnityBannerSmartLandscape]) {
         bannerSize = TDMBannerSmartLandscape;
-    } else if ([sizeStr isEqualToString:kTDUnityBannerSkyscraper]) {
-        bannerSize = TDMBannerSkyscraper;
     }
     
     return bannerSize;
