@@ -4,13 +4,6 @@ namespace Tapdaq {
 
 	public static class TDEnumHelper {
 
-		public static string FixAndroidAdapterName(string adapterName) {
-			if (adapterName == Enum.GetName (typeof(TapdaqAdapter), TapdaqAdapter.FANAdapter)) {
-				return "FacebookAdapter";
-			}
-			return adapterName;
-		}
-
 		public static T GetEnumFromString<T>(string enumString, T defaultValue = default(T)) {
 			Array values = null;
 			try {

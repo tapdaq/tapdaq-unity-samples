@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
+using Tapdaq;
 
 namespace Tapdaq {
 	public class TapdaqUninstallScript {
@@ -33,9 +34,8 @@ namespace Tapdaq {
 			DeleteIfEmpty ("iOS");
 			Delete ("Android/Tapdaq");
 
-			foreach (var adapter in Enum.GetNames(typeof(TapdaqAdapter))) {
-				var name = TDEnumHelper.FixAndroidAdapterName (adapter).Replace ("Adapter", "");
-				var path = "Android/Tapdaq" + name;
+			foreach (TDNetwork network in TDNetwork.Networks) {
+				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
 				Delete (path);
 			}
 
@@ -49,6 +49,49 @@ namespace Tapdaq {
 				Delete ("Tapdaq");
 
 			AssetDatabase.Refresh (ImportAssetOptions.ImportRecursive);
+		}
+
+		[MenuItem("Tapdaq/Uninstall Manual Integration", false, 11112)]
+		public static void DeleteManualIntegration()
+		{
+			//Android
+			Delete("Android/Tapdaq");
+            
+            string[] subfolders = Directory.GetDirectories("Assets/Plugins/Android/");
+            foreach (string s in subfolders)
+            {
+                if (s.Contains("/Tapdaq"))
+                {
+                    Debug.Log(s);
+                    Delete(s.Replace(BASE_PLUGIN_PATH, ""));
+                }
+            }
+
+			//iOS
+			Delete("iOS/Tapdaq/Adapters");
+			Delete("iOS/Tapdaq/NetworkSDKs");
+			Delete("iOS/Tapdaq/Tapdaq.framework");
+		}
+
+        public static bool IsManualIntegrationPresent()
+		{
+            if(Directory.Exists(BASE_PLUGIN_PATH + "Android/Tapdaq")
+                || Directory.Exists(BASE_PLUGIN_PATH + "iOS/Tapdaq/Adapters")
+				|| Directory.Exists(BASE_PLUGIN_PATH + "iOS/Tapdaq/NetworkSDKs")
+				|| Directory.Exists(BASE_PLUGIN_PATH + "iOS/Tapdaq/Tapdaq.framework"))
+			{
+				return true;
+			}
+			foreach (TDNetwork network in TDNetwork.Networks)
+			{
+				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
+				if(Directory.Exists(BASE_PLUGIN_PATH + path))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private static void Delete(string path) {

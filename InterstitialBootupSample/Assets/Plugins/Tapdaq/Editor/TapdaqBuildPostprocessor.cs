@@ -11,7 +11,7 @@ using TDEditor.iOS.Xcode;
 
 
 public class TapdaqBuildPostprocessor : MonoBehaviour{
-	private static string FrameworksPath = "Frameworks/Plugins/";
+	private static string FrameworksPath = "Pods/";
 	private static string FrameworksDir = "iOS/";
 	private const string BuildPathKey = "IOSBuildProjectPath";
 	[MenuItem ("Tapdaq/Run iOS Build Postprocess", false, 2222)]
@@ -22,6 +22,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 
 	[MenuItem ("Tapdaq/Run iOS Build Postprocess", true)]
 	static bool validateRunPostBuilder(){
+		Debug.Log("validateRunPost");
 		var path = EditorPrefs.GetString (BuildPathKey, null);
 		if( path == null || !Directory.Exists( path ) )
 			return false;
@@ -34,6 +35,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 	}
 
 	private static void processExistingiOSPaths (string targetPath)  {
+		Debug.Log("processExtisting");
         if (!Directory.Exists(targetPath + "/" + FrameworksPath)) {
             FrameworksPath = "Frameworks/";
             FrameworksDir = "";
@@ -51,30 +53,35 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 	[PostProcessBuild(101)]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string pathToBuiltProject) {
 		if (buildTarget != BuildTarget.iOS) return;
-               
+        TDDebugLogger.Log("OnPostprocessBuild - Path: " + pathToBuiltProject);
+        
 		EditorPrefs.SetString (BuildPathKey, pathToBuiltProject);
 
-            var path = PBXProject.GetPBXProjectPath(pathToBuiltProject);
-            if (!File.Exists(path)) {
-                TDDebugLogger.LogError(string.Format("pbxproj '{0}' does not exists", path));
-                return;
-            }
+        FrameworksPath = (TDSettings.getInstance().useCocoapodsMaven ? "Pods/" : "Frameworks/Plugins/");
+        TDDebugLogger.Log("FrameworksPath: " + FrameworksPath);
 
-	        var proj = new PBXProject();
-	        proj.ReadFromString(File.ReadAllText(path));
-	        var target = proj.TargetGuidByName("Unity-iPhone");
-   
-			processExistingiOSPaths(pathToBuiltProject);
-			SetBuildProperties(proj, target);
+        var path = PBXProject.GetPBXProjectPath(pathToBuiltProject);
+        if (!File.Exists(path))
+        {
+            TDDebugLogger.LogError(string.Format("pbxproj '{0}' does not exists", path));
+            return;
+        }
 
-            AddLibraries(proj, target, pathToBuiltProject);
+        var proj = new PBXProject();
+        proj.ReadFromString(File.ReadAllText(path));
+        var target = proj.TargetGuidByName("Unity-iPhone");
 
-			SetPListProperties(pathToBuiltProject);
+        processExistingiOSPaths(pathToBuiltProject);
+        SetBuildProperties(proj, target);
 
-            File.WriteAllText(path, proj.WriteToString());
-	}
+        AddLibraries(proj, target, pathToBuiltProject);
 
-	private static void SetBuildProperties(PBXProject proj, string target) {
+        SetPListProperties(pathToBuiltProject);
+
+        File.WriteAllText(path, proj.WriteToString());
+    }
+
+    private static void SetBuildProperties(PBXProject proj, string target) {
 		proj.SetBuildProperty(target, "LD_RUNPATH_SEARCH_PATHS", "$(inherited) @executable_path/Frameworks");
 		proj.SetBuildProperty(target, "IPHONEOS_DEPLOYMENT_TARGET", GetIOSDeploymentTarget(proj));
         proj.SetBuildProperty(target, "CLANG_ENABLE_MODULES", "YES");
@@ -98,40 +105,59 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
         proj.AddFrameworkToProject(target, "libxml2.tbd", false);
         proj.AddFrameworkToProject(target, "libresolv.9.tbd", false);
 
+		var path = EditorPrefs.GetString (BuildPathKey, null);
 
-        if (AssetDatabase.FindAssets ("YouAppiAdapter.framework").Length > 0) {
-			proj.SetBuildProperty (target, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "YES");
-			proj.SetBuildProperty (target, "DEFINES_MODULE", "YES");
-            proj.SetBuildProperty (target, "ENABLE_BITCODE", "NO");
-		}
-	}
+        string dir = path + "/Pods/";
+        if (Directory.Exists(dir) && Directory.GetFiles(dir, "YouAppiAdapter.framework", SearchOption.AllDirectories) != null
+            || AssetDatabase.FindAssets("YouAppiAdapter.framework").Length > 0)
+        {
+            Debug.Log("SET YOUAPPI PROPS");
+            proj.SetBuildProperty(target, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "YES");
+            proj.SetBuildProperty(target, "DEFINES_MODULE", "YES");
+            proj.SetBuildProperty(target, "ENABLE_BITCODE", "NO");
+        }
+    }
 
-	private static void AddLibraries(PBXProject proj, string target, string projectPath) {
+    private static void AddLibraries(PBXProject proj, string target, string projectPath) {
         bool shouldUseNewFolderStructure = !Directory.Exists(projectPath + "/" + FrameworksPath + FrameworksDir + "Tapdaq");
- 		foreach(var name in Enum.GetNames(typeof(TapdaqAdapter))) {
-			if (name.Equals("YouAppiAdapter")) {
-                proj.EmbedFramework (target, FrameworksPath + FrameworksDir +(shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/YouAppiAdapter/") +"YouAppiMoat.framework");
-			}
-		}
+		Debug.Log("Use new folder structure: " + shouldUseNewFolderStructure);
+        
+ 		foreach(TDNetwork network in TDNetwork.Networks) {
+			if (network.name.Equals("YouAppiAdapter", StringComparison.CurrentCultureIgnoreCase)) {
+                if (TDSettings.getInstance().useCocoapodsMaven)
+                {
+                    proj.EmbedFramework(target, projectPath + "/Pods/YouAppiMoatSDK/YouAppiMoat.framework");
+                }
+                else
+                {
+                    proj.EmbedFramework(target, FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/YouAppiAdapter/") + "YouAppiMoat.framework");
+                }
+            }
+		}  
 
-		if (AssetDatabase.FindAssets ("Tapjoy.framework").Length > 0) {
-			if (!proj.ContainsFileByProjectPath ("TapjoyResources.bundle")) {
-                var fullPath = FrameworksPath + FrameworksDir 
+        if (AssetDatabase.FindAssets("Tapjoy.framework").Length > 0)
+        {
+            if (!proj.ContainsFileByProjectPath("TapjoyResources.bundle"))
+            {
+                var fullPath = FrameworksPath + FrameworksDir
                     + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/TapjoyAdapter/") + "Tapjoy.framework/Resources/TapjoyResources.bundle";
-                if (!Directory.Exists(fullPath)) {
+                if (!Directory.Exists(fullPath))
+                {
                     Debug.Log("TapjoyResources.bundle does not exist");
                 }
-				proj.AddFileToBuild (target, proj.AddFile (fullPath, "TapjoyResources.bundle", PBXSourceTree.Source));
-			}
-		}
+                proj.AddFileToBuild(target, proj.AddFile(fullPath, "TapjoyResources.bundle", PBXSourceTree.Source));
+            }
+        }
 
-        if (AssetDatabase.FindAssets ("PlayableAds.framework").Length > 0) {
-			if (!proj.ContainsFileByProjectPath ("ZplayMuteListener.bundle")) {
-                var fullPath = FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/ZPlayAdapter/") +  "PlayableAds.framework/Resources/ZplayMuteListener.bundle";
-				proj.AddFileToBuild (target, proj.AddFile (fullPath, "ZplayMuteListener.bundle", PBXSourceTree.Source));
-			}
-		}
-	}
+        if (AssetDatabase.FindAssets("PlayableAds.framework").Length > 0)
+        {
+            if (!proj.ContainsFileByProjectPath("ZplayMuteListener.bundle"))
+            {
+                var fullPath = FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/ZPlayAdapter/") + "PlayableAds.framework/Resources/ZplayMuteListener.bundle";
+                proj.AddFileToBuild(target, proj.AddFile(fullPath, "ZplayMuteListener.bundle", PBXSourceTree.Source));
+            }
+        }
+    }
 
 	private static void SetPListProperties(string pathToBuiltProject) {
 		
@@ -158,10 +184,8 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 		
 		appTransportSecurity.SetBoolean ("NSAllowsArbitraryLoads", true);
 
-		if(AssetDatabase.FindAssets("AdMobAdapter.framework").Length > 0) {
+		if(TDSettings.getInstance().admob_appid_ios.Length > 0) {
             rootDict.SetString("GADApplicationIdentifier", TDSettings.getInstance().admob_appid_ios);
-			//appTransportSecurity.SetBoolean("NSAllowsArbitraryLoadsForMedia", true);
-			//appTransportSecurity.SetBoolean("NSAllowsArbitraryLoadsInWebContent", true);
 		}
 
 		// Write to file

@@ -26,14 +26,19 @@ namespace TDEditor {
 			TDManifestResolver.FixAndroidManifest ();
 		}
 
-		public override void OnInspectorGUI () {
+        private void OnDisable()
+        {
+            TDManifestResolver.FixAndroidManifest();
+        }
+
+        public override void OnInspectorGUI () {
 			foldoutStyle = EditorStyles.foldout;
 			foldoutStyle.fontStyle = FontStyle.Bold;
 
 			serializedObject.Update ();
 
 			GUILayout.Label ("You must have an App ID and Client Key to use Tapdaq", EditorStyles.boldLabel);
-		
+
 			if (GUILayout.Button ("Visit Tapdaq.com")) {
 				Application.OpenURL ("https://tapdaq.com/dashboard/apps");
 			}
@@ -41,23 +46,25 @@ namespace TDEditor {
 			GUILayout.Label ("Current version:", EditorStyles.boldLabel);
 			GUILayout.Label ("Unity plugin: \t" + TDSettings.pluginVersion);
 
-			GUILayout.Space(15);
-		
+			GUILayout.Space (15);
+
+			DrawSeparator(2);
+
+			GUILayout.Space (15);
+
 			GUILayout.Label ("App Settings", EditorStyles.boldLabel);
-		
+
 			settings.ios_applicationID = EditorGUILayout.TextField ("iOS Application ID", settings.ios_applicationID);
 			settings.ios_clientKey = EditorGUILayout.TextField ("iOS Client Key", settings.ios_clientKey);
-
-            GUILayout.Space(15);
-
-            settings.admob_appid_ios = EditorGUILayout.TextField("AdMob AppId (iOS)", settings.admob_appid_ios);
+            settings.admob_appid_ios = EditorGUILayout.TextField("iOS AdMob AppId", settings.admob_appid_ios);
 
 			GUILayout.Space(20);
 
 			settings.android_applicationID = EditorGUILayout.TextField ("Android Application ID", settings.android_applicationID);
 			settings.android_clientKey = EditorGUILayout.TextField ("Android Client Key", settings.android_clientKey);
+            settings.admob_appid_android = EditorGUILayout.TextField("Android AdMob AppId", settings.admob_appid_android);
 
-			GUILayout.Space (15);
+            GUILayout.Space (15);
 
 			settings.autoReloadAds = EditorGUILayout.Toggle("Auto-reload Ads", settings.autoReloadAds);
 
@@ -65,12 +72,102 @@ namespace TDEditor {
 
 			settings.isDebugMode = EditorGUILayout.Toggle("Debug Mode?", settings.isDebugMode);
 
-			GUILayout.Space (14);
+			GUILayout.Space (15);
 
 			ShowTestDevices ();
 
-			if (GUI.changed)
+			GUILayout.Space (15);
+
+			// Adapters
+			DrawSeparator(2);
+
+			GUILayout.Space (25);
+
+            EditorGUI.BeginChangeCheck();
+            settings.useCocoapodsMaven = EditorGUILayout.Toggle("Cocoapods/Maven", settings.useCocoapodsMaven);
+            if(EditorGUI.EndChangeCheck())
+            {
+                if (settings.useCocoapodsMaven == false)
+                {
+                    SaveAdapters();
+                } else if(TapdaqUninstallScript.IsManualIntegrationPresent())
+				{
+					int result = EditorUtility.DisplayDialogComplex("Enable Cocoapods/Maven",
+									  "An existing Tapdaq integration is present and should be removed before using Cocoapods/Maven",
+				"Cancel", "Remove", "Continue without removing");
+                    
+				    switch (result)
+					{
+						case 0:
+							{
+								//Cancel
+								settings.useCocoapodsMaven = false;
+								break;
+							}
+						case 1:
+							{
+								//Remove
+								TapdaqUninstallScript.DeleteManualIntegration();
+								break;
+							}
+						default:
+							break;
+					}
+				}
+			}
+
+            GUILayout.Space(10);
+
+            if(settings.useCocoapodsMaven)
+            {
+                GUILayout.BeginVertical();
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Network", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+                GUILayout.Label("iOS", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+                GUILayout.Label("Android", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+                GUILayout.EndHorizontal();
+                
+                foreach (TDNetwork network in TDNetwork.Networks)
+                {
+                    GUILayout.Space(10);
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(network.name, GUILayout.MaxWidth(100));
+                    if(network.cocoapodsAdapterDependency != null)
+                    {
+                        network.iOSEnabled = EditorGUILayout.Toggle("", network.iOSEnabled, GUILayout.MaxWidth(100));
+                    }
+                    if(network.mavenAdapterDependency != null)
+                    {
+                        network.androidEnabled = EditorGUILayout.Toggle(network.androidEnabled, GUILayout.MaxWidth(100));
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();                
+
+                GUILayout.Space(25);
+
+                ShowButton("Save Adapters", 130, Color.white, () => {
+                    SaveAdapters();
+
+                    // Save settings
+                    if (GUI.changed)
+                    {
+                        EditorUtility.SetDirty(settings);
+                    }
+
+                });
+            }
+            
+			// Save settings
+			if (GUI.changed) {
 				EditorUtility.SetDirty (settings);
+			}
+
+		}
+
+		private void SaveAdapters() {
+            TDDependencies.RegisterDependencies();
 		}
 
 		private void ShowTestDevices() {
@@ -96,7 +193,7 @@ namespace TDEditor {
 		TestDeviceType newTestDeviceType = TestDeviceType.Android;
 
 		private void ShowAddTestDeviceView() {
-			
+
 			GUIStyle labelStyle = new GUIStyle(EditorStyles.boldLabel);
 
 			GUILayout.Label ("Add new device.", labelStyle);
@@ -116,8 +213,8 @@ namespace TDEditor {
 		}
 
 		private void ShowDeleteDialog(TestDevice device) {
-			if (EditorUtility.DisplayDialog ("Delete Test Device", 
-				"Are you sure you want to delete test device " + device.name + "?", 
+			if (EditorUtility.DisplayDialog ("Delete Test Device",
+				"Are you sure you want to delete test device " + device.name + "?",
 				"Delete", "Cancel")) {
 
 				deviceToDelete.Add (device);
@@ -128,7 +225,6 @@ namespace TDEditor {
 
 			GUIStyle labelStyle = new GUIStyle(EditorStyles.boldLabel);
 			var isAndroid = device.type == TestDeviceType.Android;
-			labelStyle.normal.textColor = isAndroid ? new Color (0, 0.3f, 0) : new Color (0, 0, 0.3f);
 
 			GUILayout.Label (device.name + " (" + device.type.ToString () + ")", labelStyle);
 
