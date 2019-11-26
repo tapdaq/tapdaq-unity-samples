@@ -168,9 +168,13 @@ namespace TDEditor {
 
 		private void SaveAdapters() {
             TDDependencies.RegisterDependencies();
-		}
 
-		private void ShowTestDevices() {
+#if UNITY_ANDROID
+            GooglePlayServices.PlayServicesResolver.MenuForceResolve();
+#endif
+        }
+
+        private void ShowTestDevices() {
 
 			showTestDevices = EditorGUILayout.Foldout (showTestDevices, "Test devices", foldoutStyle);
 

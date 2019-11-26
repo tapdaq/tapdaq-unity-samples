@@ -76,10 +76,6 @@ public class TDDependencies : AssetPostprocessor
 		RegisterIOSDependencies();
         ResolveAdapters();
         SaveDependencies();
-
-#if UNITY_ANDROID
-        GooglePlayServices.PlayServicesResolver.MenuForceResolve();
-#endif
 	}
 
     private static void SaveDependencies()
