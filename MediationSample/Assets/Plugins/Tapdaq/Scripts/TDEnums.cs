@@ -13,8 +13,8 @@
 		TDMBannerMedium = 2,
 		TDMBannerFull = 3,
 		TDMBannerLeaderboard = 4,
-		TDMBannerSmartPortrait = 5,
-		TDMBannerSmartLandscape = 6
+		TDMBannerSmart = 5,
+        TDMBannerCustom = 6
 	}
 
 	public enum TDOrientation {
@@ -30,8 +30,9 @@
 	}
 
 	public enum TDBannerPosition {
-		Bottom,
-		Top
+		Top = 0,
+		Bottom = 1,
+        Custom = 2
 	}
 
 	public enum TDStatus {

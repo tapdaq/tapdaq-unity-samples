@@ -141,40 +141,65 @@ bool _ShouldForwardUserId() {
 
 #pragma mark - Banner (Bridge)
 
-void _LoadBannerForSize(const char* sizeChar) {
+void _LoadBannerForSize(const char* tagChar, const char* sizeChar) {
     
     if (_isEmpty(sizeChar)) {
         NSLog(@"%@ No banner size specified, cannot load banner", kTapdaqLogPrefix);
         return;
     }
     
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
     NSString *sizeStr = [[NSString stringWithUTF8String:sizeChar] copy];
     
-    [[TapdaqBannerAd sharedInstance] loadForSize:sizeStr];
+    [[TapdaqBannerAd sharedInstance] loadForPlacementTag:tagStr withSize:sizeStr];
+}
+
+void _LoadBannerWithSize(const char* tagChar, int width, int height) {
+    if (_isEmpty(tagChar)) {
+        NSLog(@"%@ No tag given, cannot load banner", kTapdaqLogPrefix);
+        return;
+    }
+    
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
+    CGSize size = CGSizeMake(width, height);
+    
+    [[TapdaqBannerAd sharedInstance] loadForPlacementTag:tagStr withCustomSize:size];
+}
+
+bool _IsBannerReady(const char* tagChar) {
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
+    return (bool) [[TapdaqBannerAd sharedInstance] isReadyForPlacementTag:tagStr];
     
 }
 
-bool _IsBannerReady() {
-    
-    return (bool) [[TapdaqBannerAd sharedInstance] isReady];
-    
-}
-
-void _ShowBanner(const char* position) {
+void _ShowBanner(const char* tagChar, const char* position) {
     
     if (_isEmpty(position)) {
         NSLog(@"%@ No banner position given, failed to show banner", kTapdaqLogPrefix);
         return;
     }
-    
-    [[TapdaqBannerAd sharedInstance] show: position];
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
+    [[TapdaqBannerAd sharedInstance] showForPlacementTag:tagStr withPosition:position];
     
 }
 
-void _HideBanner() {
-    
-    [[TapdaqBannerAd sharedInstance] hide];
-    
+void _ShowBannerWithPosition(const char* tagChar, int x, int y) {
+    if (_isEmpty(tagChar)) {
+        NSLog(@"%@ No tag given, failed to show banner", kTapdaqLogPrefix);
+        return;
+    }
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
+    [[TapdaqBannerAd sharedInstance] showForPlacementTag:tagStr atPositionX:x atPositionY:y];
+}
+
+void _HideBanner(const char* tagChar) {
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
+    [[TapdaqBannerAd sharedInstance] hideForPlacementTag:tagStr];
+}
+
+void _DestroyBanner(const char* tagChar) {
+    NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
+    [[TapdaqBannerAd sharedInstance] destroyForPlacementTag:tagStr];
 }
 
 #pragma mark - Interstitial (Bridge)

@@ -133,7 +133,14 @@ namespace Tapdaq {
 		void _didRefresh(string jsonMessage) {
 			TDDebugLogger.Log ("_didRefresh " + jsonMessage);
 			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
-			TDCallbacks.instance.OnAdAvailable (adEvent);
+			TDCallbacks.instance.OnAdRefresh (adEvent);
+		}
+
+		void _didFailToRefresh(string jsonMessage)
+		{
+			TDDebugLogger.Log("_didFailToRefresh " + jsonMessage);
+			var adEvent = JsonConvert.DeserializeObject<TDAdEvent>(jsonMessage);
+			TDCallbacks.instance.OnAdFailToRefresh(adEvent);
 		}
 	}
 }

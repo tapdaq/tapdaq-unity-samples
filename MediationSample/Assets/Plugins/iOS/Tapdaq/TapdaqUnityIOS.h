@@ -50,13 +50,19 @@ bool _ShouldForwardUserId();
  * Loads a banner.
  * @param size A string. Must be one of following values: TDMBannerStandard, TDMBannerLarge, TDMBannerMedium, TDMBannerFull, TDMBannerLeaderboard, TDMBannerSmartPortrait, TDMBannerSmartLandscape
  */
-void _LoadBannerForSize(const char* sizeChar);
+void _LoadBannerForSize(const char* tagChar, const char* sizeChar);
 
-bool _IsBannerReady();
+void _LoadBannerWithSize(const char* tagChar, int width, int height);
 
-void _ShowBanner(const char* position);
+bool _IsBannerReady(const char* tagChar);
 
-void _HideBanner();
+void _ShowBanner(const char* tagChar, const char* position);
+
+void _ShowBannerWithPosition(const char* tagChar, int x, int y);
+
+void _HideBanner(const char* tagChar);
+
+void _DestroyBanner(const char* tagChar);
 
 // interstitial
 

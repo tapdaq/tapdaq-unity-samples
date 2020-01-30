@@ -20,7 +20,7 @@ namespace Tapdaq {
 
 		private const string unsupportedPlatformMessage = "We support iOS and Android platforms only.";
 		private const string TAPDAQ_PLACEMENT_DEFAULT = "default";
-		#if UNITY_IPHONE
+#if UNITY_IPHONE
 		
 		//================================= Interstitials ==================================================
 		[DllImport ("__Internal")]
@@ -84,16 +84,25 @@ namespace Tapdaq {
 
 		// banner
 		[DllImport ("__Internal")]
-		private static extern void _LoadBannerForSize(string sizeString);
-
-		[DllImport ("__Internal")]
-        private static extern void _ShowBanner(string position);
-
-        [DllImport("__Internal")]
-        private static extern void _HideBanner();
+		private static extern void _LoadBannerForSize(string tag, string sizeString);
 
 		[DllImport("__Internal")]
-		private static extern bool _IsBannerReady();
+		private static extern void _LoadBannerWithSize(string tag, int width, int height);
+
+		[DllImport ("__Internal")]
+        private static extern void _ShowBanner(string tag, string position);
+
+        [DllImport ("__Internal")]
+        private static extern void _ShowBannerWithPosition(string tag, int x, int y);
+
+        [DllImport("__Internal")]
+        private static extern void _HideBanner(string tag);
+
+		[DllImport("__Internal")]
+		private static extern void _DestroyBanner(string tag);
+
+		[DllImport("__Internal")]
+		private static extern bool _IsBannerReady(string tag);
 
 		// video
 		[DllImport ("__Internal")]
@@ -124,7 +133,7 @@ namespace Tapdaq {
 		[DllImport ("__Internal")]
 		private static extern System.IntPtr _GetRewardId(string tag);
 
-		#endif
+#endif
 
 		#region Class Variables
 
@@ -476,44 +485,71 @@ namespace Tapdaq {
 			
 		// banner
 
-		public static bool IsBannerReady() {
+		public static bool IsBannerReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsBannerReady());
+			CallIosMethod(() => ready = _IsBannerReady(tag));
 			#elif UNITY_ANDROID
-			ready = GetAndroidStatic<bool>("IsBannerReady");
+			ready = GetAndroidStatic<bool>("IsBannerReady", tag);
 			#endif
 			return ready;
 		}
 
-		public static void RequestBanner (TDMBannerSize size) {
+		public static void RequestBanner (TDMBannerSize size, string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _LoadBannerForSize(size.ToString()));
+			CallIosMethod(() => _LoadBannerForSize(tag, size.ToString()));
 			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("LoadBannerOfType", size.ToString());
+			CallAndroidStaticMethod("LoadBanner", tag, size.ToString());
 			#endif
 		}
 
-		public static void ShowBanner (TDBannerPosition position) {
+		public static void RequestBanner(int width, int height, string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _LoadBannerWithSize(tag, width, height));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("LoadBanner", tag, width, height);
+            #endif
+		}
+
+		public static void ShowBanner (TDBannerPosition position, string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _ShowBanner(position.ToString()));
+			CallIosMethod(() => _ShowBanner(tag, position.ToString()));
 			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("ShowBanner", position.ToString());
+			CallAndroidStaticMethod("ShowBanner", tag, position.ToString());
 			#endif
 		}
 
-	    public static void HideBanner()
+		public static void ShowBanner(int x, int y, string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _ShowBannerWithPosition(tag, x, y));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("ShowBanner", tag, x, y);
+            #endif
+		}
+
+		public static void HideBanner(string tag = TAPDAQ_PLACEMENT_DEFAULT)
 	    {
-			#if UNITY_IPHONE
-			CallIosMethod(_HideBanner);
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("HideBanner");
+            #if UNITY_IPHONE
+			CallIosMethod(() => _HideBanner(tag));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("HideBanner", tag);
 			#endif
 	    }
 
+		public static void DestroyBanner(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _DestroyBanner(tag));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("DestroyBanner", tag);
+            #endif
+		}
+
 
 		// video
-        public static void LoadVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		public static void LoadVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
             #if UNITY_IPHONE
             CallIosMethod(() => _LoadVideoWithTag (tag));
