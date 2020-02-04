@@ -27,12 +27,18 @@ public class MediationSample : MonoBehaviour {
 			
 	}
 
-	// Subscribe to Tapdaq events
-	private void OnEnable () {
+    private void Awake()
+    {
+        DontDestroyOnLoad(logText);
+    }
+    // Subscribe to Tapdaq events
+    private void OnEnable () {
         TDCallbacks.TapdaqConfigLoaded += LoadedConfig;
 		TDCallbacks.TapdaqConfigFailedToLoad += FailedToLoadConfig;
 		TDCallbacks.AdAvailable += AdAvailable;
 		TDCallbacks.AdNotAvailable += AdNotAvailable;
+        TDCallbacks.AdRefresh += AdRefresh;
+        TDCallbacks.AdFailToRefresh += AdFailedToRefresh;
 		TDCallbacks.AdWillDisplay += AdWillDisplay;
 		TDCallbacks.AdDidDisplay += AdDidDisplay;
 		TDCallbacks.AdDidFailToDisplay += AdDidFailToDisplay;
@@ -48,7 +54,9 @@ public class MediationSample : MonoBehaviour {
 		TDCallbacks.TapdaqConfigFailedToLoad -= FailedToLoadConfig;
 		TDCallbacks.AdAvailable -= AdAvailable;
 		TDCallbacks.AdNotAvailable -= AdNotAvailable;
-		TDCallbacks.AdWillDisplay -= AdWillDisplay;
+        TDCallbacks.AdRefresh -= AdRefresh;
+        TDCallbacks.AdFailToRefresh -= AdFailedToRefresh;
+        TDCallbacks.AdWillDisplay -= AdWillDisplay;
 		TDCallbacks.AdDidDisplay -= AdDidDisplay;
 		TDCallbacks.AdDidFailToDisplay -= AdDidFailToDisplay;
 		TDCallbacks.AdClicked -= AdClicked;
@@ -70,7 +78,14 @@ public class MediationSample : MonoBehaviour {
 	private void LoadedConfig() {
         //SDK BOOT COMPLETE
         logMessage("LoadedConfig");
-	}
+
+        bannerSizeDropdown.onValueChanged.AddListener(delegate {
+            updateUI();
+        });
+        bannerPositionDropdown.onValueChanged.AddListener(delegate {
+            updateUI();
+        });
+    }
 
     private void FailedToLoadConfig(TDAdError e) {
         logMessage("FailedToLoadConfig: " + stringifyError(e));
@@ -86,7 +101,17 @@ public class MediationSample : MonoBehaviour {
         logMessage("AdNotAvailable: " + stringifyError(e.error));
 	}
 
-	private void AdWillDisplay(TDAdEvent e) {
+    private void AdRefresh(TDAdEvent e)
+    {
+        logMessage("AdRefresh: " + " - Tag: " + e.tag);
+    }
+
+    private void AdFailedToRefresh(TDAdEvent e)
+    {
+        logMessage("AdFailedToRefresh: " + stringifyError(e.error));
+    }
+
+    private void AdWillDisplay(TDAdEvent e) {
         logMessage("AdWillDisplayType: " + e.adType + " - Tag: " + e.tag);
 	}
 
@@ -136,31 +161,45 @@ public class MediationSample : MonoBehaviour {
         string bannerSize = bannerSizeDropdown.options[bannerSizeDropdown.value].text;
         logMessage("LoadBanner " + bannerSize);
         TDMBannerSize size;
-        if(bannerSize.Equals("Standard")) {
-            size = TDMBannerSize.TDMBannerStandard;
-        } else if (bannerSize.Equals("Medium"))
+        if(bannerSize.Equals("Custom"))
         {
-            size = TDMBannerSize.TDMBannerMedium;
-        }
-        else if (bannerSize.Equals("Large"))
+            int width;
+            int height;
+            int.TryParse(bannerWidthInput.text, out width);
+            int.TryParse(bannerHeightInput.text, out height);
+            AdManager.RequestBanner(width, height, mTag);
+        } else
         {
-            size = TDMBannerSize.TDMBannerLarge;
+            if (bannerSize.Equals("Standard"))
+            {
+                size = TDMBannerSize.TDMBannerStandard;
+            }
+            else if (bannerSize.Equals("Medium"))
+            {
+                size = TDMBannerSize.TDMBannerMedium;
+            }
+            else if (bannerSize.Equals("Large"))
+            {
+                size = TDMBannerSize.TDMBannerLarge;
+            }
+            else if (bannerSize.Equals("Full"))
+            {
+                size = TDMBannerSize.TDMBannerFull;
+            }
+            else if (bannerSize.Equals("Leaderboard"))
+            {
+                size = TDMBannerSize.TDMBannerLeaderboard;
+            }
+            else if (bannerSize.Equals("Smart"))
+            {
+                size = TDMBannerSize.TDMBannerSmart;
+            }
+            else
+            {
+                size = TDMBannerSize.TDMBannerStandard;
+            }
+            AdManager.RequestBanner(size, mTag);
         }
-        else if (bannerSize.Equals("Full"))
-        {
-            size = TDMBannerSize.TDMBannerFull;
-        }
-        else if (bannerSize.Equals("Leaderboard"))
-        {
-            size = TDMBannerSize.TDMBannerLeaderboard;
-        }
-        else if (bannerSize.Equals("Smart"))
-        {
-            size = TDMBannerSize.TDMBannerSmart;
-        } else {
-            size = TDMBannerSize.TDMBannerStandard;
-        }
-        AdManager.RequestBanner (size, mTag);
 	}
 
     public void ShowStaticInterstitial() {
