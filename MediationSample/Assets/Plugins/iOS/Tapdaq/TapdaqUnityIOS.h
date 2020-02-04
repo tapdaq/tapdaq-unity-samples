@@ -44,6 +44,17 @@ const char* _GetUserId();
 void _SetForwardUserId(bool forwardUserId);
 bool _ShouldForwardUserId();
 
+void _SetUserDataString(const char* key, const char* value);
+void _SetUserDataInteger(const char* key, int value);
+void _SetUserDataBoolean(const char* key, bool value);
+
+const char* _GetUserDataString(const char* key);
+int _GetUserDataInteger(const char* key);
+bool _GetUserDataBoolean(const char* key);
+
+const char* _GetAllUserData();
+
+void _RemoveUserData(const char* key);
 // banner
 
 /**
@@ -143,4 +154,20 @@ const char *_GetRewardId(const char* tag);
 - (void) setForwardUserId:(BOOL)forwardUserId;
 
 - (BOOL) shouldForwardUserId;
+
+- (void) setUserDataString:(NSString*)value forKey:(NSString*)key;
+    
+- (void) setUserDataBoolean:(BOOL)value forKey:(NSString*)key;
+
+- (void) setUserDataInteger:(NSInteger)value forKey:(NSString*)key;
+
+- (NSString*) userDataStringForKey:(NSString*) key;
+
+- (NSInteger) userDataIntegerForKey:(NSString*) key;
+
+- (BOOL) userDataBooleanForKey:(NSString*) key;
+
+- (NSString*) userData;
+
+- (void) removeUserDataForKey:(NSString*) key;
 @end

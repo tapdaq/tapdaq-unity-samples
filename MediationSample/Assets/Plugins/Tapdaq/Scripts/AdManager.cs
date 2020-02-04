@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Tapdaq {
 	public class AdManager {
@@ -71,6 +73,30 @@ namespace Tapdaq {
 
         [DllImport ("__Internal")]
         private static extern bool _ShouldForwardUserId();
+
+        [DllImport ("__Internal")]
+        private static extern void _SetUserDataString(string key, string value);
+
+        [DllImport ("__Internal")]
+        private static extern void _SetUserDataInteger(string key, int value);
+        
+        [DllImport ("__Internal")]
+        private static extern void _SetUserDataBoolean(string key, bool value);
+
+        [DllImport ("__Internal")]
+        private static extern string _GetUserDataString(string key);
+        
+        [DllImport ("__Internal")]
+        private static extern int _GetUserDataInteger(string key);
+        
+        [DllImport ("__Internal")]
+        private static extern bool _GetUserDataBoolean(string key);
+
+        [DllImport ("__Internal")]
+        private static extern void _RemoveUserData(string key);
+
+        [DllImport ("__Internal")]
+        private static extern string _GetAllUserData();
 
 		// interstitial
 		[DllImport ("__Internal")]
@@ -442,8 +468,88 @@ namespace Tapdaq {
             return result;
         }
 
+		public static void SetUserData(string key, string value)
+		{
+            #if UNITY_IPHONE
+            CallIosMethod(() => _SetUserDataString(key, value));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetUserDataString", key, value);
+            #endif
+		}
+
+		public static void SetUserData(string key, int value)
+		{
+            #if UNITY_IPHONE
+            CallIosMethod(() => _SetUserDataInteger(key, value));
+            #elif UNITY_ANDROID
+            CallAndroidStaticMethod("SetUserDataInteger", key, value);
+            #endif
+		}
+
+		public static void SetUserData(string key, bool value)
+		{
+            #if UNITY_IPHONE
+            CallIosMethod(() => _SetUserDataBoolean(key, value));
+            #elif UNITY_ANDROID
+            CallAndroidStaticMethod("SetUserDataBoolean", key, value);
+            #endif
+		}
+
+		public static string GetUserDataString(string key)
+		{
+			string result = "";
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _GetUserDataString(key));
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<string>("GetUserDataString", key);
+            #endif
+			return result;
+		}
+
+		public static int GetUserDataInteger(string key)
+		{
+			int result = 0;
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _GetUserDataInteger(key));
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<int>("GetUserDataInteger", key);
+            #endif
+			return result;
+		}
+
+		public static bool GetUserDataBoolean(string key)
+		{
+			bool result = false;
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _GetUserDataBoolean(key));
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<bool>("GetUserDataBoolean", key);
+            #endif
+			return result;
+		}
+
+		public static Dictionary<string, object> GetAllUserData()
+		{
+			string result = "";
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _GetAllUserData());
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<string>("GetAllUserData");
+            #endif
+			return JsonConvert.DeserializeObject<Dictionary<string, object>>(result); ;
+		}
+
+		public static void RemoveUserData(string key)
+		{
+            #if UNITY_IPHONE
+            CallIosMethod(() => _RemoveUserData(key));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("RemoveUserData", key);
+            #endif
+		}
+
 		// interstitial
-        public static void LoadInterstitial(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		public static void LoadInterstitial(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
             #if UNITY_IPHONE
             CallIosMethod(() => _LoadInterstitialWithTag(tag));

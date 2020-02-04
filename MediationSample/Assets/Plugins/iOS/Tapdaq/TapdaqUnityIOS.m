@@ -8,6 +8,7 @@
 #import "TapdaqUnityIOS.h"
 #import "TapdaqDelegates.h"
 #import "TapdaqStandardAd.h"
+#import "JsonHelper.h"
 
 static NSString *const kTapdaqLogPrefix = @"[TapdaqUnity]";
 
@@ -137,6 +138,76 @@ void _SetForwardUserId(bool forwardUserId) {
 
 bool _ShouldForwardUserId() {
     return (bool)[[TapdaqUnityIOS sharedInstance] shouldForwardUserId];
+}
+
+void _SetUserDataString(const char* key, const char* value) {
+    NSString *keyStr = nil;
+    NSString *valueStr = nil;
+    if (!_isEmpty(key) && !_isEmpty(value)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+        valueStr = [[NSString stringWithUTF8String:value] copy];
+    }
+    [[TapdaqUnityIOS sharedInstance] setUserDataString:valueStr forKey:keyStr];
+}
+
+void _SetUserDataInteger(const char* key, int value) {
+    NSString *keyStr = nil;
+    if (!_isEmpty(key)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+    }
+    
+    [[TapdaqUnityIOS sharedInstance] setUserDataInteger:value forKey:keyStr];
+}
+
+void _SetUserDataBoolean(const char* key, bool value) {
+    NSString *keyStr = nil;
+    if (!_isEmpty(key)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+    }
+    
+    [[TapdaqUnityIOS sharedInstance] setUserDataBoolean:value forKey:keyStr];
+}
+
+const char* _GetUserDataString(const char* key) {
+    NSString *keyStr = nil;
+    if (!_isEmpty(key)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+    }
+    
+    NSString * dataStr = [[[TapdaqUnityIOS sharedInstance] userDataStringForKey:keyStr] copy];
+    return makeStringCopy([dataStr UTF8String]);
+}
+
+int _GetUserDataInteger(const char* key) {
+    NSString *keyStr = nil;
+    if (!_isEmpty(key)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+    }
+    
+    return (int)[[TapdaqUnityIOS sharedInstance] userDataIntegerForKey:keyStr];
+}
+
+bool _GetUserDataBoolean(const char* key) {
+    NSString *keyStr = nil;
+    if (!_isEmpty(key)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+    }
+    
+    return (bool)[[TapdaqUnityIOS sharedInstance] userDataBooleanForKey:keyStr];
+}
+
+const char* _GetAllUserData() {
+    NSString * dataStr = [[[TapdaqUnityIOS sharedInstance] userData] copy];
+    return makeStringCopy([dataStr UTF8String]);
+}
+
+void _RemoveUserData(const char* key) {
+    NSString *keyStr = nil;
+    if (!_isEmpty(key)) {
+        keyStr = [[NSString stringWithUTF8String:key] copy];
+    }
+    
+    [[TapdaqUnityIOS sharedInstance] removeUserDataForKey:keyStr];
 }
 
 #pragma mark - Banner (Bridge)
@@ -503,6 +574,41 @@ bool _isEmpty(const char* str) {
 - (BOOL) shouldForwardUserId
 {
    return [[Tapdaq sharedSession] forwardUserId];
+}
+
+- (void) setUserDataString:(NSString*)value forKey:(NSString*)key
+{
+    [[[Tapdaq sharedSession] properties] setUserDataString:value forKey:key];
+}
+    
+- (void) setUserDataBoolean:(BOOL)value forKey:(NSString*)key
+{
+    [[[Tapdaq sharedSession] properties] setUserDataBool:value forKey:key];
+}
+
+- (void) setUserDataInteger:(NSInteger)value forKey:(NSString*)key
+{
+    [[[Tapdaq sharedSession] properties] setUserDataInteger:value forKey:key];
+}
+
+- (NSString*) userDataStringForKey:(NSString*) key {
+    return [[[Tapdaq sharedSession] properties] userDataStringForKey:key];
+}
+
+- (NSInteger) userDataIntegerForKey:(NSString*) key {
+    return [[[Tapdaq sharedSession] properties] userDataIntegerForKey:key];
+}
+
+- (BOOL) userDataBooleanForKey:(NSString*) key {
+    return [[[Tapdaq sharedSession] properties] userDataBoolForKey:key];
+}
+
+- (NSString*) userData {
+    return [JsonHelper toJsonString:[[[Tapdaq sharedSession] properties] userData]];
+}
+
+- (void) removeUserDataForKey:(NSString*) key {
+    [[[Tapdaq sharedSession] properties] removeUserDataForKey:key];
 }
 
 - (void) setTestDevices:(NSString *)testDevicesJson toProperties:(TDProperties *)properties
