@@ -98,7 +98,7 @@ static NSString *const kTDUnityBannerSmart = @"TDMBannerSmart";
 }
 
 - (void)didFailToRefreshBannerForAdRequest:(TDBannerAdRequest * _Nonnull)adRequest withError:(TDError * _Nullable)error {
-    [self send: @"_didFailToRefresh" adType: [self type] tag: [[adRequest placement] tag] message: @""];
+    [self send: @"_didFailToRefresh" adType: [self type] tag: [[adRequest placement] tag] message: @"" error:error];
 }
 
 @end

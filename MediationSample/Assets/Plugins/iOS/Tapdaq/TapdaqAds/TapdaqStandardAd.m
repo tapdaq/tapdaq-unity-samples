@@ -20,21 +20,12 @@
 }
 
 - (void)adRequest:(TDAdRequest * _Nonnull)adRequest didFailToLoadWithError:(TDError * _Nullable)error {
-    [self send: @"_didFailToLoad" adType: [self type] tag: [[adRequest placement] tag] message: @""];
+    [self send: @"_didFailToLoad" adType: [self type] tag: [[adRequest placement] tag] message: @"" error:error];
 }
 
 #pragma mark TDDisplayableAdRequestDelegate
 - (void)adRequest:(TDAdRequest * _Nonnull)adRequest didFailToDisplayWithError:(TDError * _Nullable)error {
-    NSMutableString *errorString = [[NSMutableString alloc] init];
-    [errorString appendString:error.localizedDescription];
-    for (NSString *network in error.subErrors.allKeys) {
-        [errorString appendFormat:@"\n    %@:", network];
-        for (NSError *subError in error.subErrors) {
-            [errorString appendFormat:@"\n      -> %@", subError.localizedDescription];
-        }
-    }
-    
-    [self send: @"_didFailToDisplay" adType: [self type] tag: [[adRequest placement] tag] message: @""];
+    [self send: @"_didFailToDisplay" adType: [self type] tag: [[adRequest placement] tag] message: @"" error:error];
 }
 
 - (void)willDisplayAdRequest:(TDAdRequest * _Nonnull)adRequest {

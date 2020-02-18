@@ -24,5 +24,19 @@
     [self send:@"_didFailToLoadConfig" error:error];
 }
 
+- (void)didFailToDisplayInterstitialForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"static_interstitial" tag: placementTag message: @"" error:error];
+}
+
+- (void)didFailToDisplayVideoForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"video_interstitial" tag: placementTag message: @"" error:error];
+}
+
+- (void)didFailToDisplayRewardedVideoForPlacementTag:(NSString *)placementTag withError:(NSError *)error
+{
+    [self send: @"_didFailToDisplay" adType: @"rewarded_video_interstitial" tag: placementTag message: @"" error:error];
+}
 @end
 
