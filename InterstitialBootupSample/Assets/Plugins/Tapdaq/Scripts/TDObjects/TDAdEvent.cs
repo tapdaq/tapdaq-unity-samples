@@ -21,16 +21,16 @@ namespace Tapdaq {
 		}
 
 		public TDAdType GetTypeOfEvent()  {
-			if (adType == "INTERSTITIAL")
+			if (adType == "static_interstitial")
 				return TDAdType.TDAdTypeInterstitial;
 			
-			if (adType == "BANNER")
+			if (adType == "banner")
 				return TDAdType.TDAdTypeBanner;
 			
-			if (adType == "VIDEO")
+			if (adType == "video_interstitial")
 				return TDAdType.TDAdTypeVideo;
 			
-			if (adType == "REWARD_AD")
+			if (adType == "rewarded_video_interstitial")
 				return TDAdType.TDAdTypeRewardedVideo;
 			return TDAdType.TDAdTypeNone;
 		}

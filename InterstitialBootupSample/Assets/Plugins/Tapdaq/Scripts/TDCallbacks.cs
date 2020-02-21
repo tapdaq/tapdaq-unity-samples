@@ -28,6 +28,10 @@ namespace Tapdaq {
 
 		public static event Action<TDAdEvent> AdNotAvailable;
 
+		public static event Action<TDAdEvent> AdRefresh;
+
+		public static event Action<TDAdEvent> AdFailToRefresh;
+
 		public static event Action<TDAdEvent> AdWillDisplay;
 
 		public static event Action<TDAdEvent> AdDidDisplay;
@@ -73,6 +77,17 @@ namespace Tapdaq {
 
 		public void OnAdAvailable (TDAdEvent adEvent) {
 			Invoke (AdAvailable, adEvent);
+		}
+
+
+		public void OnAdRefresh(TDAdEvent adEvent)
+		{
+			Invoke(AdRefresh, adEvent);
+		}
+
+		public void OnAdFailToRefresh(TDAdEvent adEvent)
+		{
+			Invoke(AdFailToRefresh, adEvent);
 		}
 
 		public void OnAdClicked (TDAdEvent adEvent) {

@@ -27,8 +27,8 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.4.2";
-	private static string TAPDAQ_IOS_VERSION = "7.4.0";
+	private static string TAPDAQ_ANDROID_VERSION = "7.5.0";
+	private static string TAPDAQ_IOS_VERSION = "7.5.0";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
     private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
@@ -38,7 +38,7 @@ public class TDDependencies : AssetPostprocessor
     // Manual Integration
     // This value may be set as low as 17.2.0+ ****
     private static string playServicesIdentityVersion = "17.0.0";
-    private static string playServicesAdsVersion = "18.2.0";
+    private static string playServicesAdsVersion = "18.3.0";
     private static string playServicesBaseVersion = "17.1.0";
     private static string playServicesGcmVersion = "17.0.0";
 

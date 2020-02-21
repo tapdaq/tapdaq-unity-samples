@@ -32,6 +32,7 @@ namespace TDEditor {
         {
             string path = Path.GetFullPath(TDPaths.TapdaqAndroidPath + "/AndroidManifest.xml");
             if(File.Exists(path)) {
+                bool shouldSave = false;
                 XmlDocument doc = new XmlDocument();
                 doc.Load(path);
                 XmlNodeList list = doc.DocumentElement.GetElementsByTagName("application");
@@ -43,14 +44,18 @@ namespace TDEditor {
                     {
                         XmlNode node = children.Item(i);
                         XmlAttributeCollection collection = node.Attributes;
-                        for(int j =0; j < collection.Count; j++)
+                        if (collection != null)
                         {
-                            XmlNode n = collection.Item(j);
-                            if(n.Value.Equals("com.google.android.gms.ads.APPLICATION_ID"))
+                            for (int j = 0; j < collection.Count; j++)
                             {
-                                //Exists
-                                appNode.RemoveChild(node);
-                                break;
+                                XmlNode n = collection.Item(j);
+                                if (n.Value.Equals("com.google.android.gms.ads.APPLICATION_ID"))
+                                {
+                                    //Exists
+                                    appNode.RemoveChild(node);
+                                    shouldSave = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -66,10 +71,15 @@ namespace TDEditor {
                         XmlAttribute valueAttr = doc.CreateAttribute("android", "value", "http://schemas.android.com/apk/res/android");
                         valueAttr.Value = appId;
                         metadata.Attributes.Append(valueAttr);
+
+                        shouldSave = true;
                     }
                 }
 
-                doc.Save(path);
+                if(shouldSave)
+                {
+                    doc.Save(path);
+                }
             }
 
         }

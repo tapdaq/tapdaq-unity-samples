@@ -27,11 +27,11 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.5.0-rc3";
+	private static string TAPDAQ_ANDROID_VERSION = "7.5.0";
 	private static string TAPDAQ_IOS_VERSION = "7.5.0";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
-    private static string TAPDAQ_REPOSITORY = "https://tapdaq-android-sdk.s3.eu-west-2.amazonaws.com/release/";
+    private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
 
     public static object svcSupport;
 
@@ -54,10 +54,7 @@ public class TDDependencies : AssetPostprocessor
 
 	public static TDSettings settings;
 
-    //Production
-    //public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
-    //Staging
-    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods.git";
+    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
 
     public static Dependencies dependencies = new Dependencies();
 
