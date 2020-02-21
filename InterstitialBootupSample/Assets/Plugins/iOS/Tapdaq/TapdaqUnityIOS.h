@@ -44,19 +44,36 @@ const char* _GetUserId();
 void _SetForwardUserId(bool forwardUserId);
 bool _ShouldForwardUserId();
 
+void _SetUserDataString(const char* key, const char* value);
+void _SetUserDataInteger(const char* key, int value);
+void _SetUserDataBoolean(const char* key, bool value);
+
+const char* _GetUserDataString(const char* key);
+int _GetUserDataInteger(const char* key);
+bool _GetUserDataBoolean(const char* key);
+
+const char* _GetAllUserData();
+
+void _RemoveUserData(const char* key);
 // banner
 
 /**
  * Loads a banner.
  * @param size A string. Must be one of following values: TDMBannerStandard, TDMBannerLarge, TDMBannerMedium, TDMBannerFull, TDMBannerLeaderboard, TDMBannerSmartPortrait, TDMBannerSmartLandscape
  */
-void _LoadBannerForSize(const char* sizeChar);
+void _LoadBannerForSize(const char* tagChar, const char* sizeChar);
 
-bool _IsBannerReady();
+void _LoadBannerWithSize(const char* tagChar, int width, int height);
 
-void _ShowBanner(const char* position);
+bool _IsBannerReady(const char* tagChar);
 
-void _HideBanner();
+void _ShowBanner(const char* tagChar, const char* position);
+
+void _ShowBannerWithPosition(const char* tagChar, int x, int y);
+
+void _HideBanner(const char* tagChar);
+
+void _DestroyBanner(const char* tagChar);
 
 // interstitial
 
@@ -137,4 +154,20 @@ const char *_GetRewardId(const char* tag);
 - (void) setForwardUserId:(BOOL)forwardUserId;
 
 - (BOOL) shouldForwardUserId;
+
+- (void) setUserDataString:(NSString*)value forKey:(NSString*)key;
+    
+- (void) setUserDataBoolean:(BOOL)value forKey:(NSString*)key;
+
+- (void) setUserDataInteger:(NSInteger)value forKey:(NSString*)key;
+
+- (NSString*) userDataStringForKey:(NSString*) key;
+
+- (NSInteger) userDataIntegerForKey:(NSString*) key;
+
+- (BOOL) userDataBooleanForKey:(NSString*) key;
+
+- (NSString*) userData;
+
+- (void) removeUserDataForKey:(NSString*) key;
 @end

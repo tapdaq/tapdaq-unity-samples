@@ -7,9 +7,8 @@
 //
 #import <Foundation/Foundation.h>
 #import <Tapdaq/Tapdaq.h>
+#import "TDUnityDelegateBase.h"
 
-@interface TapdaqDelegates : NSObject <TapdaqDelegate>
-
+@interface TapdaqDelegates : TDUnityDelegateBase <TapdaqDelegate>
 + (instancetype)sharedInstance;
-
 @end

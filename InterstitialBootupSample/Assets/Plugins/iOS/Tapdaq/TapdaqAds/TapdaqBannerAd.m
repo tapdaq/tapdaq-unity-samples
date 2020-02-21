@@ -1,4 +1,5 @@
 #import "TapdaqStandardAd.h"
+#import <Tapdaq/Tapdaq+PluginSupport.h>
 
 extern UIViewController *UnityGetGLViewController();
 extern UIView *UnityGetGLView();
@@ -8,85 +9,67 @@ static NSString *const kTDUnityBannerLarge = @"TDMBannerLarge";
 static NSString *const kTDUnityBannerMedium = @"TDMBannerMedium";
 static NSString *const kTDUnityBannerFull = @"TDMBannerFull";
 static NSString *const kTDUnityBannerLeaderboard = @"TDMBannerLeaderboard";
-static NSString *const kTDUnityBannerSmartPortrait = @"TDMBannerSmartPortrait";
-static NSString *const kTDUnityBannerSmartLandscape = @"TDMBannerSmartLandscape";
+static NSString *const kTDUnityBannerSmart = @"TDMBannerSmart";
 
 #pragma mark - Banner Native
 @interface TapdaqBannerAd ()
-@property (strong, nonatomic) UIView *bannerView;
-@property (strong, nonatomic) NSArray<NSLayoutConstraint *> *constraintsBanner;
 @end
 
 @implementation TapdaqBannerAd
 
-+ (TapdaqBannerAd *)sharedInstance
++ (instancetype)sharedInstance
 {
     static dispatch_once_t once;
-    static TapdaqBannerAd* sharedInstance;
+    static id sharedInstance;
     dispatch_once(&once, ^{
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;
 }
 
-- (void)loadForSize:(NSString *)sizeStr
-{
+- (NSString*) type {
+    return @"banner";
+}
+
+- (BOOL)isReadyForPlacementTag:(NSString *)tag {
+    return [Tapdaq.sharedSession isBannerReadyBannerForPlacementTag:tag];
+}
+
+- (void)loadForPlacementTag:(NSString*)tag withSize:(NSString *)sizeStr {
     TDMBannerSize bannerSize = [self bannerSizeFromString:sizeStr];
-    
-    [[Tapdaq sharedSession] loadBannerWithSize:bannerSize completion:^(UIView *banner) {
-        self.bannerView = banner;
-    }];
+    [Tapdaq.sharedSession loadPluginBannerForPlacementTag:tag withSize:bannerSize delegate:self];
 }
 
-- (BOOL)isReady
-{
-    return self.bannerView != nil;
+- (void)loadForPlacementTag:(NSString*)tag withCustomSize:(CGSize)size {
+    [Tapdaq.sharedSession loadPluginBannerForPlacementTag:tag withTargetSize:size delegate:self];
 }
 
-- (void)show
-{
-    [self show:"bottom"];
-}
-
-// position could be "Top" or "Bottom" (ignore case)
-- (void)show:(const char *)position
-{
+- (void)showForPlacementTag:(NSString*)tag withPosition:(const char *)position {
     NSString * posString = [NSString stringWithUTF8String: position];
-    
-    if (self.bannerView != nil) {
-        CGSize bannerSize = self.bannerView.frame.size;
-        
-        UIView *unityView = UnityGetGLView();
-        [unityView addSubview:self.bannerView];
-        self.bannerView.translatesAutoresizingMaskIntoConstraints = false;
-        
-        BOOL isTop = [[posString lowercaseString] isEqualToString:@"top"];
-        UILayoutGuide *layoutGuide;
-        if ([[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] != NSOrderedAscending) {
-            layoutGuide = [unityView performSelector:@selector(safeAreaLayoutGuide)];
-        } else {
-            layoutGuide = unityView.layoutMarginsGuide;
-        }
-        NSLayoutConstraint *constraintYAnchor = [isTop ? self.bannerView.topAnchor : self.bannerView.bottomAnchor constraintEqualToAnchor:isTop ? layoutGuide.topAnchor : layoutGuide.bottomAnchor];
-        
-        NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|->=0-[bannerView(bannerWidth)]->=0-|" options:0 metrics:@{@"bannerWidth" : @(CGRectGetWidth(self.bannerView.frame))} views:@{ @"bannerView" : self.bannerView }];
-        NSLayoutConstraint *constraintHeight = [NSLayoutConstraint constraintWithItem:self.bannerView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:bannerSize.height];
-        NSLayoutConstraint *constraintCenterX = [NSLayoutConstraint constraintWithItem:self.bannerView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.bannerView.superview attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-        NSArray *aggregateConstraints = [horizontalConstraints arrayByAddingObjectsFromArray:@[ constraintYAnchor, constraintHeight, constraintCenterX ]];
-        self.constraintsBanner = aggregateConstraints;
-        [unityView addConstraints:aggregateConstraints];
-        
+    TDBannerPosition p;
+    if([posString isEqualToString:@"Top"]) {
+        p = TDBannerPositionMake(TDBannerPositionTypeTop);
+    } else {
+        p = TDBannerPositionMake(TDBannerPositionTypeBottom);
     }
+    
+    UIView *unityView = UnityGetGLView();
+    [Tapdaq.sharedSession showBannerForPlacementTag:tag atPosition:p inView:unityView];
 }
 
-- (void)hide
-{
-    for (NSLayoutConstraint *constraint in self.constraintsBanner) {
-        [constraint setActive:false];
-    }
-    self.constraintsBanner = nil;
-    [self.bannerView removeFromSuperview];
-    self.bannerView = nil;
+- (void)showForPlacementTag:(NSString*)tag atPositionX:(int)x atPositionY:(int)y {
+    TDBannerPosition position = TDBannerPositionMakeCustom(CGPointMake(x,y));
+    
+    UIView *unityView = UnityGetGLView();
+    [Tapdaq.sharedSession showBannerForPlacementTag:tag atPosition:position inView:unityView];
+}
+
+- (void)hideForPlacementTag:(NSString*)tag {
+    [Tapdaq.sharedSession hideBannerForPlacementTag:tag];
+}
+
+- (void)destroyForPlacementTag:(NSString*)tag {
+    [Tapdaq.sharedSession destroyBannerForPlacementTag:tag];
 }
 
 - (TDMBannerSize)bannerSizeFromString:(NSString *)sizeStr
@@ -103,13 +86,19 @@ static NSString *const kTDUnityBannerSmartLandscape = @"TDMBannerSmartLandscape"
         bannerSize = TDMBannerFull;
     } else if ([sizeStr isEqualToString:kTDUnityBannerLeaderboard]) {
         bannerSize = TDMBannerLeaderboard;
-    } else if ([sizeStr isEqualToString:kTDUnityBannerSmartPortrait]) {
-        bannerSize = TDMBannerSmartPortrait;
-    } else if ([sizeStr isEqualToString:kTDUnityBannerSmartLandscape]) {
-        bannerSize = TDMBannerSmartLandscape;
+    } else if ([sizeStr isEqualToString:kTDUnityBannerSmart]) {
+        bannerSize = TDMBannerSmart;
     }
     
     return bannerSize;
+}
+
+- (void)didRefreshBannerForAdRequest:(TDBannerAdRequest *)adRequest {
+    [self send: @"_didRefresh" adType: [self type] tag: [[adRequest placement] tag] message: @""];
+}
+
+- (void)didFailToRefreshBannerForAdRequest:(TDBannerAdRequest * _Nonnull)adRequest withError:(TDError * _Nullable)error {
+    [self send: @"_didFailToRefresh" adType: [self type] tag: [[adRequest placement] tag] message: @"" error:error];
 }
 
 @end

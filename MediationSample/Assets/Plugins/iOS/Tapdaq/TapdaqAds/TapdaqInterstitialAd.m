@@ -2,19 +2,23 @@
 
 @implementation TapdaqInterstitialAd
 
-+ (TapdaqInterstitialAd *)sharedInstance
++ (instancetype)sharedInstance
 {
     static dispatch_once_t once;
-    static TapdaqInterstitialAd* sharedInstance;
+    static id sharedInstance;
     dispatch_once(&once, ^{
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;
 }
 
+- (NSString*) type {
+    return @"static_interstitial";
+}
+
 - (void)loadForPlacementTag:(NSString *)tag
 {
-    [[Tapdaq sharedSession] loadInterstitialForPlacementTag:tag];
+    [Tapdaq.sharedSession loadInterstitialForPlacementTag:tag delegate:self];
 }
 
 - (BOOL)isReadyForPlacementTag:(NSString *)tag
