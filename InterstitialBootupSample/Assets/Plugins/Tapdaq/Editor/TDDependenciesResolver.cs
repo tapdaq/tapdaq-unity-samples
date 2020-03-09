@@ -28,7 +28,7 @@ using System.IO;
 public class TDDependencies : AssetPostprocessor
 {
 	private static string TAPDAQ_ANDROID_VERSION = "7.5.1";
-	private static string TAPDAQ_IOS_VERSION = "7.5.0";
+	private static string TAPDAQ_IOS_VERSION = "7.5.2";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
     private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
