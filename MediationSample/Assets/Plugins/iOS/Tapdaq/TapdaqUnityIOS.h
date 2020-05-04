@@ -29,11 +29,17 @@ bool _IsInitialised();
 void _SetUserSubjectToGDPR(int userSubjectToGDPR);
 int _UserSubjectToGDPR();
 
-void _SetConsentGiven(bool isConsentGiven);
-bool _IsConsentGiven();
+void _SetGdprConsent(int gdprConsent);
+int _GdprConsent();
 
-void _SetAgeRestrictedUser(bool isAgeRestrictedUser);
-bool _IsAgeRestrictedUser();
+void _SetAgeRestrictedUser(int ageRestrictedUser);
+int _AgeRestrictedUser();
+
+void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy);
+int _UserSubjectToUSPrivacy();
+
+void _SetUSPrivacy(int usPrivacy);
+int _USPrivacy();
 
 void _SetAdMobContentRating(const char* rating);
 const char* _GetAdMobContentRating();
@@ -43,6 +49,9 @@ const char* _GetUserId();
 
 void _SetForwardUserId(bool forwardUserId);
 bool _ShouldForwardUserId();
+
+void _SetMuted(bool muted);
+bool _IsMuted();
 
 void _SetUserDataString(const char* key, const char* value);
 void _SetUserDataInteger(const char* key, int value);
@@ -81,6 +90,8 @@ void _LoadInterstitialWithTag(const char *tagChar);
 
 bool _IsInterstitialReadyWithTag(const char *tagChar);
 
+const char * _GetInterstitialFrequencyCapError(const char *tagChar);
+
 void _ShowInterstitialWithTag(const char* tagChar);
 
 // video
@@ -89,6 +100,8 @@ void _LoadVideoWithTag(const char *tagChar);
 
 bool _IsVideoReadyWithTag(const char *tagChar);
 
+const char * _GetVideoFrequencyCapError(const char *tagChar);
+
 void _ShowVideoWithTag(const char* tagChar);
 
 // reward video
@@ -96,6 +109,8 @@ void _ShowVideoWithTag(const char* tagChar);
 void _LoadRewardedVideoWithTag(const char *tagChar);
 
 bool _IsRewardedVideoReadyWithTag(const char *tagChar);
+
+const char * _GetRewardedVideoFrequencyCapError(const char *tagChar);
 
 void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar);
 
@@ -135,13 +150,21 @@ const char *_GetRewardId(const char* tag);
 
 - (int) userSubjectToGDPR;
 
-- (void) setConsentGiven:(BOOL)isConsentGiven;
+- (void) setGdprConsent:(int)gdprConsent;
 
-- (BOOL) isConsentGiven;
+- (int) gdprConsent;
 
-- (void) setAgeRestrictedUser:(BOOL)isAgeRestrictedUser;
+- (void) setAgeRestrictedUser:(int)ageRestrictedUser;
 
-- (BOOL) isAgeRestrictedUser;
+- (int) ageRestrictedUser;
+
+- (void) setUserSubjectToUSPrivacy:(int)userSubjectToUSPrivacy;
+
+- (int) userSubjectToUSPrivacy;
+
+- (void) setUSPrivacy:(int)usPrivacy;
+
+- (int) usPrivacy;
 
 - (void) setAdMobContentRating:(NSString *)rating;
 
@@ -154,6 +177,10 @@ const char *_GetRewardId(const char* tag);
 - (void) setForwardUserId:(BOOL)forwardUserId;
 
 - (BOOL) shouldForwardUserId;
+
+- (void) setMuted:(BOOL)muted;
+
+- (BOOL) isMuted;
 
 - (void) setUserDataString:(NSString*)value forKey:(NSString*)key;
     

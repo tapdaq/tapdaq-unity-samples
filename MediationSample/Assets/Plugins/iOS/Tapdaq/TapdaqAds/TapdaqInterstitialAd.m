@@ -28,6 +28,10 @@
 
 - (void)showForPlacementTag:(NSString *)tag
 {
-    [[Tapdaq sharedSession] showInterstitialForPlacementTag:tag];
+    [[Tapdaq sharedSession] showInterstitialForPlacementTag:tag delegate:self];
+}
+
+- (void)didLoadInterstitialAdRequest:(TDInterstitialAdRequest *)adRequest {
+    [self handleDidLoadAdRequest:adRequest];
 }
 @end

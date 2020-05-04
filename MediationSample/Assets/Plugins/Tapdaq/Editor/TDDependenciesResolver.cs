@@ -27,11 +27,12 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.5.1";
-	private static string TAPDAQ_IOS_VERSION = "7.5.2";
+	private static string TAPDAQ_ANDROID_VERSION = "7.6.0";
+	private static string TAPDAQ_IOS_VERSION = "7.6.0";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
-    private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
+    //private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
+    private static string TAPDAQ_REPOSITORY = "https://tapdaq-android-sdk.s3.eu-west-2.amazonaws.com/release/";
 
 
     public static object svcSupport;
@@ -39,7 +40,7 @@ public class TDDependencies : AssetPostprocessor
     // Manual Integration
     // This value may be set as low as 17.2.0+ ****
     private static string playServicesIdentityVersion = "17.0.0";
-    private static string playServicesAdsVersion = "18.3.0";
+    private static string playServicesAdsVersion = "19.1.0";
     private static string playServicesBaseVersion = "17.1.0";
     private static string playServicesGcmVersion = "17.0.0";
 
@@ -55,7 +56,8 @@ public class TDDependencies : AssetPostprocessor
 
 	public static TDSettings settings;
 
-    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+    //public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+    public static string cocoapods_respository = "https://github.com/Tapjoy/tapdaq-cocoapods.git";
 
     public static Dependencies dependencies = new Dependencies();
 
@@ -274,6 +276,13 @@ public class TDDependencies : AssetPostprocessor
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport, "DependOn",
                 new object[] { "com.android.support", "recyclerview-v7", supportLibraryVersion },
+                namedArgs: new Dictionary<string, object>() {
+                {"packageIds", new string[] { "extra-android-m2repository" } }
+            });
+
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport, "DependOn",
+                new object[] { "com.android.support", "customtabs", supportLibraryVersion },
                 namedArgs: new Dictionary<string, object>() {
                 {"packageIds", new string[] { "extra-android-m2repository" } }
             });

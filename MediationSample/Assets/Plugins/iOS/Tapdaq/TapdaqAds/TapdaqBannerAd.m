@@ -93,6 +93,10 @@ static NSString *const kTDUnityBannerSmart = @"TDMBannerSmart";
     return bannerSize;
 }
 
+- (void)didLoadBannerAdRequest:(TDBannerAdRequest *)adRequest {
+    [self handleDidLoadAdRequest:adRequest];
+}
+
 - (void)didRefreshBannerForAdRequest:(TDBannerAdRequest *)adRequest {
     [self send: @"_didRefresh" adType: [self type] tag: [[adRequest placement] tag] message: @""];
 }
