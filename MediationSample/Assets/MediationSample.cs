@@ -67,11 +67,16 @@ public class MediationSample : MonoBehaviour {
 
     public void OnClickInitialise() {
         logMessage("OnClickInitialise");
-        TDStatus consentStatus = (AdManager.IsConsentGiven() ? TDStatus.TRUE : TDStatus.FALSE);
-        TDStatus ageRestrictedUserStatus = (AdManager.IsAgeRestrictedUser() ? TDStatus.TRUE : TDStatus.FALSE);
+
+        AdManager.SetUserSubjectToGdprStatus(TDStatus.TRUE);
+        AdManager.SetConsentStatus(TDStatus.FALSE);
+        AdManager.SetAgeRestrictedUserStatus(TDStatus.UNKNOWN);
+
+        TDStatus consentStatus = AdManager.GetConsentStatus();
+        TDStatus ageRestrictedUserStatus = AdManager.GetAgeRestrictedUserStatus();
         string userId = AdManager.GetUserId();
 
-        AdManager.Init (AdManager.IsUserSubjectToGDPR(), consentStatus, ageRestrictedUserStatus, userId, AdManager.ShouldForwardUserId());
+        AdManager.Init ();
     }
 
     //Callback handlers

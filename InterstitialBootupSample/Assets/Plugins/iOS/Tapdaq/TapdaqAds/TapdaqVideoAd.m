@@ -25,7 +25,10 @@
 }
 
 - (void)showForPlacementTag:(NSString *)tag {
-    [[Tapdaq sharedSession] showVideoForPlacementTag:tag];
+    [[Tapdaq sharedSession] showVideoForPlacementTag:tag delegate:self];
 }
 
+- (void)didLoadInterstitialAdRequest:(TDInterstitialAdRequest *)adRequest {
+    [self handleDidLoadAdRequest:adRequest];
+}
 @end

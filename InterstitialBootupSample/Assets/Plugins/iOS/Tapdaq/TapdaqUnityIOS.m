@@ -93,20 +93,36 @@ int _UserSubjectToGDPR() {
     return (int)[[TapdaqUnityIOS sharedInstance] userSubjectToGDPR];
 }
 
-void _SetConsentGiven(bool isConsentGiven) {
-    [[TapdaqUnityIOS sharedInstance] setConsentGiven:isConsentGiven];
+void _SetGdprConsent(int gdprConsent) {
+    [[TapdaqUnityIOS sharedInstance] setGdprConsent:gdprConsent];
 }
 
-bool _IsConsentGiven() {
-    return (bool)[[TapdaqUnityIOS sharedInstance] isConsentGiven];
+int _GdprConsent() {
+    return (int)[[TapdaqUnityIOS sharedInstance] gdprConsent];
 }
 
-void _SetAgeRestrictedUser(bool isAgeRestrictedUser) {
-    [[TapdaqUnityIOS sharedInstance] setAgeRestrictedUser:isAgeRestrictedUser];
+void _SetAgeRestrictedUser(int ageRestrictedUser) {
+    [[TapdaqUnityIOS sharedInstance] setAgeRestrictedUser:ageRestrictedUser];
 }
 
-bool _IsAgeRestrictedUser() {
-    return (bool)[[TapdaqUnityIOS sharedInstance] isAgeRestrictedUser];
+int _AgeRestrictedUser() {
+    return (int)[[TapdaqUnityIOS sharedInstance] ageRestrictedUser];
+}
+
+void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy) {
+    [[TapdaqUnityIOS sharedInstance] setUserSubjectToUSPrivacy:userSubjectToUSPrivacy];
+}
+
+int _UserSubjectToUSPrivacy() {
+    return (int)[[TapdaqUnityIOS sharedInstance] userSubjectToUSPrivacy];
+}
+
+void _SetUSPrivacy(int usPrivacy) {
+    [[TapdaqUnityIOS sharedInstance] setUSPrivacy:usPrivacy];
+}
+
+int _USPrivacy() {
+    return (int)[[TapdaqUnityIOS sharedInstance] usPrivacy];
 }
 
 void _SetAdMobContentRating(const char * rating) {
@@ -138,6 +154,14 @@ void _SetForwardUserId(bool forwardUserId) {
 
 bool _ShouldForwardUserId() {
     return (bool)[[TapdaqUnityIOS sharedInstance] shouldForwardUserId];
+}
+
+void _SetMuted(bool muted) {
+    [[TapdaqUnityIOS sharedInstance] setMuted:muted];
+}
+
+bool _IsMuted() {
+    return (bool)[[TapdaqUnityIOS sharedInstance] isMuted];
 }
 
 void _SetUserDataString(const char* key, const char* value) {
@@ -301,6 +325,18 @@ bool _IsInterstitialReadyWithTag(const char *tagChar) {
     
 }
 
+const char *_GetInterstitialFrequencyCapError(const char* tag) {
+    NSString *placementTag = [NSString stringWithUTF8String:tag];
+    TDError* error = [[Tapdaq sharedSession] interstitialCappedForPlacementTag:placementTag];
+    
+    NSString* result = [JsonHelper toJsonString:@{
+        @"code": @(error.code),
+        @"message": (error.localizedDescription == nil ? @"" : error.localizedDescription)
+    }];
+    
+    return makeStringCopy([result UTF8String]);
+}
+
 void _ShowInterstitialWithTag(const char* tagChar) {
     
     if (_isEmpty(tagChar)) {
@@ -342,6 +378,18 @@ bool _IsVideoReadyWithTag(const char *tagChar) {
     
 }
 
+const char *_GetVideoFrequencyCapError(const char* tag) {
+    NSString *placementTag = [NSString stringWithUTF8String:tag];
+    TDError* error = [[Tapdaq sharedSession] videoCappedForPlacementTag:placementTag];
+    
+    NSString* result = [JsonHelper toJsonString:@{
+        @"code": @(error.code),
+        @"message": (error.localizedDescription == nil ? @"" : error.localizedDescription)
+    }];
+    
+    return makeStringCopy([result UTF8String]);
+}
+
 void _ShowVideoWithTag(const char* tagChar) {
     
     if (_isEmpty(tagChar)) {
@@ -381,6 +429,18 @@ bool _IsRewardedVideoReadyWithTag(const char *tagChar) {
     
     return (bool) [[TapdaqRewardedVideoAd sharedInstance] isReadyForPlacementTag:tag];
     
+}
+
+const char *_GetRewardedVideoFrequencyCapError(const char* tag) {
+    NSString *placementTag = [NSString stringWithUTF8String:tag];
+    TDError* error = [[Tapdaq sharedSession] rewardedVideoCappedForPlacementTag:placementTag];
+    
+    NSString* result = [JsonHelper toJsonString:@{
+        @"code": @(error.code),
+        @"message": (error.localizedDescription == nil ? @"" : error.localizedDescription)
+    }];
+    
+    return makeStringCopy([result UTF8String]);
 }
 
 void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar) {
@@ -484,7 +544,7 @@ bool _isEmpty(const char* str) {
                        userId:(NSString *)userId
                 shouldForwardUserId:(bool)forwardUserId
 {
-    TDProperties *properties = [[TDProperties alloc] init];
+    TDProperties *properties = [TDProperties defaultProperties];
     [properties setPluginVersion:pluginVersion];
     properties.isDebugEnabled = isDebugMode;
     properties.logLevel = isDebugMode ? TDLogLevelDebug : TDLogLevelInfo;
@@ -505,8 +565,6 @@ bool _isEmpty(const char* str) {
     [[Tapdaq sharedSession] setApplicationId:appID
                                    clientKey:clientKey
                                   properties:properties];
-    
-    [[Tapdaq sharedSession] launch];
 }
     
 - (void) setDelegate {
@@ -519,31 +577,51 @@ bool _isEmpty(const char* str) {
 }
 
 - (void) setUserSubjectToGDPR:(int)userSubjectToGDPR {
-    [[Tapdaq sharedSession] setUserSubjectToGDPR:userSubjectToGDPR];
+    [[[[Tapdaq sharedSession] properties] privacySettings] setUserSubjectToGdpr:userSubjectToGDPR];
 }
 
 - (int) userSubjectToGDPR {
-    return (int)[[Tapdaq sharedSession] userSubjectToGDPR];
+    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] userSubjectToGdpr];
 }
 
-- (void) setConsentGiven:(BOOL)isConsentGiven
+- (void) setGdprConsent:(int)gdprConsent
 {
-    [[Tapdaq sharedSession] setIsConsentGiven:isConsentGiven];
+    [[[[Tapdaq sharedSession] properties] privacySettings] setGdprConsentGiven:gdprConsent];
 }
 
-- (BOOL) isConsentGiven
+- (int) gdprConsent
 {
-    return [[Tapdaq sharedSession] isConsentGiven];
+    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] gdprConsentGiven];
 }
 
-- (void) setAgeRestrictedUser:(BOOL)isAgeRestrictedUser
+- (void) setAgeRestrictedUser:(int)ageRestrictedUser
 {
-    [[Tapdaq sharedSession] setIsAgeRestrictedUser:isAgeRestrictedUser];
+    [[[[Tapdaq sharedSession] properties] privacySettings] setAgeRestrictedUser:ageRestrictedUser];
 }
 
-- (BOOL) isAgeRestrictedUser
+- (int) ageRestrictedUser
 {
-    return [[Tapdaq sharedSession] isAgeRestrictedUser];
+    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] ageRestrictedUser];
+}
+
+- (void) setUserSubjectToUSPrivacy:(int)userSubjectToUSPrivacy
+{
+    [[[[Tapdaq sharedSession] properties] privacySettings] setUserSubjectToUSPrivacy:userSubjectToUSPrivacy];
+}
+
+- (int) userSubjectToUSPrivacy
+{
+    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] userSubjectToUSPrivacy];
+}
+
+- (void) setUSPrivacy:(int)usPrivacy
+{
+    [[[[Tapdaq sharedSession] properties] privacySettings] setUsPrivacyDoNotSell:usPrivacy];
+}
+
+- (int) usPrivacy
+{
+    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] usPrivacyDoNotSell];
 }
 
 - (void) setAdMobContentRating:(NSString*)rating
@@ -574,6 +652,16 @@ bool _isEmpty(const char* str) {
 - (BOOL) shouldForwardUserId
 {
    return [[Tapdaq sharedSession] forwardUserId];
+}
+
+- (void) setMuted:(BOOL)muted
+{
+    [[[Tapdaq sharedSession] properties] setMuted:muted];
+}
+
+- (BOOL) isMuted
+{
+   return [[[Tapdaq sharedSession] properties] isMuted];
 }
 
 - (void) setUserDataString:(NSString*)value forKey:(NSString*)key

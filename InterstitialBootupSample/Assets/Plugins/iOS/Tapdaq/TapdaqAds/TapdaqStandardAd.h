@@ -2,7 +2,7 @@
 #import <Tapdaq/Tapdaq.h>
 #import "TDUnityDelegateBase.h"
 
-@interface TapdaqStandardAd : TDUnityDelegateBase <TDAdRequestDelegate, TDDisplayableAdRequestDelegate, TDClickableAdRequestDelegate>
+@interface TapdaqStandardAd : TDUnityDelegateBase <TDAdRequestDelegate>
 
 - (NSString*) type;
 - (BOOL)isReady;
@@ -13,16 +13,16 @@
 - (BOOL)isReadyForPlacementTag:(NSString *)tag;
 - (void)showForPlacementTag:(NSString *)tag;
 - (void)showForPlacementTag:(NSString *) tag withHashedUserId:(NSString *) hashedUserId;
-
+- (void)handleDidLoadAdRequest:(TDAdRequest *)adRequest;
 @end
 
-@interface TapdaqVideoAd : TapdaqStandardAd
+@interface TapdaqVideoAd : TapdaqStandardAd <TDInterstitialAdRequestDelegate>
 @end
 
 @interface TapdaqRewardedVideoAd : TapdaqStandardAd<TDRewardedVideoAdRequestDelegate>
 @end
 
-@interface TapdaqInterstitialAd : TapdaqStandardAd
+@interface TapdaqInterstitialAd : TapdaqStandardAd <TDInterstitialAdRequestDelegate>
 @end
 
 @interface TapdaqBannerAd : TapdaqStandardAd<TDBannerAdRequestDelegate>

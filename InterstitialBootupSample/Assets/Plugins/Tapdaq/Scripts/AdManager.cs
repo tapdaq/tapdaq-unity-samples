@@ -45,18 +45,30 @@ namespace Tapdaq {
 		private static extern int _UserSubjectToGDPR();
 
 		[DllImport ("__Internal")]
-		private static extern void _SetConsentGiven(bool isConsentGiven);
+		private static extern void _SetGdprConsent(int gdprConsent);
 
 		[DllImport ("__Internal")]
-		private static extern bool _IsConsentGiven();
+		private static extern int _GdprConsent();
 
 		[DllImport ("__Internal")]
-		private static extern void _SetAgeRestrictedUser(bool isAgeRestrictedUser);
+		private static extern void _SetAgeRestrictedUser(int ageRestrictedUser);
 		
 		[DllImport ("__Internal")]
-		private static extern bool _IsAgeRestrictedUser();
+		private static extern int _AgeRestrictedUser();
 
-        [DllImport ("__Internal")]
+		[DllImport("__Internal")]
+		private static extern void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy);
+
+		[DllImport("__Internal")]
+		private static extern int _UserSubjectToUSPrivacy();
+
+		[DllImport("__Internal")]
+		private static extern void _SetUSPrivacy(int USPrivacy);
+
+		[DllImport("__Internal")]
+		private static extern int _USPrivacy();
+
+		[DllImport ("__Internal")]
         private static extern void _SetAdMobContentRating(string rating);
         
         [DllImport ("__Internal")]
@@ -73,6 +85,12 @@ namespace Tapdaq {
 
         [DllImport ("__Internal")]
         private static extern bool _ShouldForwardUserId();
+
+        [DllImport ("__Internal")]
+        private static extern void _SetMuted(bool muted);
+
+        [DllImport ("__Internal")]
+        private static extern bool _IsMuted();
 
         [DllImport ("__Internal")]
         private static extern void _SetUserDataString(string key, string value);
@@ -108,6 +126,9 @@ namespace Tapdaq {
 		[DllImport ("__Internal")]
 		private static extern bool _IsInterstitialReadyWithTag(string tag);
 
+		[DllImport("__Internal")]
+		private static extern string _GetInterstitialFrequencyCapError(string tag);
+
 		// banner
 		[DllImport ("__Internal")]
 		private static extern void _LoadBannerForSize(string tag, string sizeString);
@@ -140,6 +161,8 @@ namespace Tapdaq {
 		[DllImport("__Internal")]
 		private static extern bool _IsVideoReadyWithTag(string tag);
 
+		[DllImport("__Internal")]
+		private static extern string _GetVideoFrequencyCapError(string tag);
 
 		// reward video
 		[DllImport ("__Internal")]
@@ -150,6 +173,9 @@ namespace Tapdaq {
 
 		[DllImport ("__Internal")]
 		private static extern bool _IsRewardedVideoReadyWithTag(string tag);
+
+		[DllImport("__Internal")]
+		private static extern string _GetRewardedVideoFrequencyCapError(string tag);
 
 		/////////// Stats
 		[DllImport ("__Internal")]
@@ -167,11 +193,20 @@ namespace Tapdaq {
 
 		#endregion
 
-        public static void Init (TDStatus isUserSubjectToGDPR = TDStatus.UNKNOWN, TDStatus isConsentGiven = TDStatus.UNKNOWN, TDStatus isAgeRestrictedUser = TDStatus.UNKNOWN, string userId = null, bool shouldForwardUserId = false) {
+
+		public static void Init()
+		{
+			instance._Init(GetUserSubjectToGdprStatus(), GetConsentStatus(), GetAgeRestrictedUserStatus(), GetUserId(), ShouldForwardUserId());
+		}
+
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please use 'Init' and set values separately")]
+		public static void Init (TDStatus isUserSubjectToGDPR = TDStatus.UNKNOWN, TDStatus isConsentGiven = TDStatus.UNKNOWN, TDStatus isAgeRestrictedUser = TDStatus.UNKNOWN, string userId = null, bool shouldForwardUserId = false) {
             instance._Init (isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser, userId, shouldForwardUserId);
 		}
 
-        [Obsolete ("Please use 'Init' with optional parameters")]
+		// Obsolete as of 02/07/2019. Plugin Version 7.2.0
+		[Obsolete ("Please use 'Init' and set values separately")]
         public static void InitWithConsent(TDStatus isUserSubjectToGDPR, TDStatus isConsentGiven, TDStatus isAgeRestrictedUser)
         {
             instance._Init(isUserSubjectToGDPR, isConsentGiven, isAgeRestrictedUser, null, false);
@@ -355,61 +390,144 @@ namespace Tapdaq {
 			#endif
 		}
 
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please, use 'SetUserSubjectToGdprStatus(TDStatus isUserSubjectToGDPR)' method.")]
 		public static void SetUserSubjectToGDPR (TDStatus isUserSubjectToGDPR) {
-			#if UNITY_IPHONE
-			CallIosMethod(() => _SetUserSubjectToGDPR((int)isUserSubjectToGDPR));
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("SetUserSubjectToGDPR", (int)isUserSubjectToGDPR);
-			#endif
+			SetUserSubjectToGdprStatus(isUserSubjectToGDPR);
 		}
-		
+
+		public static void SetUserSubjectToGdprStatus(TDStatus status)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _SetUserSubjectToGDPR((int)status));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetUserSubjectToGDPR", (int)status);
+            #endif
+		}
+
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please, use 'GetUserSubjectToGdprStatus()' method.")]
 		public static TDStatus IsUserSubjectToGDPR() {
+			return GetUserSubjectToGdprStatus();
+		}
+
+		public static TDStatus GetUserSubjectToGdprStatus()
+		{
 			int result = 2;
-			#if UNITY_IPHONE
+            #if UNITY_IPHONE
 			CallIosMethod(() => result = _UserSubjectToGDPR());
-			#elif UNITY_ANDROID
-			result = GetAndroidStatic<int>("IsUserSubjectToGDPR");
-			#endif
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<int>("GetUserSubjectToGdprStatus");
+            #endif
 			return (TDStatus)result;
 		}
 
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please, use 'SetConsentStatus(TDStatus isConsentGiven)' method.")]
 		public static void SetConsentGiven (bool isConsentGiven) {
-			#if UNITY_IPHONE
-			CallIosMethod(() => _SetConsentGiven(isConsentGiven));
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("SetConsentGiven", isConsentGiven);
-			#endif
+			SetConsentStatus(isConsentGiven ? TDStatus.TRUE : TDStatus.FALSE);
 		}
 
+		public static void SetConsentStatus(TDStatus status)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _SetGdprConsent((int)status));
+#elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetConsentGiven", (int)status);
+#endif
+		}
+
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please, use 'GetConsentStatus()' method.")]
 		public static bool IsConsentGiven() {
-			bool result = false;
-			#if UNITY_IPHONE
-			CallIosMethod(() => result = _IsConsentGiven());
-			#elif UNITY_ANDROID
-			result = GetAndroidStatic<bool>("IsConsentGiven");
-			#endif
-			return result;
+			return GetConsentStatus() == TDStatus.TRUE;
 		}
 
+		public static TDStatus GetConsentStatus()
+		{
+			int result = (int)TDStatus.UNKNOWN;
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _GdprConsent());
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<int>("GetConsentStatus");
+            #endif
+			return (TDStatus)result;
+		}
+
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please, use 'SetAgeRestrictedUserStatus(TDStatus isAgeRestrictedUser)' method.")]
 		public static void SetIsAgeRestrictedUser (bool isAgeRestrictedUser) {
-			#if UNITY_IPHONE
-			CallIosMethod(() => _SetAgeRestrictedUser(isAgeRestrictedUser));
-			#elif UNITY_ANDROID
-			CallAndroidStaticMethod("SetAgeRestrictedUser", isAgeRestrictedUser);
-			#endif
-		}
-		
-		public static bool IsAgeRestrictedUser() {
-			bool result = false;
-			#if UNITY_IPHONE
-			CallIosMethod(() => result = _IsAgeRestrictedUser());
-			#elif UNITY_ANDROID
-			result = GetAndroidStatic<bool>("IsAgeRestrictedUser");
-			#endif
-			return result;
+			SetAgeRestrictedUserStatus(isAgeRestrictedUser ? TDStatus.TRUE : TDStatus.FALSE);
 		}
 
-        public static void SetAdMobContentRating(String rating) {
+		public static void SetAgeRestrictedUserStatus(TDStatus status)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _SetAgeRestrictedUser((int)status));
+#elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetAgeRestrictedUser", (int)status);
+#endif
+		}
+
+		// Obsolete as of 15/04/2020. Plugin Version 7.6.0
+		[Obsolete("Please, use 'GetAgeRestrictedUserStatus()' method.")]
+		public static bool IsAgeRestrictedUser() {
+			return GetAgeRestrictedUserStatus() == TDStatus.TRUE;
+		}
+
+		public static TDStatus GetAgeRestrictedUserStatus()
+		{
+			int result = (int)TDStatus.UNKNOWN;
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _AgeRestrictedUser());
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<int>("GetAgeRestrictedUserStatus");
+            #endif
+			return (TDStatus)result;
+		}
+
+		public static void SetUserSubjectToUSPrivacyStatus(TDStatus status)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _SetUserSubjectToUSPrivacy((int)status));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetUserSubjectToUSPrivacyStatus", (int)status);
+            #endif
+		}
+
+		public static TDStatus GetUserSubjectToUSPrivacyStatus()
+		{
+			int result = (int)TDStatus.UNKNOWN;
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _UserSubjectToUSPrivacy());
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<int>("GetUserSubjectToUSPrivacyStatus");
+            #endif
+			return (TDStatus)result;
+		}
+
+		public static void SetUSPrivacyStatus(TDStatus status)
+		{
+            #if UNITY_IPHONE
+			CallIosMethod(() => _SetUSPrivacy((int)status));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetUSPrivacyStatus", (int)status);
+            #endif
+		}
+
+		public static TDStatus GetUSPrivacyStatus()
+		{
+			int result = (int)TDStatus.UNKNOWN;
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _USPrivacy());
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<int>("GetUSPrivacyStatus");
+            #endif
+			return (TDStatus)result;
+		}
+
+
+		public static void SetAdMobContentRating(String rating) {
             #if UNITY_IPHONE
             CallIosMethod(() => _SetAdMobContentRating(rating));
             #elif UNITY_ANDROID
@@ -467,6 +585,26 @@ namespace Tapdaq {
             #endif
             return result;
         }
+
+		public static void SetMuted(bool muted)
+		{
+            #if UNITY_IPHONE
+            CallIosMethod(() => _SetMuted(muted));
+            #elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetMuted", muted);
+            #endif
+		}
+
+		public static bool IsMuted()
+		{
+			bool result = false;
+            #if UNITY_IPHONE
+            CallIosMethod(() => result = _IsMuted());
+            #elif UNITY_ANDROID
+			result = GetAndroidStatic<bool>("GetMuted");
+            #endif
+			return result;
+		}
 
 		public static void SetUserData(string key, string value)
 		{
@@ -588,6 +726,23 @@ namespace Tapdaq {
 			LogObsoleteWithTagMethod("IsInterstitialReady");
 			return IsInterstitialReady(tag);
 		}
+
+        public static TDAdError GetInterstitialFrequencyCapError(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+        {
+			TDAdError error = null;
+			string result = "";
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _GetInterstitialFrequencyCapError(tag));
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<string>("GetInterstitialFrequencyCapError", tag);
+            #endif
+			if (!String.IsNullOrEmpty(result))
+            {
+				error = JsonConvert.DeserializeObject<TDAdError>(result);
+			}
+			
+			return error;
+        }
 			
 		// banner
 
@@ -695,8 +850,25 @@ namespace Tapdaq {
 			return IsVideoReady(tag);
 		}
 
+		public static TDAdError GetVideoFrequencyCapError(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		{
+			TDAdError error = null;
+			string result = "";
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _GetVideoFrequencyCapError(tag));
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<string>("GetVideoFrequencyCapError", tag);
+            #endif
+			if (!String.IsNullOrEmpty(result))
+			{
+				error = JsonConvert.DeserializeObject<TDAdError>(result);
+			}
+
+			return error;
+		}
+
 		// rewarded video
-        public static void LoadRewardedVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		public static void LoadRewardedVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
             #if UNITY_IPHONE
             CallIosMethod(() => _LoadRewardedVideoWithTag (tag));
@@ -742,6 +914,23 @@ namespace Tapdaq {
             LogObsoleteWithTagMethod("IsRewardedVideoReady");
             return IsRewardedVideoReady(tag);
         }
+
+		public static TDAdError GetRewardedVideoFrequencyCapError(string tag = TAPDAQ_PLACEMENT_DEFAULT)
+		{
+			TDAdError error = null;
+			string result = "";
+            #if UNITY_IPHONE
+			CallIosMethod(() => result = _GetRewardedVideoFrequencyCapError(tag));
+            #elif UNITY_ANDROID
+            result = GetAndroidStatic<string>("GetRewardedVideoFrequencyCapError", tag);
+            #endif
+			if (!String.IsNullOrEmpty(result))
+			{
+				error = JsonConvert.DeserializeObject<TDAdError>(result);
+			}
+
+			return error;
+		}
 
 		// Obsolete as of 31/05/2018. Plugin Version 6.2.3
 		[Obsolete ("For Android use 'SendIAP_Android(String in_app_purchase_data, String in_app_purchase_signature, String name, double price, String currency, String locale)' \n" +

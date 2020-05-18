@@ -24,11 +24,19 @@
 - (BOOL)isReadyForPlacementTag:(NSString *)tag {
     return [[Tapdaq sharedSession] isRewardedVideoReadyForPlacementTag:tag];
 }
-- (void)showForPlacementTag:(NSString *) tag withHashedUserId:(NSString *) hashedUserId {
-    [[Tapdaq sharedSession] showRewardedVideoForPlacementTag:tag hashedUserId:hashedUserId];
+
+- (void)showForPlacementTag:(NSString *)tag {
+    [[Tapdaq sharedSession] showRewardedVideoForPlacementTag:tag delegate:self];
 }
 
+- (void)showForPlacementTag:(NSString *)tag withHashedUserId:(NSString *)hashedUserId {
+    [[Tapdaq sharedSession] showRewardedVideoForPlacementTag:tag hashedUserId:hashedUserId];
+}
 #pragma mark TDRewardedVideoAdRequestDelegate
+- (void)didLoadInterstitialAdRequest:(TDInterstitialAdRequest *)adRequest {
+    [self handleDidLoadAdRequest:adRequest];
+}
+
 - (void)adRequest:(TDAdRequest * _Nonnull)adRequest didValidateReward:(TDReward * _Nonnull)reward {
      [self handleDidVerifyReward:reward];
 }
