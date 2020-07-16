@@ -64,6 +64,8 @@ bool _GetUserDataBoolean(const char* key);
 const char* _GetAllUserData();
 
 void _RemoveUserData(const char* key);
+
+const char * _GetNetworkStatuses();
 // banner
 
 /**
