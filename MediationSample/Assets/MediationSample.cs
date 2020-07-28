@@ -287,7 +287,7 @@ public class MediationSample : MonoBehaviour {
 
     private void updateUI() {
         showStaticBtn.image.color = (AdManager.IsInterstitialReady(mTag) ? Color.green : Color.red);
-        showBannerBtn.image.color = (AdManager.IsBannerReady() ? Color.green : Color.red);
+        showBannerBtn.image.color = (AdManager.IsBannerReady(mTag) ? Color.green : Color.red);
         showVideoBtn.image.color = (AdManager.IsVideoReady(mTag) ? Color.green : Color.red);
         showRVBtn.image.color = showRVWithUserIdBtn.image.color = (AdManager.IsRewardedVideoReady(mTag) ? Color.green : Color.red);
 
