@@ -63,133 +63,159 @@ void _ConfigureTapdaq(const char* appIdChar,
         userId = [[NSString stringWithUTF8String:userIdChar] copy];
     }
     
-    [[TapdaqUnityIOS sharedInstance] initWithApplicationId:appId
-                                                 clientKey:clientKey
-                                               testDevices:testDevices
-                                               isDebugMode:isDebugMode
-                                             autoReloadAds:autoReloadAds
-                                             pluginVersion:version
-                                       isUserSubjectToGDPR:isUserSubjectToGDPR
-                                            isConsentGiven:isConsentGiven
-                                       isAgeRestrictedUser:isAgeRestrictedUser
-                                                    userId:userId
-                                       shouldForwardUserId:forwardUserId];
     
+    TDProperties *properties = [TDProperties defaultProperties];
+    [properties setPluginVersion:version];
+    properties.isDebugEnabled = isDebugMode;
+    TDLogger.logLevel = isDebugMode ? TDLogLevelDebug : TDLogLevelInfo;
+    [properties setAutoReloadAds:autoReloadAds];
+    properties.userId = userId;
+    properties.forwardUserId = forwardUserId;
+
+    if (isConsentGiven != 2) {
+        properties.isConsentGiven = (BOOL)isConsentGiven;
+    }
+    if (isAgeRestrictedUser != 2) {
+        properties.isAgeRestrictedUser = isAgeRestrictedUser;
+    }
+    properties.userSubjectToGDPR = isUserSubjectToGDPR;
+    
+    NSData *data = [testDevices dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSError *error = nil;
+    NSDictionary *testDevicesDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+    
+    if(error == nil) {
+        NSArray* amArray = testDevicesDictionary[@"adMobDevices"];
+        NSArray* fbArray = testDevicesDictionary[@"facebookDevices"];
+        
+        if(amArray != nil) {
+            TDTestDevices *amTestDevices = [[TDTestDevices alloc] initWithNetwork:TDMAdMob testDevices:amArray];
+            [properties registerTestDevices: amTestDevices];
+        }
+        
+        if(fbArray != nil) {
+            TDTestDevices *fbTestDevices = [[TDTestDevices alloc] initWithNetwork:TDMFacebookAudienceNetwork testDevices:fbArray];
+            [properties registerTestDevices: fbTestDevices];
+        }
+    }
+    
+    [[Tapdaq sharedSession] setApplicationId:appId
+                                   clientKey:clientKey
+                                  properties:properties];
 }
 
 void _SetDelegate() {
-    [[TapdaqUnityIOS sharedInstance] setDelegate];
+    Tapdaq.sharedSession.delegate = TapdaqDelegates.sharedInstance;
 }
 
 bool _IsInitialised() {
-    return  [[TapdaqUnityIOS sharedInstance] IsInitialised];
+    return Tapdaq.sharedSession.isInitialised;
 }
 
 void _SetUserSubjectToGDPR(int userSubjectToGDPR) {
-    [[TapdaqUnityIOS sharedInstance] setUserSubjectToGDPR:userSubjectToGDPR];
+    Tapdaq.sharedSession.properties.privacySettings.userSubjectToGdpr = (TDPrivacyStatus)userSubjectToGDPR;
 }
 
 int _UserSubjectToGDPR() {
-    return (int)[[TapdaqUnityIOS sharedInstance] userSubjectToGDPR];
+    return (int)Tapdaq.sharedSession.properties.privacySettings.userSubjectToGdpr;
 }
 
 void _SetGdprConsent(int gdprConsent) {
-    [[TapdaqUnityIOS sharedInstance] setGdprConsent:gdprConsent];
+    Tapdaq.sharedSession.properties.privacySettings.gdprConsentGiven = (TDPrivacyStatus)gdprConsent;
 }
 
 int _GdprConsent() {
-    return (int)[[TapdaqUnityIOS sharedInstance] gdprConsent];
+    return (int)Tapdaq.sharedSession.properties.privacySettings.gdprConsentGiven;
 }
 
 void _SetAgeRestrictedUser(int ageRestrictedUser) {
-    [[TapdaqUnityIOS sharedInstance] setAgeRestrictedUser:ageRestrictedUser];
+    Tapdaq.sharedSession.properties.privacySettings.ageRestrictedUser = (TDPrivacyStatus)ageRestrictedUser;
 }
 
 int _AgeRestrictedUser() {
-    return (int)[[TapdaqUnityIOS sharedInstance] ageRestrictedUser];
+    return (int)Tapdaq.sharedSession.properties.privacySettings.ageRestrictedUser;
 }
 
 void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy) {
-    [[TapdaqUnityIOS sharedInstance] setUserSubjectToUSPrivacy:userSubjectToUSPrivacy];
+    Tapdaq.sharedSession.properties.privacySettings.userSubjectToUSPrivacy = (TDPrivacyStatus)userSubjectToUSPrivacy;
 }
 
 int _UserSubjectToUSPrivacy() {
-    return (int)[[TapdaqUnityIOS sharedInstance] userSubjectToUSPrivacy];
+    return (int)Tapdaq.sharedSession.properties.privacySettings.userSubjectToUSPrivacy;
 }
 
 void _SetUSPrivacy(int usPrivacy) {
-    [[TapdaqUnityIOS sharedInstance] setUSPrivacy:usPrivacy];
+    Tapdaq.sharedSession.properties.privacySettings.usPrivacyDoNotSell = (TDPrivacyStatus)usPrivacy;
 }
 
 int _USPrivacy() {
-    return (int)[[TapdaqUnityIOS sharedInstance] usPrivacy];
+    return (int)Tapdaq.sharedSession.properties.privacySettings.usPrivacyDoNotSell;
 }
 
 void _SetAdMobContentRating(const char * rating) {
-    NSString *ratingStr = [[NSString stringWithUTF8String:rating] copy];
-    [[TapdaqUnityIOS sharedInstance] setAdMobContentRating:ratingStr];
+    NSString *ratingString = [NSString stringWithUTF8String:rating].copy;
+    Tapdaq.sharedSession.properties.adMobContentRating = ratingString;
 }
 
 const char * _GetAdMobContentRating() {
-    NSString * ratingStr = [[[TapdaqUnityIOS sharedInstance] getAdMobContentRating] copy];
+    NSString * ratingStr = Tapdaq.sharedSession.properties.adMobContentRating;
     return makeStringCopy([ratingStr UTF8String]);
 }
 
 void _SetUserId(const char * userId) {
-    NSString *userStr = nil;
+    NSString *userIdStrting = nil;
     if (!_isEmpty(userId)) {
-        userStr = [[NSString stringWithUTF8String:userId] copy];
+        userIdStrting = [[NSString stringWithUTF8String:userId] copy];
     }
-    [[TapdaqUnityIOS sharedInstance] setUserId:userStr];
+    Tapdaq.sharedSession.properties.userId = userIdStrting;
 }
 
 const char * _GetUserId() {
-    NSString * userIdStr = [[[TapdaqUnityIOS sharedInstance] getUserId] copy];
+    NSString * userIdStr = Tapdaq.sharedSession.properties.userId;
     return makeStringCopy([userIdStr UTF8String]);
 }
 
 void _SetForwardUserId(bool forwardUserId) {
-    [[TapdaqUnityIOS sharedInstance] setForwardUserId:forwardUserId];
+    Tapdaq.sharedSession.properties.forwardUserId = forwardUserId;
 }
 
 bool _ShouldForwardUserId() {
-    return (bool)[[TapdaqUnityIOS sharedInstance] shouldForwardUserId];
+    return (bool)Tapdaq.sharedSession.properties.forwardUserId;
 }
 
 void _SetMuted(bool muted) {
-    [[TapdaqUnityIOS sharedInstance] setMuted:muted];
+    Tapdaq.sharedSession.properties.muted = muted;
 }
 
 bool _IsMuted() {
-    return (bool)[[TapdaqUnityIOS sharedInstance] isMuted];
+    return (bool)Tapdaq.sharedSession.properties.isMuted;
 }
 
 void _SetUserDataString(const char* key, const char* value) {
     NSString *keyStr = nil;
     NSString *valueStr = nil;
     if (!_isEmpty(key) && !_isEmpty(value)) {
-        keyStr = [[NSString stringWithUTF8String:key] copy];
-        valueStr = [[NSString stringWithUTF8String:value] copy];
+        keyStr = [NSString stringWithUTF8String:key];
+        valueStr = [NSString stringWithUTF8String:value];
     }
-    [[TapdaqUnityIOS sharedInstance] setUserDataString:valueStr forKey:keyStr];
+    [Tapdaq.sharedSession.properties setUserDataString:valueStr forKey:keyStr];
 }
 
 void _SetUserDataInteger(const char* key, int value) {
     NSString *keyStr = nil;
     if (!_isEmpty(key)) {
-        keyStr = [[NSString stringWithUTF8String:key] copy];
+        keyStr = [NSString stringWithUTF8String:key];
     }
-    
-    [[TapdaqUnityIOS sharedInstance] setUserDataInteger:value forKey:keyStr];
+    [Tapdaq.sharedSession.properties setUserDataInteger:value forKey:keyStr];
 }
 
 void _SetUserDataBoolean(const char* key, bool value) {
     NSString *keyStr = nil;
     if (!_isEmpty(key)) {
-        keyStr = [[NSString stringWithUTF8String:key] copy];
+        keyStr = [NSString stringWithUTF8String:key];
     }
-    
-    [[TapdaqUnityIOS sharedInstance] setUserDataBoolean:value forKey:keyStr];
+    [Tapdaq.sharedSession.properties setUserDataBool:value forKey:keyStr];
 }
 
 const char* _GetUserDataString(const char* key) {
@@ -198,7 +224,7 @@ const char* _GetUserDataString(const char* key) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     
-    NSString * dataStr = [[[TapdaqUnityIOS sharedInstance] userDataStringForKey:keyStr] copy];
+    NSString * dataStr = [Tapdaq.sharedSession.properties userDataStringForKey:keyStr];;
     return makeStringCopy([dataStr UTF8String]);
 }
 
@@ -208,7 +234,7 @@ int _GetUserDataInteger(const char* key) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     
-    return (int)[[TapdaqUnityIOS sharedInstance] userDataIntegerForKey:keyStr];
+    return (int)[Tapdaq.sharedSession.properties userDataIntegerForKey:keyStr];
 }
 
 bool _GetUserDataBoolean(const char* key) {
@@ -217,11 +243,11 @@ bool _GetUserDataBoolean(const char* key) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     
-    return (bool)[[TapdaqUnityIOS sharedInstance] userDataBooleanForKey:keyStr];
+    return (bool)[Tapdaq.sharedSession.properties userDataBoolForKey:keyStr];
 }
 
 const char* _GetAllUserData() {
-    NSString * dataStr = [[[TapdaqUnityIOS sharedInstance] userData] copy];
+    NSString * dataStr = [JsonHelper toJsonString:Tapdaq.sharedSession.properties.userData];
     return makeStringCopy([dataStr UTF8String]);
 }
 
@@ -230,8 +256,16 @@ void _RemoveUserData(const char* key) {
     if (!_isEmpty(key)) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
-    
-    [[TapdaqUnityIOS sharedInstance] removeUserDataForKey:keyStr];
+    [Tapdaq.sharedSession.properties removeUserDataForKey:keyStr];
+}
+
+const char* _GetNetworkStatuses() {
+    NSArray* networkStatuses = [[Tapdaq sharedSession] networkStatusesDictionary];
+    if (networkStatuses != nil && [networkStatuses count] > 0) {
+        NSString * dataStr = [JsonHelper arrayToJsonString:networkStatuses];
+        return makeStringCopy([dataStr UTF8String]);
+    }
+    return "";
 }
 
 #pragma mark - Banner (Bridge)
@@ -245,7 +279,6 @@ void _LoadBannerForSize(const char* tagChar, const char* sizeChar) {
     
     NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
     NSString *sizeStr = [[NSString stringWithUTF8String:sizeChar] copy];
-    
     [[TapdaqBannerAd sharedInstance] loadForPlacementTag:tagStr withSize:sizeStr];
 }
 
@@ -507,219 +540,3 @@ void _LaunchMediationDebugger() {
 bool _isEmpty(const char* str) {
     return str == NULL;
 }
-
-@implementation TapdaqUnityIOS
-
-+ (instancetype)sharedInstance
-{
-    static dispatch_once_t once;
-    static id sharedInstance;
-    dispatch_once(&once, ^{
-        sharedInstance = [[self alloc] init];
-    });
-    return sharedInstance;
-}
-
-+ (void)load
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createPlugin:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-}
-
-+ (void)createPlugin:(NSNotification *)notification
-{
-    [TapdaqUnityIOS sharedInstance];
-}
-
-// Init
-//Configure Tapdaq with credentials and ad settings
-- (void)initWithApplicationId:(NSString *)appID
-                    clientKey:(NSString *)clientKey
-                  testDevices:(NSString *)testDevices
-                  isDebugMode:(bool)isDebugMode
-                autoReloadAds:(bool)autoReloadAds
-                pluginVersion:(NSString *)pluginVersion
-          isUserSubjectToGDPR:(int)isUserSubjectToGDPR
-               isConsentGiven:(int)isConsentGiven
-          isAgeRestrictedUser:(int)isAgeRestrictedUser
-                       userId:(NSString *)userId
-                shouldForwardUserId:(bool)forwardUserId
-{
-    TDProperties *properties = [TDProperties defaultProperties];
-    [properties setPluginVersion:pluginVersion];
-    properties.isDebugEnabled = isDebugMode;
-    properties.logLevel = isDebugMode ? TDLogLevelDebug : TDLogLevelInfo;
-    [properties setAutoReloadAds:autoReloadAds];
-    properties.userId = userId;
-    properties.forwardUserId = forwardUserId;
-
-    if (isConsentGiven != 2) {
-        properties.isConsentGiven = (BOOL)isConsentGiven;
-    }
-    if (isAgeRestrictedUser != 2) {
-        properties.isAgeRestrictedUser = isAgeRestrictedUser;
-    }
-    properties.userSubjectToGDPR = isUserSubjectToGDPR;
-    
-    [self setTestDevices: testDevices toProperties:properties];
-    
-    [[Tapdaq sharedSession] setApplicationId:appID
-                                   clientKey:clientKey
-                                  properties:properties];
-}
-    
-- (void) setDelegate {
-    [[Tapdaq sharedSession] setDelegate: [TapdaqDelegates sharedInstance]];
-}
-
-- (BOOL) IsInitialised
-{
-    return [[Tapdaq sharedSession] isInitialised];
-}
-
-- (void) setUserSubjectToGDPR:(int)userSubjectToGDPR {
-    [[[[Tapdaq sharedSession] properties] privacySettings] setUserSubjectToGdpr:userSubjectToGDPR];
-}
-
-- (int) userSubjectToGDPR {
-    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] userSubjectToGdpr];
-}
-
-- (void) setGdprConsent:(int)gdprConsent
-{
-    [[[[Tapdaq sharedSession] properties] privacySettings] setGdprConsentGiven:gdprConsent];
-}
-
-- (int) gdprConsent
-{
-    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] gdprConsentGiven];
-}
-
-- (void) setAgeRestrictedUser:(int)ageRestrictedUser
-{
-    [[[[Tapdaq sharedSession] properties] privacySettings] setAgeRestrictedUser:ageRestrictedUser];
-}
-
-- (int) ageRestrictedUser
-{
-    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] ageRestrictedUser];
-}
-
-- (void) setUserSubjectToUSPrivacy:(int)userSubjectToUSPrivacy
-{
-    [[[[Tapdaq sharedSession] properties] privacySettings] setUserSubjectToUSPrivacy:userSubjectToUSPrivacy];
-}
-
-- (int) userSubjectToUSPrivacy
-{
-    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] userSubjectToUSPrivacy];
-}
-
-- (void) setUSPrivacy:(int)usPrivacy
-{
-    [[[[Tapdaq sharedSession] properties] privacySettings] setUsPrivacyDoNotSell:usPrivacy];
-}
-
-- (int) usPrivacy
-{
-    return (int)[[[[Tapdaq sharedSession] properties] privacySettings] usPrivacyDoNotSell];
-}
-
-- (void) setAdMobContentRating:(NSString*)rating
-{
-    [[Tapdaq sharedSession] setAdMobContentRating:rating];
-}
-
-- (NSString*) getAdMobContentRating
-{
-    return [[Tapdaq sharedSession] adMobContentRating];
-}
-
-- (void) setUserId:(NSString*)userId
-{
-     [[Tapdaq sharedSession] setUserId:userId];
-}
-
-- (NSString*) getUserId
-{
-    return [[Tapdaq sharedSession] userId];
-}
-
-- (void) setForwardUserId:(BOOL)forwardUserId
-{
-   [[Tapdaq sharedSession] setForwardUserId:forwardUserId];
-}
-
-- (BOOL) shouldForwardUserId
-{
-   return [[Tapdaq sharedSession] forwardUserId];
-}
-
-- (void) setMuted:(BOOL)muted
-{
-    [[[Tapdaq sharedSession] properties] setMuted:muted];
-}
-
-- (BOOL) isMuted
-{
-   return [[[Tapdaq sharedSession] properties] isMuted];
-}
-
-- (void) setUserDataString:(NSString*)value forKey:(NSString*)key
-{
-    [[[Tapdaq sharedSession] properties] setUserDataString:value forKey:key];
-}
-    
-- (void) setUserDataBoolean:(BOOL)value forKey:(NSString*)key
-{
-    [[[Tapdaq sharedSession] properties] setUserDataBool:value forKey:key];
-}
-
-- (void) setUserDataInteger:(NSInteger)value forKey:(NSString*)key
-{
-    [[[Tapdaq sharedSession] properties] setUserDataInteger:value forKey:key];
-}
-
-- (NSString*) userDataStringForKey:(NSString*) key {
-    return [[[Tapdaq sharedSession] properties] userDataStringForKey:key];
-}
-
-- (NSInteger) userDataIntegerForKey:(NSString*) key {
-    return [[[Tapdaq sharedSession] properties] userDataIntegerForKey:key];
-}
-
-- (BOOL) userDataBooleanForKey:(NSString*) key {
-    return [[[Tapdaq sharedSession] properties] userDataBoolForKey:key];
-}
-
-- (NSString*) userData {
-    return [JsonHelper toJsonString:[[[Tapdaq sharedSession] properties] userData]];
-}
-
-- (void) removeUserDataForKey:(NSString*) key {
-    [[[Tapdaq sharedSession] properties] removeUserDataForKey:key];
-}
-
-- (void) setTestDevices:(NSString *)testDevicesJson toProperties:(TDProperties *)properties
-{
-    NSData *data = [testDevicesJson dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSError *error = nil;
-    NSDictionary *testDevicesDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-    
-    if(error == nil) {
-        NSArray* amArray = testDevicesDictionary[@"adMobDevices"];
-        NSArray* fbArray = testDevicesDictionary[@"facebookDevices"];
-        
-        if(amArray != nil) {
-            TDTestDevices *amTestDevices = [[TDTestDevices alloc] initWithNetwork:@"admob" testDevices:amArray];
-            [properties registerTestDevices: amTestDevices];
-        }
-        
-        if(fbArray != nil) {
-            TDTestDevices *fbTestDevices = [[TDTestDevices alloc] initWithNetwork:@"facebook" testDevices:fbArray];
-            [properties registerTestDevices: fbTestDevices];
-        }
-    }
-}
-
-@end

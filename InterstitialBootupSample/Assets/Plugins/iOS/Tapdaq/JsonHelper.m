@@ -20,6 +20,24 @@
     return @"{}";
 }
 
++(NSString *) arrayToJsonString:(NSArray *) array {
+    if([NSJSONSerialization isValidJSONObject:array])
+    {
+        NSError *error;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:array
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+    
+        if (! jsonData) {
+            NSLog(@"toJsonString: error: %@", error.localizedDescription);
+            return @"{}";
+        } else {
+            return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        }
+    }
+    return @"{}";
+}
+
 +(NSDictionary *) fromJsonString:(NSString *) json {
     NSError *err = nil;
     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:

@@ -126,7 +126,10 @@ namespace TDEditor {
                 GUILayout.Label("iOS", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
                 GUILayout.Label("Android", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
                 GUILayout.EndHorizontal();
-                
+
+                bool isNetworkWithBundlePresent = false;
+
+                EditorGUI.BeginChangeCheck();
                 foreach (TDNetwork network in TDNetwork.Networks)
                 {
                     GUILayout.Space(10);
@@ -136,6 +139,9 @@ namespace TDEditor {
                     if(network.cocoapodsAdapterDependency != null)
                     {
                         network.iOSEnabled = EditorGUILayout.Toggle("", network.iOSEnabled, GUILayout.MaxWidth(100));
+                        if (network.iOSEnabled && network.bundlePresent) {
+                        	isNetworkWithBundlePresent = true;
+                        }
                     }
                     if(network.mavenAdapterDependency != null)
                     {
@@ -143,6 +149,15 @@ namespace TDEditor {
                     }
                     GUILayout.EndHorizontal();
                 }
+                if(EditorGUI.EndChangeCheck()) {
+		        	settings.shouldAddUnityIPhoneTargetToPodfile = isNetworkWithBundlePresent;
+		        }
+                // Only display with setting for Unity 2019.3 and above.
+                #if UNITY_2019_3_OR_NEWER
+                GUILayout.Space(15);
+                DrawSeparator(2);
+                settings.shouldAddUnityIPhoneTargetToPodfile = EditorGUILayout.ToggleLeft(new GUIContent("iOS: Add empty Unity-iPhone target to Podfile", "Enabling this option will add an empty Unity-iPhone target to the generated Podfile. This is a workaround for a bug in the interaction between External Dependency Manager and Unity 2019.3 and above. All pods are being added to UnityFramework target which may cause some of the dependencies to not find their resources that are expected to be located in main bundle(Unity-iPhone)."), settings.shouldAddUnityIPhoneTargetToPodfile);
+				#endif
                 GUILayout.EndVertical();                
 
                 GUILayout.Space(25);

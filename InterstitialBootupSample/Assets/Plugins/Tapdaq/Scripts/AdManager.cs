@@ -116,6 +116,9 @@ namespace Tapdaq {
         [DllImport ("__Internal")]
         private static extern string _GetAllUserData();
 
+        [DllImport ("__Internal")]
+		private static extern string _GetNetworkStatuses();
+
 		// interstitial
 		[DllImport ("__Internal")]
 		private static extern void _ShowInterstitialWithTag(string tag);
@@ -965,6 +968,23 @@ namespace Tapdaq {
             #endif
 
             return null;
+		}
+
+		public static List<TDNetworkStatus> GetNetworkStatuses()
+		{
+			List<TDNetworkStatus> networkStatuses = new List<TDNetworkStatus>();
+			string result = "";
+#if UNITY_IPHONE
+			CallIosMethod(() => result = _GetNetworkStatuses());
+#elif UNITY_ANDROID
+			result = GetAndroidStatic<string>("GetNetworkStatuses");
+#endif
+            if(!String.IsNullOrEmpty(result))
+			{
+				TDDebugLogger.Log(result);
+				networkStatuses = JsonConvert.DeserializeObject<List<TDNetworkStatus>>(result);
+			}
+			return networkStatuses;
 		}
 	}
 }

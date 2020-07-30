@@ -49,6 +49,31 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 		}
 	}
 
+    [PostProcessBuildAttribute(45)]//must be between 40 and 50 to ensure that it's not overriden by Podfile generation (40) and that it's added before "pod install" (50)
+    private static void PostProcessBuildEditPodfile_iOS(BuildTarget target, string buildPath)
+    {
+        if (target == BuildTarget.iOS && TDSettings.getInstance().shouldAddUnityIPhoneTargetToPodfile)
+        {
+             #if UNITY_2019_3_OR_NEWER
+            bool networkWithBundlePresent = false;
+            foreach (TDNetwork network in TDNetwork.Networks) {
+                if (network.iOSEnabled && network.bundlePresent) {
+                    TDDebugLogger.Log("Network " + network.name + " has bundle");
+                    networkWithBundlePresent = true;
+                }
+            }
+            // Return if adding a target is not required by any enabled network
+            if (!networkWithBundlePresent) { return ; }
+            using (StreamWriter streamWriter = File.AppendText(buildPath + "/Podfile"))
+            {
+
+                TDDebugLogger.Log("Adding Unity-iPhone target");
+                streamWriter.WriteLine("\ntarget 'Unity-iPhone' do\n\nend");
+            }
+            #endif
+        }
+    }
+
 
 	[PostProcessBuild(101)]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string pathToBuiltProject) {
