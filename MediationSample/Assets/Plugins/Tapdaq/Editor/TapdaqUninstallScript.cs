@@ -33,10 +33,13 @@ namespace Tapdaq {
 			Delete ("iOS/Tapdaq.framework");
 			DeleteIfEmpty ("iOS");
 			Delete ("Android/Tapdaq");
+			Delete ("Android/Tapdaq.androidlib");
 
 			foreach (TDNetwork network in TDNetwork.Networks) {
 				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
 				Delete (path);
+				path += ".androidlib";
+				Delete(path);
 			}
 
 			Delete ("Android/libs/Tapdaq");
@@ -96,8 +99,13 @@ namespace Tapdaq {
 
 		private static void Delete(string path) {
 			path = BASE_PLUGIN_PATH + path;
-			if (File.Exists (path) || Directory.Exists (path))
-				FileUtil.DeleteFileOrDirectory (path);
+			if (File.Exists(path) || Directory.Exists(path))
+			{
+				FileUtil.DeleteFileOrDirectory(path);
+				path += ".meta";
+				FileUtil.DeleteFileOrDirectory(path);
+			}
+			
 		}
 
 		private static void DeleteButKeep(string path, string[] keepFiles) {

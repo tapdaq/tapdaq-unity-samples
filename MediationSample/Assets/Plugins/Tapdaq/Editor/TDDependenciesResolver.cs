@@ -27,11 +27,12 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.7.0";
-	private static string TAPDAQ_IOS_VERSION = "7.7.0";
+	private static string TAPDAQ_ANDROID_VERSION = "7.8.0-rc2";
+	private static string TAPDAQ_IOS_VERSION = "7.8.0";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
-    private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
+    //private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
+    private static string TAPDAQ_REPOSITORY = "https://tapdaq-android-sdk.s3.eu-west-2.amazonaws.com/release/";
 
 
 
@@ -40,23 +41,26 @@ public class TDDependencies : AssetPostprocessor
     // Manual Integration
     // This value may be set as low as 17.2.0+ ****
     private static string playServicesIdentityVersion = "17.0.0";
-    private static string playServicesAdsVersion = "19.1.0";
+    private static string playServicesAdsVersion = "19.4.0";
     private static string playServicesBaseVersion = "17.3.0";
     private static string playServicesGcmVersion = "17.0.0";
 
     // DO NOT CHANGE THESE VALUES 
-    private static string minimumLifecycleVersion = "1.+";
+    private static string minimumLifecycleVersion = "2.0.0+";
 
-    private static string minimumSupportLibraryVersion = "24.0.0+";
-    private static string minimumInMobiSupportLibraryVersion = "24.0.0+";
-    private static string minimumFANSupportLibraryVersion = "24.0.0+";
-    private static string minimumVungleSupportLibraryVersion = "26.0.0+";
+    private static string minimumRecyclerViewLibraryVersion = "1.0.0+";
+    private static string minimumBrowserLibraryVersion = "1.0.0+";
+    private static string minimumSupportLibraryVersion = "1.0.0+";
+    private static string minimumInMobiSupportLibraryVersion = "1.0.0+";
+    private static string minimumFANSupportLibraryVersion = "1.0.0+";
+    private static string minimumVungleSupportLibraryVersion = "1.0.0+";
 
     public static string minTargetSDKVersion = "9.0";
 
 	public static TDSettings settings;
 
-    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+    //public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods.git";
 
     public static Dependencies dependencies = new Dependencies();
 
@@ -213,11 +217,6 @@ public class TDDependencies : AssetPostprocessor
             supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumVungleSupportLibraryVersion);
         }
 
-        if (AssetDatabase.FindAssets("TapdaqZPlayAdapter").Length > 0)
-        {
-            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumSupportLibraryVersion);
-        }
-
         if (AssetDatabase.FindAssets("Tapdaq", new[] { "Assets/Plugins/Android" }).Length > 0)
         {
             //Required by Tapdaq
@@ -230,7 +229,7 @@ public class TDDependencies : AssetPostprocessor
 
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport, "DependOn",
-                new object[] { "android.arch.lifecycle", "extensions", minimumLifecycleVersion },
+                new object[] { "androidx.lifecycle", "lifecycle-extensions", minimumLifecycleVersion },
             namedArgs: new Dictionary<string, object>() {
             {"packageIds", new string[] { "extra-android-m2repository" } }
             });
@@ -274,21 +273,21 @@ public class TDDependencies : AssetPostprocessor
         {
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport, "DependOn",
-                new object[] { "com.android.support", "recyclerview-v7", supportLibraryVersion },
+                new object[] { "androidx.recyclerview", "recyclerview", minimumRecyclerViewLibraryVersion },
                 namedArgs: new Dictionary<string, object>() {
                 {"packageIds", new string[] { "extra-android-m2repository" } }
             });
 
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport, "DependOn",
-                new object[] { "com.android.support", "customtabs", supportLibraryVersion },
+                new object[] { "androidx.browser", "browser", minimumBrowserLibraryVersion },
                 namedArgs: new Dictionary<string, object>() {
                 {"packageIds", new string[] { "extra-android-m2repository" } }
             });
 
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport, "DependOn",
-                new object[] { "com.android.support", "support-v4", supportLibraryVersion },
+                new object[] { "androidx.legacy", "legacy-support-v4", supportLibraryVersion },
                 namedArgs: new Dictionary<string, object>() {
                 {"packageIds", new string[] { "extra-android-m2repository" } }
             });
@@ -299,18 +298,8 @@ public class TDDependencies : AssetPostprocessor
         {
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport, "DependOn",
-                new object[] { "com.android.support", "recyclerview-v7", supportLibraryVersion },
+                new object[] { "androidx.recyclerview", "recyclerview", minimumRecyclerViewLibraryVersion },
             namedArgs: new Dictionary<string, object>() {
-                {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-        }
-
-        if (AssetDatabase.FindAssets("TapdaqZPlayAdapter").Length > 0)
-        {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "com.android.support", "support-v4", supportLibraryVersion },
-                namedArgs: new Dictionary<string, object>() {
                 {"packageIds", new string[] { "extra-android-m2repository" } }
             });
         }

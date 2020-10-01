@@ -13,6 +13,9 @@ namespace TDEditor {
 		private bool showOther = false;
 
 		private bool showTestDevices = false;
+		private bool showSKAdNetworkIds = false;
+		private string skAdNetworkIdKey = "";
+		private string skAdNetworkIdValue = "";
 
 		private GUIStyle foldoutStyle;
 
@@ -73,6 +76,79 @@ namespace TDEditor {
 			settings.isDebugMode = EditorGUILayout.Toggle("Debug Mode?", settings.isDebugMode);
 
 			GUILayout.Space (15);
+
+			// SKAdNetworkIds
+
+			//GUILayout.Label("SKAdNetworkIds", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+			showSKAdNetworkIds = EditorGUILayout.Foldout(showSKAdNetworkIds, "SKAdNetworkIds", foldoutStyle);
+			if (showSKAdNetworkIds)
+			{
+				GUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("Name", GUILayout.MaxWidth(120));
+				EditorGUILayout.LabelField("ID", GUILayout.MaxWidth(120));
+				GUILayout.EndHorizontal();
+
+				List<TDKeyValuePair> skAdNetworkIdsList = new List<TDKeyValuePair>(TDSettings.getInstance().skAdNetworkIds);
+
+				foreach (TDKeyValuePair pair in skAdNetworkIdsList)
+				{
+					GUILayout.BeginHorizontal();
+					EditorGUILayout.TextField(pair.getKey(), GUILayout.MaxWidth(120));
+					EditorGUILayout.TextField(pair.getValue(), GUILayout.MaxWidth(120));
+					if (GUILayout.Button("Remove", GUILayout.Width(75)))
+					{
+						//Invoke remove
+						skAdNetworkIdsList.Remove(pair);
+						TDSettings.getInstance().skAdNetworkIds = skAdNetworkIdsList;
+						skAdNetworkIdKey = skAdNetworkIdValue = null;
+						return;
+					}
+					GUILayout.EndHorizontal();
+				}
+				
+				GUILayout.BeginHorizontal();
+
+				string placeholderKey = "SKAdNetworkId";
+				int keyCount = skAdNetworkIdsList.Count;
+
+				while(skAdNetworkIdsList.Find(f => f.getKey() == placeholderKey + keyCount) != null)
+				{
+					keyCount++;
+				}
+
+				if (String.IsNullOrEmpty(skAdNetworkIdKey) || skAdNetworkIdsList.Find(f => f.getKey() == skAdNetworkIdKey) != null)
+				{
+					skAdNetworkIdKey = placeholderKey + keyCount;
+				}
+
+				skAdNetworkIdKey = EditorGUILayout.TextField(skAdNetworkIdKey, GUILayout.MaxWidth(120));
+				skAdNetworkIdValue = EditorGUILayout.TextField(skAdNetworkIdValue, GUILayout.MaxWidth(120));
+				if (GUILayout.Button("Add", GUILayout.Width(75)))
+				{
+					if (String.IsNullOrEmpty(skAdNetworkIdValue))
+					{
+						EditorUtility.DisplayDialog("Error", "SKAdNetworkId value is null or empty", "OK");
+
+					}
+					else if (skAdNetworkIdsList.Find(f => f.getKey() == skAdNetworkIdKey) != null)
+					{
+
+						EditorUtility.DisplayDialog("Error", "SKAdNetworkId key already exists", "OK");
+					}
+					else
+					{
+						//Invoke Add
+						TDKeyValuePair pair = new TDKeyValuePair(skAdNetworkIdKey, skAdNetworkIdValue);
+						skAdNetworkIdsList.Add(pair);
+						TDSettings.getInstance().skAdNetworkIds = skAdNetworkIdsList;
+						skAdNetworkIdValue = "";
+					}
+				}
+				TDSettings.getInstance().skAdNetworkIds = skAdNetworkIdsList;
+				GUILayout.EndHorizontal();
+			}
+
+			GUILayout.Space(15);
 
 			ShowTestDevices ();
 
@@ -173,7 +249,7 @@ namespace TDEditor {
 
                 });
             }
-            
+
 			// Save settings
 			if (GUI.changed) {
 				EditorUtility.SetDirty (settings);
@@ -269,5 +345,5 @@ namespace TDEditor {
 			}
 			GUI.backgroundColor = Color.white;
 		}
-	}
+    }
 }
