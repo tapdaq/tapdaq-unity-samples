@@ -8,7 +8,7 @@ namespace Tapdaq {
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_7.7.0";
+		public const string pluginVersion = "unity_7.8.0";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
@@ -29,6 +29,9 @@ namespace Tapdaq {
 
 		[SerializeField]
 		public List<TestDevice> testDevices = new List<TestDevice>();
+
+		[SerializeField]
+		public List<TDKeyValuePair> skAdNetworkIds = new List<TDKeyValuePair>();
 
         public static TDSettings getInstance() {
 			if (instance == null) {
@@ -100,5 +103,23 @@ namespace Tapdaq {
 		public string GetFacebookListJson() {
 			return JsonConvert.SerializeObject (facebookDevices);
 		}
+	}
+
+	[Serializable]
+	public class TDKeyValuePair
+	{
+		[SerializeField]
+		private string key;
+		[SerializeField]
+		private string value;
+
+		public TDKeyValuePair(string key, string value)
+		{
+			this.key = key;
+			this.value = value;
+		}
+
+		public string getKey() { return key; }
+		public string getValue() { return value; }
 	}
 }

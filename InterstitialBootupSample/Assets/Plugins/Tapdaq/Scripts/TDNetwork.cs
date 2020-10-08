@@ -56,14 +56,12 @@ namespace Tapdaq
 			new TDNetwork("Facebook AN", new TDSDKTargetVersion("9.0", "14"), "FAN", "com.tapdaq.sdk:TapdaqFANAdapter:"),
 			new TDNetwork("InMobi", new TDSDKTargetVersion("9.0", "15"), "InMobi", "com.tapdaq.sdk:TapdaqInmobiAdapter:"),
 			new TDNetwork("ironSource", new TDSDKTargetVersion("9.0", "16"), "IronSource", "com.tapdaq.sdk:TapdaqIronsourceAdapter:", "https://dl.bintray.com/ironsource-mobile/android-sdk"),
-			new TDNetwork("Maio", new TDSDKTargetVersion("9.0", "14"), "Maio", "com.tapdaq.sdk:TapdaqMaioAdapter:", "https://imobile-maio.github.io/maven"),
-			new TDNetwork("Mintegral", new TDSDKTargetVersion("9.0", "14"), "Mintegral", "com.tapdaq.sdk:TapdaqMintegralAdapter:"),
+			new TDNetwork("Maio", new TDSDKTargetVersion("9.0", "16"), "Maio", "com.tapdaq.sdk:TapdaqMaioAdapter:", "https://imobile-maio.github.io/maven"),
 			new TDNetwork("Tapjoy", new TDSDKTargetVersion("9.0", "14"), "Tapjoy", "com.tapdaq.sdk:TapdaqTapjoyAdapter:", "https://tapjoy.bintray.com/maven", true),
 			new TDNetwork("Pangle", new TDSDKTargetVersion("9.0", null), "Pangle", null, null, true),
 			new TDNetwork("UnityAds", new TDSDKTargetVersion("9.0", "14"), "UnityAds", "com.tapdaq.sdk:TapdaqUnityAdsAdapter:"),
 			new TDNetwork("Vungle", new TDSDKTargetVersion("9.0", "14"), "Vungle", "com.tapdaq.sdk:TapdaqVungleAdapter:"),
 			new TDNetwork("YouAppi", new TDSDKTargetVersion("10.0", "16"), "YouAppi", "com.tapdaq.sdk:TapdaqYouAppiAdapter:", "http://repository.youappi.com/repository/release"),
-			new TDNetwork("ZPlay", new TDSDKTargetVersion("9.0", "16"), "ZPlay", "com.tapdaq.sdk:TapdaqZPlayAdapter:", null, true)
 		});
 	}
 

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System;
 using Tapdaq;
 
@@ -54,7 +55,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
     {
         if (target == BuildTarget.iOS && TDSettings.getInstance().shouldAddUnityIPhoneTargetToPodfile)
         {
-             #if UNITY_2019_3_OR_NEWER
+            #if UNITY_2019_3_OR_NEWER
             bool networkWithBundlePresent = false;
             foreach (TDNetwork network in TDNetwork.Networks) {
                 if (network.iOSEnabled && network.bundlePresent) {
@@ -94,41 +95,81 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 
         var proj = new PBXProject();
         proj.ReadFromString(File.ReadAllText(path));
-        var target = proj.TargetGuidByName("Unity-iPhone");
+
+        var unityIPhoneTargetGuid = GetUnityIPhoneTargetGuid(path);
+        var unityFrameworkTargetGuid = GetUnityFrameworkTargetGuid(path);
 
         processExistingiOSPaths(pathToBuiltProject);
-        SetBuildProperties(proj, target);
 
-        AddLibraries(proj, target, pathToBuiltProject);
+        SetBuildProperties(proj, unityIPhoneTargetGuid, unityFrameworkTargetGuid);
+
+        // Pass Unity-iPhone target only when UnityFramework is not available
+        AddLibraries(proj, unityFrameworkTargetGuid == null ? unityIPhoneTargetGuid : unityFrameworkTargetGuid, pathToBuiltProject);
 
         SetPListProperties(pathToBuiltProject);
 
         File.WriteAllText(path, proj.WriteToString());
     }
 
-    private static void SetBuildProperties(PBXProject proj, string target) {
-		proj.SetBuildProperty(target, "LD_RUNPATH_SEARCH_PATHS", "$(inherited) @executable_path/Frameworks");
-		proj.SetBuildProperty(target, "IPHONEOS_DEPLOYMENT_TARGET", GetIOSDeploymentTarget(proj));
-        proj.SetBuildProperty(target, "CLANG_ENABLE_MODULES", "YES");
-        proj.UpdateBuildProperty(target, "OTHER_LDFLAGS", new string [] { "-ObjC" }, new string [] {});
+    private static string GetUnityFrameworkTargetGuid(string path) {
+        var proj = new UnityEditor.iOS.Xcode.PBXProject();
+        proj.ReadFromString(File.ReadAllText(path));
+        string unityFrameworkTargetGuid = null;
+                
+        var unityFrameworkTargetGuidMethod = proj.GetType().GetMethod("GetUnityFrameworkTargetGuid");
+                        
+        if (unityFrameworkTargetGuidMethod != null) {
+            unityFrameworkTargetGuid = (string)unityFrameworkTargetGuidMethod.Invoke(proj, null);
+        }
+        return unityFrameworkTargetGuid;
+    }
+
+
+    private static string GetUnityIPhoneTargetGuid(string path) {
+        var proj = new UnityEditor.iOS.Xcode.PBXProject();
+        proj.ReadFromString(File.ReadAllText(path));
+        string mainTargetGuid = null;
+                
+        var unityMainTargetGuidMethod = proj.GetType().GetMethod("GetUnityMainTargetGuid");                       
+        if (unityMainTargetGuidMethod != null) {
+            mainTargetGuid = (string)unityMainTargetGuidMethod.Invoke(proj, null);
+        } else {
+            mainTargetGuid = proj.TargetGuidByName ("Unity-iPhone");
+        }
+        return mainTargetGuid;
+    }
+
+    private static void SetBuildProperties(PBXProject proj, string unityIPhoneTargetGuid, string unityFrameworkTargetGuid) {
+		proj.SetBuildProperty(unityIPhoneTargetGuid, "LD_RUNPATH_SEARCH_PATHS", "$(inherited) @executable_path/Frameworks");
+		proj.SetBuildProperty(unityIPhoneTargetGuid, "IPHONEOS_DEPLOYMENT_TARGET", GetIOSDeploymentTarget(proj));
+        proj.SetBuildProperty(unityIPhoneTargetGuid, "CLANG_ENABLE_MODULES", "YES");
+        proj.UpdateBuildProperty(unityIPhoneTargetGuid, "OTHER_LDFLAGS", new string [] { "-ObjC" }, new string [] {});
+
+        var targetGuidForFrameworks = unityFrameworkTargetGuid == null ? unityIPhoneTargetGuid : unityFrameworkTargetGuid;
+
+        // This flag is also required in UnityFramework target
+        if (unityFrameworkTargetGuid != null) {
+            proj.UpdateBuildProperty(unityFrameworkTargetGuid, "OTHER_LDFLAGS", new string [] { "-ObjC" }, new string [] {});
+        }
 
 
 
-        proj.AddFrameworkToProject(target, "MessageUI.framework", false);
-        proj.AddFrameworkToProject(target, "AdSupport.framework", false);
-        proj.AddFrameworkToProject(target, "CoreData.framework", false);
-        proj.AddFrameworkToProject(target, "SystemConfiguration.framework", false);
-        proj.AddFrameworkToProject(target, "EventKit.framework", false);
-        proj.AddFrameworkToProject(target, "EventKitUI.framework", false);
-        proj.AddFrameworkToProject(target, "WatchConnectivity.framework", false);
-        proj.AddFrameworkToProject(target, "MobileCoreServices.framework", false);
-        proj.AddFrameworkToProject(target, "Social.framework", false);
-        proj.AddFrameworkToProject(target, "JavaScriptCore.framework", false);
-        proj.AddFrameworkToProject(target, "libz.dylib", false);
-        proj.AddFrameworkToProject(target, "libsqlite3.tbd", false);
-        proj.AddFrameworkToProject(target, "libc++.tbd", false);
-        proj.AddFrameworkToProject(target, "libxml2.tbd", false);
-        proj.AddFrameworkToProject(target, "libresolv.9.tbd", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "MessageUI.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "AdSupport.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "CoreData.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "SystemConfiguration.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "EventKit.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "EventKitUI.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "WatchConnectivity.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "MobileCoreServices.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "Social.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "JavaScriptCore.framework", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "libz.dylib", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "libsqlite3.tbd", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "libc++.tbd", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "libxml2.tbd", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "libresolv.9.tbd", false);
+        proj.AddFrameworkToProject(targetGuidForFrameworks, "libbz2.tbd", false); //Pangle
 
 		var path = EditorPrefs.GetString (BuildPathKey, null);
 
@@ -137,9 +178,9 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
             || AssetDatabase.FindAssets("YouAppiAdapter.framework").Length > 0)
         {
             Debug.Log("SET YOUAPPI PROPS");
-            proj.SetBuildProperty(target, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "YES");
-            proj.SetBuildProperty(target, "DEFINES_MODULE", "YES");
-            proj.SetBuildProperty(target, "ENABLE_BITCODE", "NO");
+            proj.SetBuildProperty(unityIPhoneTargetGuid, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "YES");
+            proj.SetBuildProperty(unityIPhoneTargetGuid, "DEFINES_MODULE", "YES");
+            proj.SetBuildProperty(unityIPhoneTargetGuid, "ENABLE_BITCODE", "NO");
         }
     }
 
@@ -173,15 +214,6 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
                 proj.AddFileToBuild(target, proj.AddFile(fullPath, "TapjoyResources.bundle", PBXSourceTree.Source));
             }
         }
-
-        if (AssetDatabase.FindAssets("PlayableAds.framework").Length > 0)
-        {
-            if (!proj.ContainsFileByProjectPath("ZplayMuteListener.bundle"))
-            {
-                var fullPath = FrameworksPath + FrameworksDir + (shouldUseNewFolderStructure ? "" : "Tapdaq/NetworkSDKs/ZPlayAdapter/") + "PlayableAds.framework/Resources/ZplayMuteListener.bundle";
-                proj.AddFileToBuild(target, proj.AddFile(fullPath, "ZplayMuteListener.bundle", PBXSourceTree.Source));
-            }
-        }
     }
 
 	private static void SetPListProperties(string pathToBuiltProject) {
@@ -212,6 +244,18 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
 		if(TDSettings.getInstance().admob_appid_ios.Length > 0) {
             rootDict.SetString("GADApplicationIdentifier", TDSettings.getInstance().admob_appid_ios);
 		}
+
+        //SKAdNetworkIds
+        List<TDKeyValuePair> skAdNetworkIds = TDSettings.getInstance().skAdNetworkIds;
+        if (skAdNetworkIds.Count > 0)
+        {
+            PlistElementArray skAdNetworkItemsArray = rootDict.CreateArray("SKAdNetworkItems");
+            foreach (TDKeyValuePair pair in skAdNetworkIds)
+            {
+                PlistElementDict itemDict = skAdNetworkItemsArray.AddDict();
+                itemDict.SetString("SKAdNetworkIdentifier", pair.getValue());
+            }
+        }
 
 		// Write to file
 		File.WriteAllText(plistPath, plist.WriteToString());
