@@ -72,13 +72,9 @@ void _ConfigureTapdaq(const char* appIdChar,
     properties.userId = userId;
     properties.forwardUserId = forwardUserId;
 
-    if (isConsentGiven != 2) {
-        properties.isConsentGiven = (BOOL)isConsentGiven;
-    }
-    if (isAgeRestrictedUser != 2) {
-        properties.isAgeRestrictedUser = isAgeRestrictedUser;
-    }
-    properties.userSubjectToGDPR = isUserSubjectToGDPR;
+    [properties.privacySettings setUserSubjectToGdpr:(TDPrivacyStatus)isUserSubjectToGDPR];
+    [properties.privacySettings setGdprConsentGiven:(TDPrivacyStatus)isConsentGiven];
+    [properties.privacySettings setAgeRestrictedUser:(TDPrivacyStatus)isAgeRestrictedUser];
     
     NSData *data = [testDevices dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -161,6 +157,14 @@ void _SetAdMobContentRating(const char * rating) {
 const char * _GetAdMobContentRating() {
     NSString * ratingStr = Tapdaq.sharedSession.properties.adMobContentRating;
     return makeStringCopy([ratingStr UTF8String]);
+}
+
+void _SetAdvertiserTracking(int status) {
+    Tapdaq.sharedSession.properties.privacySettings.advertiserTracking = (TDPrivacyStatus)status;
+}
+
+int _AdvertiserTracking() {
+    return (int)Tapdaq.sharedSession.properties.privacySettings.advertiserTracking;
 }
 
 void _SetUserId(const char * userId) {

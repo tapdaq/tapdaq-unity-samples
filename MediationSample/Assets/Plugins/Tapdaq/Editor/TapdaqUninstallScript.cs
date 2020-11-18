@@ -35,7 +35,7 @@ namespace Tapdaq {
 			Delete ("Android/Tapdaq");
 			Delete ("Android/Tapdaq.androidlib");
 
-			foreach (TDNetwork network in TDNetwork.Networks) {
+			foreach (TDNetwork network in TDNetwork.AllNetworks) {
 				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
 				Delete (path);
 				path += ".androidlib";
@@ -85,7 +85,7 @@ namespace Tapdaq {
 			{
 				return true;
 			}
-			foreach (TDNetwork network in TDNetwork.Networks)
+			foreach (TDNetwork network in TDNetwork.AllNetworks)
 			{
 				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
 				if(Directory.Exists(BASE_PLUGIN_PATH + path))

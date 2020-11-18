@@ -206,7 +206,7 @@ namespace TDEditor {
                 bool isNetworkWithBundlePresent = false;
 
                 EditorGUI.BeginChangeCheck();
-                foreach (TDNetwork network in TDNetwork.Networks)
+                foreach (TDNetwork network in TDSettings.getInstance().networks)
                 {
                     GUILayout.Space(10);
 
