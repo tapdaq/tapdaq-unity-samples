@@ -64,7 +64,7 @@ void _ConfigureTapdaq(const char* appIdChar,
     }
     
     
-    TDProperties *properties = [TDProperties defaultProperties];
+    TDProperties *properties = [[Tapdaq sharedSession] properties];
     [properties setPluginVersion:version];
     properties.isDebugEnabled = isDebugMode;
     TDLogger.logLevel = isDebugMode ? TDLogLevelDebug : TDLogLevelInfo;
