@@ -74,7 +74,13 @@ namespace Tapdaq {
         [DllImport ("__Internal")]
         private static extern string _GetAdMobContentRating();
 
-        [DllImport ("__Internal")]
+		[DllImport("__Internal")]
+		private static extern void _SetAdvertiserTracking(int enabled);
+
+		[DllImport("__Internal")]
+		private static extern int _AdvertiserTracking();
+
+		[DllImport ("__Internal")]
         private static extern void _SetUserId(string userId);
         
         [DllImport ("__Internal")]
@@ -549,7 +555,23 @@ namespace Tapdaq {
             return result;
         }
 
-        public static void SetUserId(String userId)
+		public static void SetAdvertiserTrackingEnabled(TDStatus status)
+		{
+			#if UNITY_IPHONE
+			CallIosMethod(() => _SetAdvertiserTracking((int)status));
+			#endif
+		}
+
+		public static TDStatus GetAdvertiserTrackingEnabled()
+		{
+			int result = (int)TDStatus.UNKNOWN;
+			#if UNITY_IPHONE
+			CallIosMethod(() => result = _AdvertiserTracking());
+			#endif
+			return (TDStatus)result;
+		}
+
+		public static void SetUserId(String userId)
         {
             #if UNITY_IPHONE
             CallIosMethod(() => _SetUserId(userId));

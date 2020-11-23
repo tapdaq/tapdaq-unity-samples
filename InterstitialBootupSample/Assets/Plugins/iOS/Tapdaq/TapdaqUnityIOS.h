@@ -44,6 +44,9 @@ int _USPrivacy();
 void _SetAdMobContentRating(const char* rating);
 const char* _GetAdMobContentRating();
 
+void _SetAdvertiserTracking(int status);
+int _AdvertiserTracking();
+
 void _SetUserId(const char* userId);
 const char* _GetUserId();
 

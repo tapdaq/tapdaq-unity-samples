@@ -57,7 +57,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
         {
             #if UNITY_2019_3_OR_NEWER
             bool networkWithBundlePresent = false;
-            foreach (TDNetwork network in TDNetwork.Networks) {
+            foreach (TDNetwork network in TDNetwork.AllNetworks) {
                 if (network.iOSEnabled && network.bundlePresent) {
                     TDDebugLogger.Log("Network " + network.name + " has bundle");
                     networkWithBundlePresent = true;
@@ -152,26 +152,50 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
             proj.UpdateBuildProperty(unityFrameworkTargetGuid, "OTHER_LDFLAGS", new string [] { "-ObjC" }, new string [] {});
         }
 
+        List<string> frameworks = new List<string>();
+        List<string> weakFrameworks = new List<string>();
 
+        // Tapdaq Dependencies
+        frameworks.Add(TDFramework.ADSUPPORT_FRAMEWORK);
+        frameworks.Add(TDFramework.FOUNDATION_FRAMEWORK);
+        frameworks.Add(TDFramework.QUARTZ_CORE_FRAMEWORK);
+        frameworks.Add(TDFramework.SECURITY_FRAMEWORK);
+        frameworks.Add(TDFramework.SYSTEM_CONFIGURATION_FRAMEWORK);
+        frameworks.Add(TDFramework.UI_KIT_FRAMEWORK);
 
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "MessageUI.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "AdSupport.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "CoreData.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "SystemConfiguration.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "EventKit.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "EventKitUI.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "WatchConnectivity.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "MobileCoreServices.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "Social.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "JavaScriptCore.framework", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "libz.dylib", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "libsqlite3.tbd", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "libc++.tbd", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "libxml2.tbd", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "libresolv.9.tbd", false);
-        proj.AddFrameworkToProject(targetGuidForFrameworks, "libbz2.tbd", false); //Pangle
+        foreach (TDNetwork network in TDNetwork.AllNetworks)
+        {
+            if(AssetDatabase.FindAssets(String.Concat(network.name, "Adapter.framework")).Length > 0)
+            {
+                foreach(TDFramework framework in network.iosDependendencies)
+                {
+                    if(framework.Weak)
+                    {
+                        if(!weakFrameworks.Contains(framework.Name))
+                        {
+                            weakFrameworks.Add(framework.Name);
+                        }
+                    } else
+                    {
+                        if (!frameworks.Contains(framework.Name))
+                        {
+                            frameworks.Add(framework.Name);
+                        }
+                    }
+                }
+            }
+        }
 
-		var path = EditorPrefs.GetString (BuildPathKey, null);
+        foreach(string framework in weakFrameworks)
+        {
+            proj.AddFrameworkToProject(targetGuidForFrameworks, framework, true);
+        }
+        foreach (string framework in frameworks)
+        {
+            proj.AddFrameworkToProject(targetGuidForFrameworks, framework, false);
+        }
+
+        var path = EditorPrefs.GetString (BuildPathKey, null);
 
         string dir = path + "/Pods/";
         if (Directory.Exists(dir) && Directory.GetFiles(dir, "YouAppiAdapter.framework", SearchOption.AllDirectories) != null
@@ -188,7 +212,7 @@ public class TapdaqBuildPostprocessor : MonoBehaviour{
         bool shouldUseNewFolderStructure = !Directory.Exists(projectPath + "/" + FrameworksPath + FrameworksDir + "Tapdaq");
 		Debug.Log("Use new folder structure: " + shouldUseNewFolderStructure);
         
- 		foreach(TDNetwork network in TDNetwork.Networks) {
+ 		foreach(TDNetwork network in TDNetwork.AllNetworks) {
 			if (network.name.Equals("YouAppiAdapter", StringComparison.CurrentCultureIgnoreCase)) {
                 if (TDSettings.getInstance().useCocoapodsMaven)
                 {

@@ -27,8 +27,8 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.8.0";
-	private static string TAPDAQ_IOS_VERSION = "7.8.0";
+	private static string TAPDAQ_ANDROID_VERSION = "7.8.1";
+	private static string TAPDAQ_IOS_VERSION = "7.8.1";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
     private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
@@ -56,19 +56,12 @@ public class TDDependencies : AssetPostprocessor
 
     public static string minTargetSDKVersion = "9.0";
 
-	public static TDSettings settings;
-
     public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
 
     public static Dependencies dependencies = new Dependencies();
 
 	static TDDependencies()
 	{
-		if (!settings)
-		{
-			settings = TDSettings.getInstance();
-		}
-
 		RegisterDependencies();
 	}
 
@@ -93,9 +86,9 @@ public class TDDependencies : AssetPostprocessor
 
     public static void RegisterAndroidDependencies()
 	{
-        if(settings.useCocoapodsMaven)
+        if(TDSettings.getInstance().useCocoapodsMaven)
         {
-            if (settings.useCocoapodsMaven)
+            if (TDSettings.getInstance().useCocoapodsMaven)
             {
                 List<String> repositories = new List<string>();
                 repositories.Add(TAPDAQ_REPOSITORY);

@@ -8,7 +8,7 @@ namespace Tapdaq {
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_7.8.0";
+		public const string pluginVersion = "unity_7.8.1";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
@@ -25,7 +25,7 @@ namespace Tapdaq {
         public bool shouldAddUnityIPhoneTargetToPodfile = false;
 
 		[SerializeField]
-		public List<TDNetwork> networks = new List<TDNetwork>(TDNetwork.Networks.ToArray());
+		public List<TDNetwork> networks = new List<TDNetwork>(TDNetwork.AllNetworks.ToArray());
 
 		[SerializeField]
 		public List<TestDevice> testDevices = new List<TestDevice>();
@@ -33,18 +33,41 @@ namespace Tapdaq {
 		[SerializeField]
 		public List<TDKeyValuePair> skAdNetworkIds = new List<TDKeyValuePair>();
 
-        public static TDSettings getInstance() {
-			if (instance == null) {
-				TDSettings[] settings = Resources.LoadAll<TDSettings> ("Tapdaq");
-                if(settings != null && settings.Length > 0)
-                {
-                    instance = settings[0];
-                } else
-                {
-                    return new TDSettings();
-                }
+		public static TDSettings getInstance()
+		{
+			if (instance == null)
+			{
+				TDSettings[] settings = Resources.LoadAll<TDSettings>("Tapdaq");
+				if (settings != null && settings.Length > 0)
+				{
+					instance = settings[0];
+					instance.clean();
+				}
+				else
+				{
+					return new TDSettings();
+				}
 			}
-            return instance;
+			return instance;
+		}
+
+		private void clean()
+		{
+			if (this.networks.Count == 0)
+			{
+				Debug.Log("Networks Empty, repopulating");
+				this.networks = new List<TDNetwork>(TDNetwork.AllNetworks.ToArray());
+			}
+
+			List<TDNetwork> tmp = new List<TDNetwork>(this.networks);
+			foreach (TDNetwork network in tmp)
+			{
+				if (String.IsNullOrEmpty(network.name))
+				{
+					Debug.Log("Network name missing, removing");
+					this.networks.Remove(network);
+				}
+			}
 		}
 	}
 
