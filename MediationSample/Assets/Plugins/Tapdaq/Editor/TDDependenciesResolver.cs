@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using Tapdaq;
 using UnityEngine;
-using System.Reflection;
 using System.Xml.Serialization;
 using TDXMLSchema;
 using System.IO;
@@ -27,36 +26,19 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.8.1";
-	private static string TAPDAQ_IOS_VERSION = "7.8.1";
+	private static string TAPDAQ_ANDROID_VERSION = "7.9.0-rc3";
+	private static string TAPDAQ_IOS_VERSION = "7.9.0";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
-    private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
+    private static string TAPDAQ_REPOSITORY = "https://tapdaq-android-sdk.s3.eu-west-2.amazonaws.com/release/";
+    //private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
 
-
-
-    public static object svcSupport;
-
-    // Manual Integration
-    // This value may be set as low as 17.2.0+ ****
-    private static string playServicesIdentityVersion = "17.0.0";
-    private static string playServicesAdsVersion = "19.4.0";
-    private static string playServicesBaseVersion = "17.3.0";
-    private static string playServicesGcmVersion = "17.0.0";
-
-    // DO NOT CHANGE THESE VALUES 
-    private static string minimumLifecycleVersion = "2.0.0+";
-
-    private static string minimumRecyclerViewLibraryVersion = "1.0.0+";
-    private static string minimumBrowserLibraryVersion = "1.0.0+";
-    private static string minimumSupportLibraryVersion = "1.0.0+";
-    private static string minimumInMobiSupportLibraryVersion = "1.0.0+";
-    private static string minimumFANSupportLibraryVersion = "1.0.0+";
-    private static string minimumVungleSupportLibraryVersion = "1.0.0+";
 
     public static string minTargetSDKVersion = "9.0";
 
-    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods.git";
+    //public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+
 
     public static Dependencies dependencies = new Dependencies();
 
@@ -86,20 +68,11 @@ public class TDDependencies : AssetPostprocessor
 
     public static void RegisterAndroidDependencies()
 	{
-        if(TDSettings.getInstance().useCocoapodsMaven)
-        {
-            if (TDSettings.getInstance().useCocoapodsMaven)
-            {
-                List<String> repositories = new List<string>();
-                repositories.Add(TAPDAQ_REPOSITORY);
-                // Fetch Tapdaq SDK
-                FetchAndroid("com.tapdaq.sdk:Tapdaq-BaseSDK:" + TAPDAQ_ANDROID_VERSION, repositories);
-                FetchAndroid("com.tapdaq.sdk:Tapdaq-UnityBridge:" + TAPDAQ_ANDROID_VERSION, repositories);
-            }
-        } else
-        {
-            RegisterManualAndroidDependencies();
-        }
+        List<String> repositories = new List<string>();
+        repositories.Add(TAPDAQ_REPOSITORY);
+        // Fetch Tapdaq SDK
+        FetchAndroid("com.tapdaq.sdk:Tapdaq-BaseSDK:" + TAPDAQ_ANDROID_VERSION, repositories);
+        FetchAndroid("com.tapdaq.sdk:Tapdaq-UnityBridge:" + TAPDAQ_ANDROID_VERSION, repositories);  
 	}
 
 	public static void FetchAndroid(string spec, List<String> repositories)
@@ -118,45 +91,39 @@ public class TDDependencies : AssetPostprocessor
 
 	public static void ResolveAdapters()
 	{
-        if (TDSettings.getInstance().useCocoapodsMaven)
+        // Check status of each network and resolve if enabled
+        foreach (TDNetwork network in TDSettings.getInstance().networks)
         {
-            // Check status of each network and resolve if enabled
-            foreach (TDNetwork network in TDSettings.getInstance().networks)
+            Debug.Log("Adapter: " + network.name + "- Android: " + network.mavenAdapterDependency + " Enabled: " + network.androidEnabled + " - iOS: " + network.iOSEnabled);
+
+            if (network.iOSEnabled)
             {
-                Debug.Log("Adapter: " + network.name + "- Android: " + network.mavenAdapterDependency + " Enabled: " + network.androidEnabled + " - iOS: " + network.iOSEnabled);
+                FetchiOSPod("Tapdaq/" + network.cocoapodsAdapterDependency, TAPDAQ_IOS_VERSION, network.sdkTargetVersion.iOS);
+            }
 
-                if (network.iOSEnabled)
+            if (network.androidEnabled)
+            {
+                List<String> repositories = new List<string>();
+                repositories.Add(TAPDAQ_REPOSITORY);
+
+                if (network.mavenNetworkRepository != null)
                 {
-                    FetchiOSPod("Tapdaq/" + network.cocoapodsAdapterDependency, TAPDAQ_IOS_VERSION, network.sdkTargetVersion.iOS);
+                    repositories.Add(network.mavenNetworkRepository);
                 }
-
-                if (network.androidEnabled)
-                {
-                    List<String> repositories = new List<string>();
-                    repositories.Add(TAPDAQ_REPOSITORY);
-
-                    if (network.mavenNetworkRepository != null)
-                    {
-                        repositories.Add(network.mavenNetworkRepository);
-                    }
-                    FetchAndroid(network.mavenAdapterDependency + TAPDAQ_ANDROID_VERSION, repositories);
-                }
+                FetchAndroid(network.mavenAdapterDependency + TAPDAQ_ANDROID_VERSION, repositories);
             }
         }
     }
 
 	public static void RegisterIOSDependencies()
 	{
-        if (TDSettings.getInstance().useCocoapodsMaven)
-		{
-			// ADD TAPDAQ POD  
-			Sources s = new Sources();
-			s.Source = cocoapods_respository;
+		// ADD TAPDAQ POD  
+		Sources s = new Sources();
+		s.Source = cocoapods_respository;
 
-			dependencies.IosPods.Sources = s;
+		dependencies.IosPods.Sources = s;
 
-			FetchiOSPod("Tapdaq", TAPDAQ_IOS_VERSION, "9.0");
-		}
+		FetchiOSPod("Tapdaq", TAPDAQ_IOS_VERSION, "9.0");
 	}
 
 	public static void FetchiOSPod(string podName, string version, string minTargetSDK)
@@ -169,159 +136,6 @@ public class TDDependencies : AssetPostprocessor
 
 		dependencies.IosPods.IosPod.Add(p);
 	}
-
-    public static void RegisterManualAndroidDependencies()
-    {
-#if UNITY_ANDROID
-        // Setup the resolver using reflection as the module may not be
-        // available at compile time.
-        Type playServicesSupport = Google.VersionHandler.FindClass(
-            "Google.JarResolver", "Google.JarResolver.PlayServicesSupport");
-        if (playServicesSupport == null)
-        {
-            return;
-        }
-
-        svcSupport = svcSupport ?? Google.VersionHandler.InvokeStaticMethod(
-            playServicesSupport, "CreateInstance",
-            new object[] {
-                "GooglePlayGames",
-                EditorPrefs.GetString("AndroidSdkRoot"),
-                "ProjectSettings"
-            });
-
-        string playServicesVersion = playServicesAdsVersion;
-        string supportLibraryVersion = minimumSupportLibraryVersion;
-
-        if (AssetDatabase.FindAssets("TapdaqFANAdapter").Length > 0)
-        {
-            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumFANSupportLibraryVersion);
-        }
-
-        if (AssetDatabase.FindAssets("TapdaqInMobiAdapter").Length > 0)
-        {
-            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumInMobiSupportLibraryVersion);
-        }
-
-        if (AssetDatabase.FindAssets("TapdaqVungleAdapter").Length > 0)
-        {
-            supportLibraryVersion = getHighestVersion(supportLibraryVersion, minimumVungleSupportLibraryVersion);
-        }
-
-        if (AssetDatabase.FindAssets("Tapdaq", new[] { "Assets/Plugins/Android" }).Length > 0)
-        {
-            //Required by Tapdaq
-            Google.VersionHandler.InvokeInstanceMethod(
-            svcSupport, "DependOn",
-            new object[] { "com.google.android.gms", "play-services-ads-identifier", playServicesIdentityVersion },
-        namedArgs: new Dictionary<string, object>() {
-            {"packageIds", new string[] { "extra-google-m2repository" } }
-        });
-
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "androidx.lifecycle", "lifecycle-extensions", minimumLifecycleVersion },
-            namedArgs: new Dictionary<string, object>() {
-            {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-        }
-
-        // Required by AdColony
-        if (AssetDatabase.FindAssets("TapdaqAdColonyAdapter").Length > 0)
-        {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "com.google.android.gms", "play-services-gcm", playServicesGcmVersion },
-            namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-google-m2repository" } }
-            });
-        }
-
-        //Required by AdMob
-        if (AssetDatabase.FindAssets("TapdaqAdMobAdapter").Length > 0)
-        {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "com.google.android.gms", "play-services-ads", playServicesAdsVersion },
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-google-m2repository" } }
-                });
-        }
-
-        //Required by Chartboost
-        if (AssetDatabase.FindAssets("TapdaqChartboostAdapter").Length > 0)
-        {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "com.google.android.gms", "play-services-base", playServicesBaseVersion },
-            namedArgs: new Dictionary<string, object>() {
-                {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-        }
-
-        //Required by InMobi
-        if (AssetDatabase.FindAssets("TapdaqInMobiAdapter").Length > 0)
-        {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "androidx.recyclerview", "recyclerview", minimumRecyclerViewLibraryVersion },
-                namedArgs: new Dictionary<string, object>() {
-                {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "androidx.browser", "browser", minimumBrowserLibraryVersion },
-                namedArgs: new Dictionary<string, object>() {
-                {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "androidx.legacy", "legacy-support-v4", supportLibraryVersion },
-                namedArgs: new Dictionary<string, object>() {
-                {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-        }
-
-        //Required by FAN
-        if (AssetDatabase.FindAssets("TapdaqFANAdapter").Length > 0)
-        {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport, "DependOn",
-                new object[] { "androidx.recyclerview", "recyclerview", minimumRecyclerViewLibraryVersion },
-            namedArgs: new Dictionary<string, object>() {
-                {"packageIds", new string[] { "extra-android-m2repository" } }
-            });
-        }
-#endif
-    }
-
-    private static string cleanVersionString(string version)
-    {
-        version = version.Replace("+", "");
-        if (version.EndsWith(".", StringComparison.Ordinal))
-        {
-            version += "0";
-        }
-        return version;
-    }
-
-    // Compares two version numbers. Must have at least 2 numbers e.g. 1.0
-    // Plus symbols will be removed for comparison but return value will include them
-    private static string getHighestVersion(string v, string v1)
-    {
-        var version1 = new Version(cleanVersionString(v));
-        var version2 = new Version(cleanVersionString(v1));
-
-        var result = version1.CompareTo(version2);
-        if (result > 0)
-            return v;
-        else if (result < 0)
-            return v1;
-
-        return v;
-    }
 
     // Handle delayed loading of the dependency resolvers.
     private static void OnPostprocessAllAssets(

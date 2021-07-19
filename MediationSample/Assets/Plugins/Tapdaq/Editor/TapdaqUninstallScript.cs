@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using System;
+using UnityEditor;
 using System.IO;
-using Tapdaq;
 
 namespace Tapdaq {
 	public class TapdaqUninstallScript {
@@ -22,28 +19,9 @@ namespace Tapdaq {
 	private static void Uninstall(bool keepSettings) {
 			Delete ("Editor/iOS/Xcode");
 			DeleteIfEmpty ("Editor/iOS");
-			Delete ("Editor/Vungle/VungleResources");
-			Delete ("Editor/Vungle/mod_pbxproj.pyc");
-			Delete ("Editor/Vungle/mod_pbxproj.py");
-			Delete ("Editor/Vungle/VunglePostBuilder.cs");
-			Delete ("Editor/Vungle/VunglePostProcessor.py");
-			DeleteIfEmpty ("Editor/Vungle");
 			DeleteIfEmpty ("Editor");
 			Delete ("iOS/Tapdaq");
-			Delete ("iOS/Tapdaq.framework");
 			DeleteIfEmpty ("iOS");
-			Delete ("Android/Tapdaq");
-			Delete ("Android/Tapdaq.androidlib");
-
-			foreach (TDNetwork network in TDNetwork.AllNetworks) {
-				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
-				Delete (path);
-				path += ".androidlib";
-				Delete(path);
-			}
-
-			Delete ("Android/libs/Tapdaq");
-			DeleteIfEmpty ("Android/libs");
 			DeleteIfEmpty ("Android", "AndroidManifest.xml");
 
 			if (keepSettings)
@@ -52,49 +30,6 @@ namespace Tapdaq {
 				Delete ("Tapdaq");
 
 			AssetDatabase.Refresh (ImportAssetOptions.ImportRecursive);
-		}
-
-		[MenuItem("Tapdaq/Uninstall Manual Integration", false, 11112)]
-		public static void DeleteManualIntegration()
-		{
-			//Android
-			Delete("Android/Tapdaq");
-            
-            string[] subfolders = Directory.GetDirectories("Assets/Plugins/Android/");
-            foreach (string s in subfolders)
-            {
-                if (s.Contains("/Tapdaq"))
-                {
-                    Debug.Log(s);
-                    Delete(s.Replace(BASE_PLUGIN_PATH, ""));
-                }
-            }
-
-			//iOS
-			Delete("iOS/Tapdaq/Adapters");
-			Delete("iOS/Tapdaq/NetworkSDKs");
-			Delete("iOS/Tapdaq/Tapdaq.framework");
-		}
-
-        public static bool IsManualIntegrationPresent()
-		{
-            if(Directory.Exists(BASE_PLUGIN_PATH + "Android/Tapdaq")
-                || Directory.Exists(BASE_PLUGIN_PATH + "iOS/Tapdaq/Adapters")
-				|| Directory.Exists(BASE_PLUGIN_PATH + "iOS/Tapdaq/NetworkSDKs")
-				|| Directory.Exists(BASE_PLUGIN_PATH + "iOS/Tapdaq/Tapdaq.framework"))
-			{
-				return true;
-			}
-			foreach (TDNetwork network in TDNetwork.AllNetworks)
-			{
-				var path = "Android/Tapdaq" + network.cocoapodsAdapterDependency;
-				if(Directory.Exists(BASE_PLUGIN_PATH + path))
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		private static void Delete(string path) {

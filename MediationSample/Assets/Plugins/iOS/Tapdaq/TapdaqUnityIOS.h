@@ -8,9 +8,9 @@
 #import <Foundation/Foundation.h>
 #import <Tapdaq/Tapdaq.h>
 
-void _LaunchMediationDebugger();
+void TD_LaunchMediationDebugger();
 
-void _ConfigureTapdaq(const char* appIdChar,
+void TD_ConfigureTapdaq(const char* appIdChar,
                       const char* clientKeyChar,
                       const char* testDevices,
                       bool isDebugMode,
@@ -22,114 +22,114 @@ void _ConfigureTapdaq(const char* appIdChar,
                       const char* userIdChar,
                       bool forwardUserId);
 
-void _SetDelegate();
+void TD_SetDelegate();
 
-bool _IsInitialised();
+bool TD_IsInitialised();
 
-void _SetUserSubjectToGDPR(int userSubjectToGDPR);
-int _UserSubjectToGDPR();
+void TD_SetPluginTools(const char* unityVersion);
 
-void _SetGdprConsent(int gdprConsent);
-int _GdprConsent();
+void TD_SetUserSubjectToGDPR(int userSubjectToGDPR);
+int TD_UserSubjectToGDPR();
 
-void _SetAgeRestrictedUser(int ageRestrictedUser);
-int _AgeRestrictedUser();
+void TD_SetGdprConsent(int gdprConsent);
+int TD_GdprConsent();
 
-void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy);
-int _UserSubjectToUSPrivacy();
+void TD_SetAgeRestrictedUser(int ageRestrictedUser);
+int TD_AgeRestrictedUser();
 
-void _SetUSPrivacy(int usPrivacy);
-int _USPrivacy();
+void TD_SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy);
+int TD_UserSubjectToUSPrivacy();
 
-void _SetAdMobContentRating(const char* rating);
-const char* _GetAdMobContentRating();
+void TD_SetUSPrivacy(int usPrivacy);
+int TD_USPrivacy();
 
-void _SetAdvertiserTracking(int status);
-int _AdvertiserTracking();
+void TD_SetAdMobContentRating(const char* rating);
+const char* TD_GetAdMobContentRating();
 
-void _SetUserId(const char* userId);
-const char* _GetUserId();
+void TD_SetAdvertiserTracking(int status);
+int TD_AdvertiserTracking();
 
-void _SetForwardUserId(bool forwardUserId);
-bool _ShouldForwardUserId();
+void TD_SetUserId(const char* userId);
+const char* TD_GetUserId();
 
-void _SetMuted(bool muted);
-bool _IsMuted();
+void TD_SetForwardUserId(bool forwardUserId);
+bool TD_ShouldForwardUserId();
 
-void _SetUserDataString(const char* key, const char* value);
-void _SetUserDataInteger(const char* key, int value);
-void _SetUserDataBoolean(const char* key, bool value);
+void TD_SetMuted(bool muted);
+bool TD_IsMuted();
 
-const char* _GetUserDataString(const char* key);
-int _GetUserDataInteger(const char* key);
-bool _GetUserDataBoolean(const char* key);
+void TD_SetUserDataString(const char* key, const char* value);
+void TD_SetUserDataInteger(const char* key, int value);
+void TD_SetUserDataBoolean(const char* key, bool value);
 
-const char* _GetAllUserData();
+const char* TD_GetUserDataString(const char* key);
+int TD_GetUserDataInteger(const char* key);
+bool TD_GetUserDataBoolean(const char* key);
 
-void _RemoveUserData(const char* key);
+const char* TD_GetAllUserData();
 
-const char * _GetNetworkStatuses();
+void TD_RemoveUserData(const char* key);
+
+const char * TD_GetNetworkStatuses();
 // banner
 
 /**
  * Loads a banner.
  * @param size A string. Must be one of following values: TDMBannerStandard, TDMBannerLarge, TDMBannerMedium, TDMBannerFull, TDMBannerLeaderboard, TDMBannerSmartPortrait, TDMBannerSmartLandscape
  */
-void _LoadBannerForSize(const char* tagChar, const char* sizeChar);
+void TD_LoadBannerForSize(const char* tagChar, const char* sizeChar);
 
-void _LoadBannerWithSize(const char* tagChar, int width, int height);
+void TD_LoadBannerWithSize(const char* tagChar, int width, int height);
 
-bool _IsBannerReady(const char* tagChar);
+bool TD_IsBannerReady(const char* tagChar);
 
-void _ShowBanner(const char* tagChar, const char* position);
+void TD_ShowBanner(const char* tagChar, const char* position);
 
-void _ShowBannerWithPosition(const char* tagChar, int x, int y);
+void TD_ShowBannerWithPosition(const char* tagChar, int x, int y);
 
-void _HideBanner(const char* tagChar);
+void TD_HideBanner(const char* tagChar);
 
-void _DestroyBanner(const char* tagChar);
+void TD_DestroyBanner(const char* tagChar);
 
 // interstitial
 
-void _LoadInterstitialWithTag(const char *tagChar);
+void TD_LoadInterstitialWithTag(const char *tagChar);
 
-bool _IsInterstitialReadyWithTag(const char *tagChar);
+bool TD_IsInterstitialReadyWithTag(const char *tagChar);
 
-const char * _GetInterstitialFrequencyCapError(const char *tagChar);
+const char * TD_GetInterstitialFrequencyCapError(const char *tagChar);
 
-void _ShowInterstitialWithTag(const char* tagChar);
+void TD_ShowInterstitialWithTag(const char* tagChar);
 
 // video
 
-void _LoadVideoWithTag(const char *tagChar);
+void TD_LoadVideoWithTag(const char *tagChar);
 
-bool _IsVideoReadyWithTag(const char *tagChar);
+bool TD_IsVideoReadyWithTag(const char *tagChar);
 
-const char * _GetVideoFrequencyCapError(const char *tagChar);
+const char * TD_GetVideoFrequencyCapError(const char *tagChar);
 
-void _ShowVideoWithTag(const char* tagChar);
+void TD_ShowVideoWithTag(const char* tagChar);
 
 // reward video
 
-void _LoadRewardedVideoWithTag(const char *tagChar);
+void TD_LoadRewardedVideoWithTag(const char *tagChar);
 
-bool _IsRewardedVideoReadyWithTag(const char *tagChar);
+bool TD_IsRewardedVideoReadyWithTag(const char *tagChar);
 
-const char * _GetRewardedVideoFrequencyCapError(const char *tagChar);
+const char * TD_GetRewardedVideoFrequencyCapError(const char *tagChar);
 
-void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar);
+void TD_ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar);
 
-void _LaunchMediationDebugger();
-
-bool _isEmpty(const char *str);
+bool TD_isEmpty(const char *str);
 
 // stats
 
-void _SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale);
+void TD_SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale);
 
 // rewards
 
-const char *_GetRewardId(const char* tag);
+const char *TD_GetRewardId(const char* tag);
 
 @interface TapdaqUnityIOS : NSObject
 

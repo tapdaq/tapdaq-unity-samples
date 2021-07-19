@@ -156,106 +156,50 @@ namespace TDEditor {
 
 			// Adapters
 			DrawSeparator(2);
-
-			GUILayout.Space (25);
-
-            EditorGUI.BeginChangeCheck();
-            settings.useCocoapodsMaven = EditorGUILayout.Toggle("Cocoapods/Maven", settings.useCocoapodsMaven);
-            if(EditorGUI.EndChangeCheck())
-            {
-                if (settings.useCocoapodsMaven == false)
-                {
-                    SaveAdapters();
-                } else if(TapdaqUninstallScript.IsManualIntegrationPresent())
-				{
-					int result = EditorUtility.DisplayDialogComplex("Enable Cocoapods/Maven",
-									  "An existing Tapdaq integration is present and should be removed before using Cocoapods/Maven",
-				"Cancel", "Remove", "Continue without removing");
-                    
-				    switch (result)
-					{
-						case 0:
-							{
-								//Cancel
-								settings.useCocoapodsMaven = false;
-								break;
-							}
-						case 1:
-							{
-								//Remove
-								TapdaqUninstallScript.DeleteManualIntegration();
-								break;
-							}
-						default:
-							break;
-					}
-				}
-			}
-
+             
             GUILayout.Space(10);
 
-            if(settings.useCocoapodsMaven)
+            GUILayout.BeginVertical();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Network", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+            GUILayout.Label("iOS", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+            GUILayout.Label("Android", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
+            GUILayout.EndHorizontal();
+
+            EditorGUI.BeginChangeCheck();
+            foreach (TDNetwork network in TDSettings.getInstance().networks)
             {
-                GUILayout.BeginVertical();
+                GUILayout.Space(10);
+
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Network", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
-                GUILayout.Label("iOS", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
-                GUILayout.Label("Android", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
-                GUILayout.EndHorizontal();
-
-                bool isNetworkWithBundlePresent = false;
-
-                EditorGUI.BeginChangeCheck();
-                foreach (TDNetwork network in TDSettings.getInstance().networks)
+                GUILayout.Label(network.name, GUILayout.MaxWidth(100));
+                if(network.cocoapodsAdapterDependency != null)
                 {
-                    GUILayout.Space(10);
-
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(network.name, GUILayout.MaxWidth(100));
-                    if(network.cocoapodsAdapterDependency != null)
-                    {
-                        network.iOSEnabled = EditorGUILayout.Toggle("", network.iOSEnabled, GUILayout.MaxWidth(100));
-                        if (network.iOSEnabled && network.bundlePresent) {
-                        	isNetworkWithBundlePresent = true;
-                        }
-                    }
-                    if(network.mavenAdapterDependency != null)
-                    {
-                        network.androidEnabled = EditorGUILayout.Toggle(network.androidEnabled, GUILayout.MaxWidth(100));
-                    }
-                    GUILayout.EndHorizontal();
+                    network.iOSEnabled = EditorGUILayout.Toggle("", network.iOSEnabled, GUILayout.MaxWidth(100));
                 }
-                if(EditorGUI.EndChangeCheck()) {
-		        	settings.shouldAddUnityIPhoneTargetToPodfile = isNetworkWithBundlePresent;
-		        }
-                // Only display with setting for Unity 2019.3 and above.
-                #if UNITY_2019_3_OR_NEWER
-                GUILayout.Space(15);
-                DrawSeparator(2);
-                settings.shouldAddUnityIPhoneTargetToPodfile = EditorGUILayout.ToggleLeft(new GUIContent("iOS: Add empty Unity-iPhone target to Podfile", "Enabling this option will add an empty Unity-iPhone target to the generated Podfile. This is a workaround for a bug in the interaction between External Dependency Manager and Unity 2019.3 and above. All pods are being added to UnityFramework target which may cause some of the dependencies to not find their resources that are expected to be located in main bundle(Unity-iPhone)."), settings.shouldAddUnityIPhoneTargetToPodfile);
-				#endif
-                GUILayout.EndVertical();                
-
-                GUILayout.Space(25);
-
-                ShowButton("Save Adapters", 130, Color.white, () => {
-                    SaveAdapters();
-
-                    // Save settings
-                    if (GUI.changed)
-                    {
-                        EditorUtility.SetDirty(settings);
-                    }
-
-                });
+                if(network.mavenAdapterDependency != null)
+                {
+                    network.androidEnabled = EditorGUILayout.Toggle(network.androidEnabled, GUILayout.MaxWidth(100));
+                }
+                GUILayout.EndHorizontal();
             }
+			EditorGUI.EndChangeCheck();
 
-			// Save settings
-			if (GUI.changed) {
-				EditorUtility.SetDirty (settings);
-			}
+            GUILayout.EndVertical();                
 
-		}
+            GUILayout.Space(25);
+
+            ShowButton("Save Adapters", 130, Color.white, () => {
+                SaveAdapters();
+
+                // Save settings
+                if (GUI.changed)
+                {
+                    EditorUtility.SetDirty(settings);
+                }
+
+            });
+        }
 
 		private void SaveAdapters() {
             TDDependencies.RegisterDependencies();

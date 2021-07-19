@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a5c15c400e9f44468e6f88ee9a1c1b94
+guid: e58587a2334449b9b86d8bee04eb89ad
 labels:
 - gvh
 - gvh_rename_to_disable
-- gvh_version-1.2.161
-- gvhp_exportpath-ExternalDependencyManager/Editor/Google.IOSResolver_v1.2.161.dll.mdb
+- gvh_version-1.2.166
+- gvhp_exportpath-ExternalDependencyManager/Editor/Google.JarResolver_v1.2.166.dll.mdb
 - gvhp_targets-editor
 DefaultImporter:
   externalObjects: {}
