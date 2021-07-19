@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using Tapdaq;
 using Newtonsoft.Json;
+#if UNITY_IOS
+using Unity.Advertisement.IosSupport;
+#endif
 
 public class MediationSample : MonoBehaviour {
 
@@ -24,8 +27,15 @@ public class MediationSample : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-			
-	}
+#if UNITY_IOS
+		if(float.Parse(UnityEngine.iOS.Device.systemVersion) >= 14.0f)
+        {
+			Debug.Log("Unity iOS Support: Requesting iOS App Tracking Transparency native dialog.");
+
+			ATTrackingStatusBinding.RequestAuthorizationTracking();
+		}
+#endif
+    }
 
     private void Awake()
     {
