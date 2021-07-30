@@ -26,173 +26,176 @@ namespace Tapdaq {
 		
 		//================================= Interstitials ==================================================
 		[DllImport ("__Internal")]
-		private static extern void _ConfigureTapdaq(string appIdChar, string clientKeyChar, string testDevicesChar, bool isDebugMode, bool autoReloadAds,
+		private static extern void TD_ConfigureTapdaq(string appIdChar, string clientKeyChar, string testDevicesChar, bool isDebugMode, bool autoReloadAds,
                                                     string pluginVersion, int isUserSubjectToGDPR, int isConsentGiven, int isAgeRestrictedUser, string userIdChar, bool forwardUserId);
 
         [DllImport ("__Internal")]
-        private static extern void _SetDelegate();
+        private static extern void TD_SetDelegate();
 
 		[DllImport ("__Internal")]
-		private static extern bool _IsInitialised();
+        private static extern void TD_SetPluginTools(string unityVersion);
 
 		[DllImport ("__Internal")]
-		private static extern void _LaunchMediationDebugger();
+		private static extern bool TD_IsInitialised();
 
 		[DllImport ("__Internal")]
-		private static extern void _SetUserSubjectToGDPR(int userSubjectToGDPR);
+		private static extern void TD_LaunchMediationDebugger();
 
 		[DllImport ("__Internal")]
-		private static extern int _UserSubjectToGDPR();
+		private static extern void TD_SetUserSubjectToGDPR(int userSubjectToGDPR);
 
 		[DllImport ("__Internal")]
-		private static extern void _SetGdprConsent(int gdprConsent);
+		private static extern int TD_UserSubjectToGDPR();
 
 		[DllImport ("__Internal")]
-		private static extern int _GdprConsent();
+		private static extern void TD_SetGdprConsent(int gdprConsent);
 
 		[DllImport ("__Internal")]
-		private static extern void _SetAgeRestrictedUser(int ageRestrictedUser);
+		private static extern int TD_GdprConsent();
+
+		[DllImport ("__Internal")]
+		private static extern void TD_SetAgeRestrictedUser(int ageRestrictedUser);
 		
 		[DllImport ("__Internal")]
-		private static extern int _AgeRestrictedUser();
+		private static extern int TD_AgeRestrictedUser();
 
 		[DllImport("__Internal")]
-		private static extern void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy);
+		private static extern void TD_SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy);
 
 		[DllImport("__Internal")]
-		private static extern int _UserSubjectToUSPrivacy();
+		private static extern int TD_UserSubjectToUSPrivacy();
 
 		[DllImport("__Internal")]
-		private static extern void _SetUSPrivacy(int USPrivacy);
+		private static extern void TD_SetUSPrivacy(int USPrivacy);
 
 		[DllImport("__Internal")]
-		private static extern int _USPrivacy();
+		private static extern int TD_USPrivacy();
 
 		[DllImport ("__Internal")]
-        private static extern void _SetAdMobContentRating(string rating);
+        private static extern void TD_SetAdMobContentRating(string rating);
         
         [DllImport ("__Internal")]
-        private static extern string _GetAdMobContentRating();
+        private static extern string TD_GetAdMobContentRating();
 
 		[DllImport("__Internal")]
-		private static extern void _SetAdvertiserTracking(int enabled);
+		private static extern void TD_SetAdvertiserTracking(int enabled);
 
 		[DllImport("__Internal")]
-		private static extern int _AdvertiserTracking();
+		private static extern int TD_AdvertiserTracking();
 
 		[DllImport ("__Internal")]
-        private static extern void _SetUserId(string userId);
+        private static extern void TD_SetUserId(string userId);
         
         [DllImport ("__Internal")]
-        private static extern string _GetUserId();
+        private static extern string TD_GetUserId();
 
         [DllImport ("__Internal")]
-        private static extern void _SetForwardUserId(bool forwardUserId);
+        private static extern void TD_SetForwardUserId(bool forwardUserId);
 
         [DllImport ("__Internal")]
-        private static extern bool _ShouldForwardUserId();
+        private static extern bool TD_ShouldForwardUserId();
 
         [DllImport ("__Internal")]
-        private static extern void _SetMuted(bool muted);
+        private static extern void TD_SetMuted(bool muted);
 
         [DllImport ("__Internal")]
-        private static extern bool _IsMuted();
+        private static extern bool TD_IsMuted();
 
         [DllImport ("__Internal")]
-        private static extern void _SetUserDataString(string key, string value);
+        private static extern void TD_SetUserDataString(string key, string value);
 
         [DllImport ("__Internal")]
-        private static extern void _SetUserDataInteger(string key, int value);
+        private static extern void TD_SetUserDataInteger(string key, int value);
         
         [DllImport ("__Internal")]
-        private static extern void _SetUserDataBoolean(string key, bool value);
+        private static extern void TD_SetUserDataBoolean(string key, bool value);
 
         [DllImport ("__Internal")]
-        private static extern string _GetUserDataString(string key);
+        private static extern string TD_GetUserDataString(string key);
         
         [DllImport ("__Internal")]
-        private static extern int _GetUserDataInteger(string key);
+        private static extern int TD_GetUserDataInteger(string key);
         
         [DllImport ("__Internal")]
-        private static extern bool _GetUserDataBoolean(string key);
+        private static extern bool TD_GetUserDataBoolean(string key);
 
         [DllImport ("__Internal")]
-        private static extern void _RemoveUserData(string key);
+        private static extern void TD_RemoveUserData(string key);
 
         [DllImport ("__Internal")]
-        private static extern string _GetAllUserData();
+        private static extern string TD_GetAllUserData();
 
         [DllImport ("__Internal")]
-		private static extern string _GetNetworkStatuses();
+		private static extern string TD_GetNetworkStatuses();
 
 		// interstitial
 		[DllImport ("__Internal")]
-		private static extern void _ShowInterstitialWithTag(string tag);
+		private static extern void TD_ShowInterstitialWithTag(string tag);
 
 		[DllImport ("__Internal")]
-		private static extern void _LoadInterstitialWithTag(string tag);
+		private static extern void TD_LoadInterstitialWithTag(string tag);
 
 		[DllImport ("__Internal")]
-		private static extern bool _IsInterstitialReadyWithTag(string tag);
+		private static extern bool TD_IsInterstitialReadyWithTag(string tag);
 
 		[DllImport("__Internal")]
-		private static extern string _GetInterstitialFrequencyCapError(string tag);
+		private static extern string TD_GetInterstitialFrequencyCapError(string tag);
 
 		// banner
 		[DllImport ("__Internal")]
-		private static extern void _LoadBannerForSize(string tag, string sizeString);
+		private static extern void TD_LoadBannerForSize(string tag, string sizeString);
 
 		[DllImport("__Internal")]
-		private static extern void _LoadBannerWithSize(string tag, int width, int height);
+		private static extern void TD_LoadBannerWithSize(string tag, int width, int height);
 
 		[DllImport ("__Internal")]
-        private static extern void _ShowBanner(string tag, string position);
+        private static extern void TD_ShowBanner(string tag, string position);
 
         [DllImport ("__Internal")]
-        private static extern void _ShowBannerWithPosition(string tag, int x, int y);
+        private static extern void TD_ShowBannerWithPosition(string tag, int x, int y);
 
         [DllImport("__Internal")]
-        private static extern void _HideBanner(string tag);
+        private static extern void TD_HideBanner(string tag);
 
 		[DllImport("__Internal")]
-		private static extern void _DestroyBanner(string tag);
+		private static extern void TD_DestroyBanner(string tag);
 
 		[DllImport("__Internal")]
-		private static extern bool _IsBannerReady(string tag);
+		private static extern bool TD_IsBannerReady(string tag);
 
 		// video
 		[DllImport ("__Internal")]
-		private static extern void _ShowVideoWithTag (string tag);
+		private static extern void TD_ShowVideoWithTag (string tag);
 
 		[DllImport("__Internal")]
-		private static extern void _LoadVideoWithTag(string tag);
+		private static extern void TD_LoadVideoWithTag(string tag);
 
 		[DllImport("__Internal")]
-		private static extern bool _IsVideoReadyWithTag(string tag);
+		private static extern bool TD_IsVideoReadyWithTag(string tag);
 
 		[DllImport("__Internal")]
-		private static extern string _GetVideoFrequencyCapError(string tag);
+		private static extern string TD_GetVideoFrequencyCapError(string tag);
 
 		// reward video
 		[DllImport ("__Internal")]
-		private static extern void _ShowRewardedVideoWithTag (string tag, string hashedUserId);
+		private static extern void TD_ShowRewardedVideoWithTag (string tag, string hashedUserId);
 
 		[DllImport ("__Internal")]
-		private static extern void _LoadRewardedVideoWithTag(string tag);
+		private static extern void TD_LoadRewardedVideoWithTag(string tag);
 
 		[DllImport ("__Internal")]
-		private static extern bool _IsRewardedVideoReadyWithTag(string tag);
+		private static extern bool TD_IsRewardedVideoReadyWithTag(string tag);
 
 		[DllImport("__Internal")]
-		private static extern string _GetRewardedVideoFrequencyCapError(string tag);
+		private static extern string TD_GetRewardedVideoFrequencyCapError(string tag);
 
 		/////////// Stats
 		[DllImport ("__Internal")]
-		private static extern void _SendIAP(string transactionId, string productId, string name, double price, string currency, string locale);
+		private static extern void TD_SendIAP(string transactionId, string productId, string name, double price, string currency, string locale);
 
 		/////////// Rewards
 		[DllImport ("__Internal")]
-		private static extern System.IntPtr _GetRewardId(string tag);
+		private static extern System.IntPtr TD_GetRewardId(string tag);
 
 #endif
 
@@ -266,12 +269,15 @@ namespace Tapdaq {
 
 			LogMessage (TDLogSeverity.debug, "TapdaqSDK/Initializing");
 
-			#if UNITY_IPHONE
+#if UNITY_IPHONE
+			CallIosMethod(() => TD_SetPluginTools(Application.unityVersion));
 			var testDevices = new TestDevicesList (settings.testDevices, TestDeviceType.iOS).ToString ();
 			TDDebugLogger.Log ("testDevices:\n" + testDevices);
-			CallIosMethod(() => _ConfigureTapdaq(appID, clientKey, testDevices, 
+			CallIosMethod(() => TD_ConfigureTapdaq(appID, clientKey, testDevices, 
                                                  settings.isDebugMode, settings.autoReloadAds, TDSettings.pluginVersion, (int)isUserSubjectToGDPR, (int)isConsentGiven, (int)isAgeRestrictedUser, userId, shouldForwardUserId));
-			#elif UNITY_ANDROID
+#elif UNITY_ANDROID
+			CallAndroidStaticMethod("SetPluginTools", Application.unityVersion);
+
 			var testDevices = new TestDevicesList (settings.testDevices, TestDeviceType.Android).ToString ();
 			TDDebugLogger.Log ("testDevices:\n" + testDevices);
 			CallAndroidStaticMethod("InitiateTapdaq", appID, clientKey, testDevices,
@@ -289,7 +295,7 @@ namespace Tapdaq {
 			LogUnsupportedPlatform ();
 			if(Application.platform == RuntimePlatform.IPhonePlayer) {
 				if(AdManager.instance != null && action != null) {
-                    _SetDelegate();
+                    TD_SetDelegate();
 					action.Invoke();
 				}
 			}
@@ -384,7 +390,7 @@ namespace Tapdaq {
 		public static bool IsInitialised() {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsInitialised());
+			CallIosMethod(() => ready = TD_IsInitialised());
 			#elif UNITY_ANDROID
 			ready = GetAndroidStatic<bool>("IsInitialised");
 			#endif
@@ -393,7 +399,7 @@ namespace Tapdaq {
 
 		public static void LaunchMediationDebugger () {
 			#if UNITY_IPHONE
-			_LaunchMediationDebugger ();
+			TD_LaunchMediationDebugger ();
 			#elif UNITY_ANDROID
 			CallAndroidStaticMethod("ShowMediationDebugger");
 			#endif
@@ -408,7 +414,7 @@ namespace Tapdaq {
 		public static void SetUserSubjectToGdprStatus(TDStatus status)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _SetUserSubjectToGDPR((int)status));
+			CallIosMethod(() => TD_SetUserSubjectToGDPR((int)status));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetUserSubjectToGDPR", (int)status);
             #endif
@@ -424,7 +430,7 @@ namespace Tapdaq {
 		{
 			int result = 2;
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _UserSubjectToGDPR());
+			CallIosMethod(() => result = TD_UserSubjectToGDPR());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<int>("GetUserSubjectToGdprStatus");
             #endif
@@ -440,7 +446,7 @@ namespace Tapdaq {
 		public static void SetConsentStatus(TDStatus status)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _SetGdprConsent((int)status));
+			CallIosMethod(() => TD_SetGdprConsent((int)status));
 #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetConsentGiven", (int)status);
 #endif
@@ -456,7 +462,7 @@ namespace Tapdaq {
 		{
 			int result = (int)TDStatus.UNKNOWN;
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _GdprConsent());
+			CallIosMethod(() => result = TD_GdprConsent());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<int>("GetConsentStatus");
             #endif
@@ -472,7 +478,7 @@ namespace Tapdaq {
 		public static void SetAgeRestrictedUserStatus(TDStatus status)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _SetAgeRestrictedUser((int)status));
+			CallIosMethod(() => TD_SetAgeRestrictedUser((int)status));
 #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetAgeRestrictedUser", (int)status);
 #endif
@@ -488,7 +494,7 @@ namespace Tapdaq {
 		{
 			int result = (int)TDStatus.UNKNOWN;
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _AgeRestrictedUser());
+			CallIosMethod(() => result = TD_AgeRestrictedUser());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<int>("GetAgeRestrictedUserStatus");
             #endif
@@ -498,7 +504,7 @@ namespace Tapdaq {
 		public static void SetUserSubjectToUSPrivacyStatus(TDStatus status)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _SetUserSubjectToUSPrivacy((int)status));
+			CallIosMethod(() => TD_SetUserSubjectToUSPrivacy((int)status));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetUserSubjectToUSPrivacyStatus", (int)status);
             #endif
@@ -508,7 +514,7 @@ namespace Tapdaq {
 		{
 			int result = (int)TDStatus.UNKNOWN;
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _UserSubjectToUSPrivacy());
+			CallIosMethod(() => result = TD_UserSubjectToUSPrivacy());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<int>("GetUserSubjectToUSPrivacyStatus");
             #endif
@@ -518,7 +524,7 @@ namespace Tapdaq {
 		public static void SetUSPrivacyStatus(TDStatus status)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _SetUSPrivacy((int)status));
+			CallIosMethod(() => TD_SetUSPrivacy((int)status));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetUSPrivacyStatus", (int)status);
             #endif
@@ -528,7 +534,7 @@ namespace Tapdaq {
 		{
 			int result = (int)TDStatus.UNKNOWN;
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _USPrivacy());
+			CallIosMethod(() => result = TD_USPrivacy());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<int>("GetUSPrivacyStatus");
             #endif
@@ -538,7 +544,7 @@ namespace Tapdaq {
 
 		public static void SetAdMobContentRating(String rating) {
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetAdMobContentRating(rating));
+            CallIosMethod(() => TD_SetAdMobContentRating(rating));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("SetAdMobContentRating", rating);
             #endif
@@ -548,7 +554,7 @@ namespace Tapdaq {
         {
             string result = null;
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _GetAdMobContentRating());
+            CallIosMethod(() => result = TD_GetAdMobContentRating());
             #elif UNITY_ANDROID
             result = GetAndroidStatic<String>("GetAdMobContentRating");
             #endif
@@ -558,7 +564,7 @@ namespace Tapdaq {
 		public static void SetAdvertiserTrackingEnabled(TDStatus status)
 		{
 			#if UNITY_IPHONE
-			CallIosMethod(() => _SetAdvertiserTracking((int)status));
+			CallIosMethod(() => TD_SetAdvertiserTracking((int)status));
 			#endif
 		}
 
@@ -566,7 +572,7 @@ namespace Tapdaq {
 		{
 			int result = (int)TDStatus.UNKNOWN;
 			#if UNITY_IPHONE
-			CallIosMethod(() => result = _AdvertiserTracking());
+			CallIosMethod(() => result = TD_AdvertiserTracking());
 			#endif
 			return (TDStatus)result;
 		}
@@ -574,7 +580,7 @@ namespace Tapdaq {
 		public static void SetUserId(String userId)
         {
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetUserId(userId));
+            CallIosMethod(() => TD_SetUserId(userId));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("SetUserId", userId);
             #endif
@@ -584,7 +590,7 @@ namespace Tapdaq {
         {
             string result = null;
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _GetUserId());
+            CallIosMethod(() => result = TD_GetUserId());
             #elif UNITY_ANDROID
             result = GetAndroidStatic<String>("GetUserId");
             #endif
@@ -594,7 +600,7 @@ namespace Tapdaq {
         public static void SetForwardUserId(bool forwardUserId)
         {
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetForwardUserId(forwardUserId));
+            CallIosMethod(() => TD_SetForwardUserId(forwardUserId));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("SetForwardUserId", forwardUserId);
             #endif
@@ -604,7 +610,7 @@ namespace Tapdaq {
         {
             bool result = false;
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _ShouldForwardUserId());
+            CallIosMethod(() => result = TD_ShouldForwardUserId());
             #elif UNITY_ANDROID
             result = GetAndroidStatic<bool>("ShouldForwardUserId");
             #endif
@@ -614,7 +620,7 @@ namespace Tapdaq {
 		public static void SetMuted(bool muted)
 		{
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetMuted(muted));
+            CallIosMethod(() => TD_SetMuted(muted));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetMuted", muted);
             #endif
@@ -624,7 +630,7 @@ namespace Tapdaq {
 		{
 			bool result = false;
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _IsMuted());
+            CallIosMethod(() => result = TD_IsMuted());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<bool>("GetMuted");
             #endif
@@ -634,7 +640,7 @@ namespace Tapdaq {
 		public static void SetUserData(string key, string value)
 		{
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetUserDataString(key, value));
+            CallIosMethod(() => TD_SetUserDataString(key, value));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("SetUserDataString", key, value);
             #endif
@@ -643,7 +649,7 @@ namespace Tapdaq {
 		public static void SetUserData(string key, int value)
 		{
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetUserDataInteger(key, value));
+            CallIosMethod(() => TD_SetUserDataInteger(key, value));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("SetUserDataInteger", key, value);
             #endif
@@ -652,7 +658,7 @@ namespace Tapdaq {
 		public static void SetUserData(string key, bool value)
 		{
             #if UNITY_IPHONE
-            CallIosMethod(() => _SetUserDataBoolean(key, value));
+            CallIosMethod(() => TD_SetUserDataBoolean(key, value));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("SetUserDataBoolean", key, value);
             #endif
@@ -662,7 +668,7 @@ namespace Tapdaq {
 		{
 			string result = "";
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _GetUserDataString(key));
+            CallIosMethod(() => result = TD_GetUserDataString(key));
             #elif UNITY_ANDROID
             result = GetAndroidStatic<string>("GetUserDataString", key);
             #endif
@@ -673,7 +679,7 @@ namespace Tapdaq {
 		{
 			int result = 0;
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _GetUserDataInteger(key));
+            CallIosMethod(() => result = TD_GetUserDataInteger(key));
             #elif UNITY_ANDROID
             result = GetAndroidStatic<int>("GetUserDataInteger", key);
             #endif
@@ -684,7 +690,7 @@ namespace Tapdaq {
 		{
 			bool result = false;
             #if UNITY_IPHONE
-            CallIosMethod(() => result = _GetUserDataBoolean(key));
+            CallIosMethod(() => result = TD_GetUserDataBoolean(key));
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<bool>("GetUserDataBoolean", key);
             #endif
@@ -695,7 +701,7 @@ namespace Tapdaq {
 		{
 			string result = "";
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _GetAllUserData());
+			CallIosMethod(() => result = TD_GetAllUserData());
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<string>("GetAllUserData");
             #endif
@@ -705,7 +711,7 @@ namespace Tapdaq {
 		public static void RemoveUserData(string key)
 		{
             #if UNITY_IPHONE
-            CallIosMethod(() => _RemoveUserData(key));
+            CallIosMethod(() => TD_RemoveUserData(key));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("RemoveUserData", key);
             #endif
@@ -715,7 +721,7 @@ namespace Tapdaq {
 		public static void LoadInterstitial(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
             #if UNITY_IPHONE
-            CallIosMethod(() => _LoadInterstitialWithTag(tag));
+            CallIosMethod(() => TD_LoadInterstitialWithTag(tag));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("LoadInterstitial", tag);
             #endif
@@ -730,7 +736,7 @@ namespace Tapdaq {
 
         public static void ShowInterstitial (string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _ShowInterstitialWithTag(tag));
+			CallIosMethod(() => TD_ShowInterstitialWithTag(tag));
 			#elif UNITY_ANDROID
             CallAndroidStaticMethod("ShowInterstitial", tag);
 			#endif
@@ -739,7 +745,7 @@ namespace Tapdaq {
         public static bool IsInterstitialReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsInterstitialReadyWithTag(tag));
+			CallIosMethod(() => ready = TD_IsInterstitialReadyWithTag(tag));
 			#elif UNITY_ANDROID
 			ready = GetAndroidStatic<bool>("IsInterstitialReady", tag);
 			#endif
@@ -757,7 +763,7 @@ namespace Tapdaq {
 			TDAdError error = null;
 			string result = "";
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _GetInterstitialFrequencyCapError(tag));
+			CallIosMethod(() => result = TD_GetInterstitialFrequencyCapError(tag));
             #elif UNITY_ANDROID
             result = GetAndroidStatic<string>("GetInterstitialFrequencyCapError", tag);
             #endif
@@ -774,7 +780,7 @@ namespace Tapdaq {
 		public static bool IsBannerReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsBannerReady(tag));
+			CallIosMethod(() => ready = TD_IsBannerReady(tag));
 			#elif UNITY_ANDROID
 			ready = GetAndroidStatic<bool>("IsBannerReady", tag);
 			#endif
@@ -783,7 +789,7 @@ namespace Tapdaq {
 
 		public static void RequestBanner (TDMBannerSize size, string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _LoadBannerForSize(tag, size.ToString()));
+			CallIosMethod(() => TD_LoadBannerForSize(tag, size.ToString()));
 			#elif UNITY_ANDROID
 			CallAndroidStaticMethod("LoadBanner", tag, size.ToString());
 			#endif
@@ -792,7 +798,7 @@ namespace Tapdaq {
 		public static void RequestBanner(int width, int height, string tag = TAPDAQ_PLACEMENT_DEFAULT)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _LoadBannerWithSize(tag, width, height));
+			CallIosMethod(() => TD_LoadBannerWithSize(tag, width, height));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("LoadBanner", tag, width, height);
             #endif
@@ -800,7 +806,7 @@ namespace Tapdaq {
 
 		public static void ShowBanner (TDBannerPosition position, string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _ShowBanner(tag, position.ToString()));
+			CallIosMethod(() => TD_ShowBanner(tag, position.ToString()));
 			#elif UNITY_ANDROID
 			CallAndroidStaticMethod("ShowBanner", tag, position.ToString());
 			#endif
@@ -809,7 +815,7 @@ namespace Tapdaq {
 		public static void ShowBanner(int x, int y, string tag = TAPDAQ_PLACEMENT_DEFAULT)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _ShowBannerWithPosition(tag, x, y));
+			CallIosMethod(() => TD_ShowBannerWithPosition(tag, x, y));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("ShowBanner", tag, x, y);
             #endif
@@ -818,7 +824,7 @@ namespace Tapdaq {
 		public static void HideBanner(string tag = TAPDAQ_PLACEMENT_DEFAULT)
 	    {
             #if UNITY_IPHONE
-			CallIosMethod(() => _HideBanner(tag));
+			CallIosMethod(() => TD_HideBanner(tag));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("HideBanner", tag);
 			#endif
@@ -827,7 +833,7 @@ namespace Tapdaq {
 		public static void DestroyBanner(string tag = TAPDAQ_PLACEMENT_DEFAULT)
 		{
             #if UNITY_IPHONE
-			CallIosMethod(() => _DestroyBanner(tag));
+			CallIosMethod(() => TD_DestroyBanner(tag));
             #elif UNITY_ANDROID
 			CallAndroidStaticMethod("DestroyBanner", tag);
             #endif
@@ -838,7 +844,7 @@ namespace Tapdaq {
 		public static void LoadVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
             #if UNITY_IPHONE
-            CallIosMethod(() => _LoadVideoWithTag (tag));
+            CallIosMethod(() => TD_LoadVideoWithTag (tag));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("LoadVideo", tag);
             #endif
@@ -853,7 +859,7 @@ namespace Tapdaq {
 
         public static void ShowVideo (string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _ShowVideoWithTag (tag));
+			CallIosMethod(() => TD_ShowVideoWithTag (tag));
 			#elif UNITY_ANDROID
             CallAndroidStaticMethod("ShowVideo", tag);
 			#endif
@@ -862,7 +868,7 @@ namespace Tapdaq {
         public static bool IsVideoReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsVideoReadyWithTag(tag));
+			CallIosMethod(() => ready = TD_IsVideoReadyWithTag(tag));
 			#elif UNITY_ANDROID
 			ready = GetAndroidStatic<bool>("IsVideoReady", tag);
 			#endif
@@ -880,7 +886,7 @@ namespace Tapdaq {
 			TDAdError error = null;
 			string result = "";
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _GetVideoFrequencyCapError(tag));
+			CallIosMethod(() => result = TD_GetVideoFrequencyCapError(tag));
             #elif UNITY_ANDROID
             result = GetAndroidStatic<string>("GetVideoFrequencyCapError", tag);
             #endif
@@ -896,7 +902,7 @@ namespace Tapdaq {
 		public static void LoadRewardedVideo(string tag = TAPDAQ_PLACEMENT_DEFAULT)
         {
             #if UNITY_IPHONE
-            CallIosMethod(() => _LoadRewardedVideoWithTag (tag));
+            CallIosMethod(() => TD_LoadRewardedVideoWithTag (tag));
             #elif UNITY_ANDROID
             CallAndroidStaticMethod("LoadRewardedVideo", tag);
             #endif
@@ -912,7 +918,7 @@ namespace Tapdaq {
         [Obsolete("UserId should now be set on Init or using SetUserId")]
         public static void ShowRewardVideo (string tag, string hashedUserId) {
 			#if UNITY_IPHONE
-            CallIosMethod(() => _ShowRewardedVideoWithTag (tag, hashedUserId));
+            CallIosMethod(() => TD_ShowRewardedVideoWithTag (tag, hashedUserId));
 			#elif UNITY_ANDROID
             CallAndroidStaticMethod("ShowRewardedVideo", tag, hashedUserId);
 			#endif
@@ -926,7 +932,7 @@ namespace Tapdaq {
         public static bool IsRewardedVideoReady(string tag = TAPDAQ_PLACEMENT_DEFAULT) {
 			bool ready = false;
 			#if UNITY_IPHONE
-			CallIosMethod(() => ready = _IsRewardedVideoReadyWithTag(tag));
+			CallIosMethod(() => ready = TD_IsRewardedVideoReadyWithTag(tag));
 			#elif UNITY_ANDROID
             ready = GetAndroidStatic<bool>("IsRewardedVideoReady", tag);
 			#endif
@@ -945,7 +951,7 @@ namespace Tapdaq {
 			TDAdError error = null;
 			string result = "";
             #if UNITY_IPHONE
-			CallIosMethod(() => result = _GetRewardedVideoFrequencyCapError(tag));
+			CallIosMethod(() => result = TD_GetRewardedVideoFrequencyCapError(tag));
             #elif UNITY_ANDROID
             result = GetAndroidStatic<string>("GetRewardedVideoFrequencyCapError", tag);
             #endif
@@ -971,7 +977,7 @@ namespace Tapdaq {
 		// iOS
 		public static void SendIAP_iOS (String transactionId, String productId, String name, double price, String currency, String locale) {
 			#if UNITY_IPHONE
-			CallIosMethod(() => _SendIAP(transactionId, productId, name, price, currency, locale));
+			CallIosMethod(() => TD_SendIAP(transactionId, productId, name, price, currency, locale));
 			#endif
 		}
 
@@ -984,7 +990,7 @@ namespace Tapdaq {
 
 		public static String GetRewardId (String tag) {
 			#if UNITY_IPHONE
-			return Marshal.PtrToStringAnsi(_GetRewardId(tag));
+			return Marshal.PtrToStringAnsi(TD_GetRewardId(tag));
 			#elif UNITY_ANDROID
 			return GetAndroidStatic<string>("GetRewardId", tag);
             #endif
@@ -997,7 +1003,7 @@ namespace Tapdaq {
 			List<TDNetworkStatus> networkStatuses = new List<TDNetworkStatus>();
 			string result = "";
 #if UNITY_IPHONE
-			CallIosMethod(() => result = _GetNetworkStatuses());
+			CallIosMethod(() => result = TD_GetNetworkStatuses());
 #elif UNITY_ANDROID
 			result = GetAndroidStatic<string>("GetNetworkStatuses");
 #endif

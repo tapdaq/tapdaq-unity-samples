@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 6dfcff7db2394cdc898a4240adf649c1
+guid: 0be593908d82451686bc8e5cc843a86f
 labels:
 - gvh
-- gvh_version-1.2.161
-- gvhp_exportpath-ExternalDependencyManager/Editor/Google.JarResolver_v1.2.161.dll
+- gvh_version-1.2.166
+- gvhp_exportpath-ExternalDependencyManager/Editor/Google.IOSResolver_v1.2.166.dll
 - gvhp_targets-editor
 PluginImporter:
   externalObjects: {}

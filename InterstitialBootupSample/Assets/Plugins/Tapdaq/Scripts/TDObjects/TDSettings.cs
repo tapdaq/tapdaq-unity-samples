@@ -8,7 +8,7 @@ namespace Tapdaq {
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_7.8.1";
+		public const string pluginVersion = "unity_7.9.0";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
@@ -20,9 +20,6 @@ namespace Tapdaq {
 
         public bool isDebugMode = false;
 		public bool autoReloadAds = false;
-
-        public bool useCocoapodsMaven = false;
-        public bool shouldAddUnityIPhoneTargetToPodfile = false;
 
 		[SerializeField]
 		public List<TDNetwork> networks = new List<TDNetwork>(TDNetwork.AllNetworks.ToArray());

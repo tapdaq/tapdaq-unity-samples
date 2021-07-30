@@ -13,7 +13,7 @@
 static NSString *const kTapdaqLogPrefix = @"[TapdaqUnity]";
 
 // Helper method to create C string copy
-char* makeStringCopy (const char* string)
+char* TDMakeStringCopy (const char* string)
 {
     if (string == NULL)
         return NULL;
@@ -23,7 +23,7 @@ char* makeStringCopy (const char* string)
     return res;
 }
 
-void _ConfigureTapdaq(const char* appIdChar,
+void TD_ConfigureTapdaq(const char* appIdChar,
                       const char* clientKeyChar,
                       const char* testDevicesChar,
                       bool isDebugMode,
@@ -37,12 +37,12 @@ void _ConfigureTapdaq(const char* appIdChar,
     
     bool isValid = true;
     
-    if (_isEmpty(appIdChar)) {
+    if (TD_isEmpty(appIdChar)) {
         NSLog(@"%@ iOS App ID is empty", kTapdaqLogPrefix);
         isValid = false;
     }
     
-    if (_isEmpty(clientKeyChar)) {
+    if (TD_isEmpty(clientKeyChar)) {
         NSLog(@"%@ iOS Client Key is empty", kTapdaqLogPrefix);
         isValid = false;
     }
@@ -59,7 +59,7 @@ void _ConfigureTapdaq(const char* appIdChar,
     
     NSString *userId = nil;
     
-    if (!_isEmpty(userIdChar)) {
+    if (!TD_isEmpty(userIdChar)) {
         userId = [[NSString stringWithUTF8String:userIdChar] copy];
     }
     
@@ -101,182 +101,189 @@ void _ConfigureTapdaq(const char* appIdChar,
                                   properties:properties];
 }
 
-void _SetDelegate() {
+void TD_SetDelegate() {
     Tapdaq.sharedSession.delegate = TapdaqDelegates.sharedInstance;
 }
 
-bool _IsInitialised() {
+bool TD_IsInitialised() {
     return Tapdaq.sharedSession.isInitialised;
 }
 
-void _SetUserSubjectToGDPR(int userSubjectToGDPR) {
+void TD_SetPluginTools(const char* unityVersion) {
+    if(!TD_isEmpty(unityVersion)) {
+        NSString *version = [[NSString stringWithUTF8String:unityVersion] copy];
+        [Tapdaq setPluginToolsVersion:version userDefaults:NSUserDefaults.standardUserDefaults];
+    }
+}
+
+void TD_SetUserSubjectToGDPR(int userSubjectToGDPR) {
     Tapdaq.sharedSession.properties.privacySettings.userSubjectToGdpr = (TDPrivacyStatus)userSubjectToGDPR;
 }
 
-int _UserSubjectToGDPR() {
+int TD_UserSubjectToGDPR() {
     return (int)Tapdaq.sharedSession.properties.privacySettings.userSubjectToGdpr;
 }
 
-void _SetGdprConsent(int gdprConsent) {
+void TD_SetGdprConsent(int gdprConsent) {
     Tapdaq.sharedSession.properties.privacySettings.gdprConsentGiven = (TDPrivacyStatus)gdprConsent;
 }
 
-int _GdprConsent() {
+int TD_GdprConsent() {
     return (int)Tapdaq.sharedSession.properties.privacySettings.gdprConsentGiven;
 }
 
-void _SetAgeRestrictedUser(int ageRestrictedUser) {
+void TD_SetAgeRestrictedUser(int ageRestrictedUser) {
     Tapdaq.sharedSession.properties.privacySettings.ageRestrictedUser = (TDPrivacyStatus)ageRestrictedUser;
 }
 
-int _AgeRestrictedUser() {
+int TD_AgeRestrictedUser() {
     return (int)Tapdaq.sharedSession.properties.privacySettings.ageRestrictedUser;
 }
 
-void _SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy) {
+void TD_SetUserSubjectToUSPrivacy(int userSubjectToUSPrivacy) {
     Tapdaq.sharedSession.properties.privacySettings.userSubjectToUSPrivacy = (TDPrivacyStatus)userSubjectToUSPrivacy;
 }
 
-int _UserSubjectToUSPrivacy() {
+int TD_UserSubjectToUSPrivacy() {
     return (int)Tapdaq.sharedSession.properties.privacySettings.userSubjectToUSPrivacy;
 }
 
-void _SetUSPrivacy(int usPrivacy) {
+void TD_SetUSPrivacy(int usPrivacy) {
     Tapdaq.sharedSession.properties.privacySettings.usPrivacyDoNotSell = (TDPrivacyStatus)usPrivacy;
 }
 
-int _USPrivacy() {
+int TD_USPrivacy() {
     return (int)Tapdaq.sharedSession.properties.privacySettings.usPrivacyDoNotSell;
 }
 
-void _SetAdMobContentRating(const char * rating) {
+void TD_SetAdMobContentRating(const char * rating) {
     NSString *ratingString = [NSString stringWithUTF8String:rating].copy;
     Tapdaq.sharedSession.properties.adMobContentRating = ratingString;
 }
 
-const char * _GetAdMobContentRating() {
+const char * TD_GetAdMobContentRating() {
     NSString * ratingStr = Tapdaq.sharedSession.properties.adMobContentRating;
-    return makeStringCopy([ratingStr UTF8String]);
+    return TDMakeStringCopy([ratingStr UTF8String]);
 }
 
-void _SetAdvertiserTracking(int status) {
+void TD_SetAdvertiserTracking(int status) {
     Tapdaq.sharedSession.properties.privacySettings.advertiserTracking = (TDPrivacyStatus)status;
 }
 
-int _AdvertiserTracking() {
+int TD_AdvertiserTracking() {
     return (int)Tapdaq.sharedSession.properties.privacySettings.advertiserTracking;
 }
 
-void _SetUserId(const char * userId) {
+void TD_SetUserId(const char * userId) {
     NSString *userIdStrting = nil;
-    if (!_isEmpty(userId)) {
+    if (!TD_isEmpty(userId)) {
         userIdStrting = [[NSString stringWithUTF8String:userId] copy];
     }
     Tapdaq.sharedSession.properties.userId = userIdStrting;
 }
 
-const char * _GetUserId() {
+const char * TD_GetUserId() {
     NSString * userIdStr = Tapdaq.sharedSession.properties.userId;
-    return makeStringCopy([userIdStr UTF8String]);
+    return TDMakeStringCopy([userIdStr UTF8String]);
 }
 
-void _SetForwardUserId(bool forwardUserId) {
+void TD_SetForwardUserId(bool forwardUserId) {
     Tapdaq.sharedSession.properties.forwardUserId = forwardUserId;
 }
 
-bool _ShouldForwardUserId() {
+bool TD_ShouldForwardUserId() {
     return (bool)Tapdaq.sharedSession.properties.forwardUserId;
 }
 
-void _SetMuted(bool muted) {
+void TD_SetMuted(bool muted) {
     Tapdaq.sharedSession.properties.muted = muted;
 }
 
-bool _IsMuted() {
+bool TD_IsMuted() {
     return (bool)Tapdaq.sharedSession.properties.isMuted;
 }
 
-void _SetUserDataString(const char* key, const char* value) {
+void TD_SetUserDataString(const char* key, const char* value) {
     NSString *keyStr = nil;
     NSString *valueStr = nil;
-    if (!_isEmpty(key) && !_isEmpty(value)) {
+    if (!TD_isEmpty(key) && !TD_isEmpty(value)) {
         keyStr = [NSString stringWithUTF8String:key];
         valueStr = [NSString stringWithUTF8String:value];
     }
     [Tapdaq.sharedSession.properties setUserDataString:valueStr forKey:keyStr];
 }
 
-void _SetUserDataInteger(const char* key, int value) {
+void TD_SetUserDataInteger(const char* key, int value) {
     NSString *keyStr = nil;
-    if (!_isEmpty(key)) {
+    if (!TD_isEmpty(key)) {
         keyStr = [NSString stringWithUTF8String:key];
     }
     [Tapdaq.sharedSession.properties setUserDataInteger:value forKey:keyStr];
 }
 
-void _SetUserDataBoolean(const char* key, bool value) {
+void TD_SetUserDataBoolean(const char* key, bool value) {
     NSString *keyStr = nil;
-    if (!_isEmpty(key)) {
+    if (!TD_isEmpty(key)) {
         keyStr = [NSString stringWithUTF8String:key];
     }
     [Tapdaq.sharedSession.properties setUserDataBool:value forKey:keyStr];
 }
 
-const char* _GetUserDataString(const char* key) {
+const char* TD_GetUserDataString(const char* key) {
     NSString *keyStr = nil;
-    if (!_isEmpty(key)) {
+    if (!TD_isEmpty(key)) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     
     NSString * dataStr = [Tapdaq.sharedSession.properties userDataStringForKey:keyStr];;
-    return makeStringCopy([dataStr UTF8String]);
+    return TDMakeStringCopy([dataStr UTF8String]);
 }
 
-int _GetUserDataInteger(const char* key) {
+int TD_GetUserDataInteger(const char* key) {
     NSString *keyStr = nil;
-    if (!_isEmpty(key)) {
+    if (!TD_isEmpty(key)) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     
     return (int)[Tapdaq.sharedSession.properties userDataIntegerForKey:keyStr];
 }
 
-bool _GetUserDataBoolean(const char* key) {
+bool TD_GetUserDataBoolean(const char* key) {
     NSString *keyStr = nil;
-    if (!_isEmpty(key)) {
+    if (!TD_isEmpty(key)) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     
     return (bool)[Tapdaq.sharedSession.properties userDataBoolForKey:keyStr];
 }
 
-const char* _GetAllUserData() {
+const char* TD_GetAllUserData() {
     NSString * dataStr = [JsonHelper toJsonString:Tapdaq.sharedSession.properties.userData];
-    return makeStringCopy([dataStr UTF8String]);
+    return TDMakeStringCopy([dataStr UTF8String]);
 }
 
-void _RemoveUserData(const char* key) {
+void TD_RemoveUserData(const char* key) {
     NSString *keyStr = nil;
-    if (!_isEmpty(key)) {
+    if (!TD_isEmpty(key)) {
         keyStr = [[NSString stringWithUTF8String:key] copy];
     }
     [Tapdaq.sharedSession.properties removeUserDataForKey:keyStr];
 }
 
-const char* _GetNetworkStatuses() {
+const char* TD_GetNetworkStatuses() {
     NSArray* networkStatuses = [[Tapdaq sharedSession] networkStatusesDictionary];
     if (networkStatuses != nil && [networkStatuses count] > 0) {
         NSString * dataStr = [JsonHelper arrayToJsonString:networkStatuses];
-        return makeStringCopy([dataStr UTF8String]);
+        return TDMakeStringCopy([dataStr UTF8String]);
     }
     return "";
 }
 
 #pragma mark - Banner (Bridge)
 
-void _LoadBannerForSize(const char* tagChar, const char* sizeChar) {
+void TD_LoadBannerForSize(const char* tagChar, const char* sizeChar) {
     
-    if (_isEmpty(sizeChar)) {
+    if (TD_isEmpty(sizeChar)) {
         NSLog(@"%@ No banner size specified, cannot load banner", kTapdaqLogPrefix);
         return;
     }
@@ -286,8 +293,8 @@ void _LoadBannerForSize(const char* tagChar, const char* sizeChar) {
     [[TapdaqBannerAd sharedInstance] loadForPlacementTag:tagStr withSize:sizeStr];
 }
 
-void _LoadBannerWithSize(const char* tagChar, int width, int height) {
-    if (_isEmpty(tagChar)) {
+void TD_LoadBannerWithSize(const char* tagChar, int width, int height) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, cannot load banner", kTapdaqLogPrefix);
         return;
     }
@@ -298,15 +305,15 @@ void _LoadBannerWithSize(const char* tagChar, int width, int height) {
     [[TapdaqBannerAd sharedInstance] loadForPlacementTag:tagStr withCustomSize:size];
 }
 
-bool _IsBannerReady(const char* tagChar) {
+bool TD_IsBannerReady(const char* tagChar) {
     NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
     return (bool) [[TapdaqBannerAd sharedInstance] isReadyForPlacementTag:tagStr];
     
 }
 
-void _ShowBanner(const char* tagChar, const char* position) {
+void TD_ShowBanner(const char* tagChar, const char* position) {
     
-    if (_isEmpty(position)) {
+    if (TD_isEmpty(position)) {
         NSLog(@"%@ No banner position given, failed to show banner", kTapdaqLogPrefix);
         return;
     }
@@ -315,8 +322,8 @@ void _ShowBanner(const char* tagChar, const char* position) {
     
 }
 
-void _ShowBannerWithPosition(const char* tagChar, int x, int y) {
-    if (_isEmpty(tagChar)) {
+void TD_ShowBannerWithPosition(const char* tagChar, int x, int y) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to show banner", kTapdaqLogPrefix);
         return;
     }
@@ -324,21 +331,21 @@ void _ShowBannerWithPosition(const char* tagChar, int x, int y) {
     [[TapdaqBannerAd sharedInstance] showForPlacementTag:tagStr atPositionX:x atPositionY:y];
 }
 
-void _HideBanner(const char* tagChar) {
+void TD_HideBanner(const char* tagChar) {
     NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
     [[TapdaqBannerAd sharedInstance] hideForPlacementTag:tagStr];
 }
 
-void _DestroyBanner(const char* tagChar) {
+void TD_DestroyBanner(const char* tagChar) {
     NSString *tagStr = [[NSString stringWithUTF8String:tagChar] copy];
     [[TapdaqBannerAd sharedInstance] destroyForPlacementTag:tagStr];
 }
 
 #pragma mark - Interstitial (Bridge)
 
-void _LoadInterstitialWithTag(const char *tagChar) {
+void TD_LoadInterstitialWithTag(const char *tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to load interstitial", kTapdaqLogPrefix);
         return;
     }
@@ -349,9 +356,9 @@ void _LoadInterstitialWithTag(const char *tagChar) {
     
 }
 
-bool _IsInterstitialReadyWithTag(const char *tagChar) {
+bool TD_IsInterstitialReadyWithTag(const char *tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to check if interstitial is ready", kTapdaqLogPrefix);
         return false;
     }
@@ -362,7 +369,7 @@ bool _IsInterstitialReadyWithTag(const char *tagChar) {
     
 }
 
-const char *_GetInterstitialFrequencyCapError(const char* tag) {
+const char *TD_GetInterstitialFrequencyCapError(const char* tag) {
     NSString *placementTag = [NSString stringWithUTF8String:tag];
     TDError* error = [[Tapdaq sharedSession] interstitialCappedForPlacementTag:placementTag];
     
@@ -371,12 +378,12 @@ const char *_GetInterstitialFrequencyCapError(const char* tag) {
         @"message": (error.localizedDescription == nil ? @"" : error.localizedDescription)
     }];
     
-    return makeStringCopy([result UTF8String]);
+    return TDMakeStringCopy([result UTF8String]);
 }
 
-void _ShowInterstitialWithTag(const char* tagChar) {
+void TD_ShowInterstitialWithTag(const char* tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to show interstitial", kTapdaqLogPrefix);
         return;
     }
@@ -389,9 +396,9 @@ void _ShowInterstitialWithTag(const char* tagChar) {
 
 #pragma mark - Video (Bridge)
 
-void _LoadVideoWithTag(const char *tagChar) {
+void TD_LoadVideoWithTag(const char *tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to load video", kTapdaqLogPrefix);
         return;
     }
@@ -402,9 +409,9 @@ void _LoadVideoWithTag(const char *tagChar) {
     
 }
 
-bool _IsVideoReadyWithTag(const char *tagChar) {
+bool TD_IsVideoReadyWithTag(const char *tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to check if video is ready", kTapdaqLogPrefix);
         return false;
     }
@@ -415,7 +422,7 @@ bool _IsVideoReadyWithTag(const char *tagChar) {
     
 }
 
-const char *_GetVideoFrequencyCapError(const char* tag) {
+const char *TD_GetVideoFrequencyCapError(const char* tag) {
     NSString *placementTag = [NSString stringWithUTF8String:tag];
     TDError* error = [[Tapdaq sharedSession] videoCappedForPlacementTag:placementTag];
     
@@ -424,12 +431,12 @@ const char *_GetVideoFrequencyCapError(const char* tag) {
         @"message": (error.localizedDescription == nil ? @"" : error.localizedDescription)
     }];
     
-    return makeStringCopy([result UTF8String]);
+    return TDMakeStringCopy([result UTF8String]);
 }
 
-void _ShowVideoWithTag(const char* tagChar) {
+void TD_ShowVideoWithTag(const char* tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to show video", kTapdaqLogPrefix);
         return;
     }
@@ -442,9 +449,9 @@ void _ShowVideoWithTag(const char* tagChar) {
 
 #pragma mark - Rewarded Video (Bridge)
 
-void _LoadRewardedVideoWithTag(const char *tagChar) {
+void TD_LoadRewardedVideoWithTag(const char *tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to load rewarded video", kTapdaqLogPrefix);
         return;
     }
@@ -455,9 +462,9 @@ void _LoadRewardedVideoWithTag(const char *tagChar) {
     
 }
 
-bool _IsRewardedVideoReadyWithTag(const char *tagChar) {
+bool TD_IsRewardedVideoReadyWithTag(const char *tagChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to check if rewarded video is ready", kTapdaqLogPrefix);
         return false;
     }
@@ -468,7 +475,7 @@ bool _IsRewardedVideoReadyWithTag(const char *tagChar) {
     
 }
 
-const char *_GetRewardedVideoFrequencyCapError(const char* tag) {
+const char *TD_GetRewardedVideoFrequencyCapError(const char* tag) {
     NSString *placementTag = [NSString stringWithUTF8String:tag];
     TDError* error = [[Tapdaq sharedSession] rewardedVideoCappedForPlacementTag:placementTag];
     
@@ -477,12 +484,12 @@ const char *_GetRewardedVideoFrequencyCapError(const char* tag) {
         @"message": (error.localizedDescription == nil ? @"" : error.localizedDescription)
     }];
     
-    return makeStringCopy([result UTF8String]);
+    return TDMakeStringCopy([result UTF8String]);
 }
 
-void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar) {
+void TD_ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar) {
     
-    if (_isEmpty(tagChar)) {
+    if (TD_isEmpty(tagChar)) {
         NSLog(@"%@ No tag given, failed to show rewarded video", kTapdaqLogPrefix);
         return;
     }
@@ -496,7 +503,7 @@ void _ShowRewardedVideoWithTag(const char* tagChar, const char* hashedUserIdChar
 
 #pragma mart - Stats
 
-void _SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale) {
+void TD_SendIAP(const char* transationId, const char* productId, const char* name, double price, const char* currency, const char* locale) {
     NSString *transactionIdString;
     NSString *productIdString;
     NSString *currencyString;
@@ -531,16 +538,16 @@ void _SendIAP(const char* transationId, const char* productId, const char* name,
                                               productId:productIdString];
 }
 
-const char *_GetRewardId(const char* tag) {
+const char *TD_GetRewardId(const char* tag) {
     NSString *placementTag = [NSString stringWithUTF8String:tag];
     NSString *rewardId = [[Tapdaq sharedSession] rewardIdForPlacementTag:placementTag];
     return [rewardId cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
-void _LaunchMediationDebugger() {
+void TD_LaunchMediationDebugger() {
     [[Tapdaq sharedSession] presentDebugViewController];
 }
 
-bool _isEmpty(const char* str) {
+bool TD_isEmpty(const char* str) {
     return str == NULL;
 }
