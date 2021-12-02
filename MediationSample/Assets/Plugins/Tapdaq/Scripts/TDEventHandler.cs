@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Tapdaq {
 	public class TDEventHandler : MonoBehaviour {
@@ -39,50 +37,50 @@ namespace Tapdaq {
 
 		void _didFailToLoadConfig(string message) {
 			TDDebugLogger.LogWarning ("_didFailToLoadConfig");
-			var adEvent = JsonConvert.DeserializeObject<TDAdError> (message);
+			var adEvent = JsonUtility.FromJson<TDAdError> (message);
 			TDCallbacks.instance.OnTapdaqConfigFailedToLoad (adEvent);
 		}
 			
 		void _didLoad (string jsonMessage) {
 			TDDebugLogger.Log("_didLoad " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdAvailable (adEvent);
 		}
 
 		void _didFailToLoad (string jsonMessage) {
 			TDDebugLogger.Log("_didFailToLoad " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdNotAvailable (adEvent);
 		}
 
 		void _didClose (string jsonMessage) {
 			TDDebugLogger.Log("_didClose " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdClosed (adEvent);
 		}
 
 		void _didClick (string jsonMessage) {
 			TDDebugLogger.Log("_onAdClick " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdClicked (adEvent);
 		}
 
 		void _didDisplay (string jsonMessage) {
 			TDDebugLogger.Log("_didDisplay " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdDidDisplay (adEvent);
 		}
 
 		void _willDisplay (string jsonMessage) {
 			TDDebugLogger.Log("_willDisplay " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdWillDisplay (adEvent);
 		}
 
         void _didFailToDisplay(string jsonMessage)
         {
             TDDebugLogger.Log("_didFailToDisplay " + jsonMessage);
-            var adEvent = JsonConvert.DeserializeObject<TDAdEvent>(jsonMessage);
+            var adEvent = JsonUtility.FromJson<TDAdEvent>(jsonMessage);
             TDCallbacks.instance.OnAdDidFailToDisplay(adEvent);
         }
 
@@ -108,7 +106,7 @@ namespace Tapdaq {
 
 		void _didFail (string jsonMessage) {
 			TDDebugLogger.Log("_didFail " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdError (adEvent);
 		}
 
@@ -119,27 +117,27 @@ namespace Tapdaq {
 
 		void _didVerify (string message) {
 			TDDebugLogger.Log("_didVerify " + message);
-			var reward = JsonConvert.DeserializeObject<TDVideoReward> (message);
+			var reward = JsonUtility.FromJson<TDVideoReward> (message);
 			TDCallbacks.instance.OnRewardedVideoValidated (reward);
 		}
 
 		void _onValidationFailed(string jsonMessage) {
 			TDDebugLogger.Log("_onValidationFailed " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdError (adEvent);
 		}
 
 		// banner
 		void _didRefresh(string jsonMessage) {
 			TDDebugLogger.Log ("_didRefresh " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent> (jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent> (jsonMessage);
 			TDCallbacks.instance.OnAdRefresh (adEvent);
 		}
 
 		void _didFailToRefresh(string jsonMessage)
 		{
 			TDDebugLogger.Log("_didFailToRefresh " + jsonMessage);
-			var adEvent = JsonConvert.DeserializeObject<TDAdEvent>(jsonMessage);
+			var adEvent = JsonUtility.FromJson<TDAdEvent>(jsonMessage);
 			TDCallbacks.instance.OnAdFailToRefresh(adEvent);
 		}
 	}

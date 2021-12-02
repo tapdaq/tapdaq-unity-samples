@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace Tapdaq {
 	public class AdManager {
@@ -705,7 +704,7 @@ namespace Tapdaq {
             #elif UNITY_ANDROID
 			result = GetAndroidStatic<string>("GetAllUserData");
             #endif
-			return JsonConvert.DeserializeObject<Dictionary<string, object>>(result); ;
+			return JsonUtility.FromJson<Dictionary<string, object>>(result); ;
 		}
 
 		public static void RemoveUserData(string key)
@@ -769,7 +768,7 @@ namespace Tapdaq {
             #endif
 			if (!String.IsNullOrEmpty(result))
             {
-				error = JsonConvert.DeserializeObject<TDAdError>(result);
+				error = JsonUtility.FromJson<TDAdError>(result);
 			}
 			
 			return error;
@@ -892,7 +891,7 @@ namespace Tapdaq {
             #endif
 			if (!String.IsNullOrEmpty(result))
 			{
-				error = JsonConvert.DeserializeObject<TDAdError>(result);
+				error = JsonUtility.FromJson<TDAdError>(result);
 			}
 
 			return error;
@@ -957,7 +956,7 @@ namespace Tapdaq {
             #endif
 			if (!String.IsNullOrEmpty(result))
 			{
-				error = JsonConvert.DeserializeObject<TDAdError>(result);
+				error = JsonUtility.FromJson<TDAdError>(result);
 			}
 
 			return error;
@@ -1000,7 +999,7 @@ namespace Tapdaq {
 
 		public static List<TDNetworkStatus> GetNetworkStatuses()
 		{
-			List<TDNetworkStatus> networkStatuses = new List<TDNetworkStatus>();
+			List <TDNetworkStatus> networkStatuses = new List<TDNetworkStatus>();
 			string result = "";
 #if UNITY_IPHONE
 			CallIosMethod(() => result = TD_GetNetworkStatuses());
@@ -1009,8 +1008,8 @@ namespace Tapdaq {
 #endif
             if(!String.IsNullOrEmpty(result))
 			{
-				TDDebugLogger.Log(result);
-				networkStatuses = JsonConvert.DeserializeObject<List<TDNetworkStatus>>(result);
+				result = String.Format("{{\"items\": {0} }}", result);
+				networkStatuses = JsonUtility.FromJson<TDList<TDNetworkStatus>>(result).items;
 			}
 			return networkStatuses;
 		}

@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System;
-
-namespace Tapdaq {
+﻿namespace Tapdaq {
 	public class TDPaths {
 		public const string TapdaqPath = "Assets/Plugins/Tapdaq";
 		public const string TapdaqIOSPath = "Assets/Plugins/iOS/Tapdaq";
