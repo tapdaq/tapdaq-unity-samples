@@ -309,13 +309,18 @@ public class MediationSample : MonoBehaviour {
 
     private string stringifyError(TDAdError e) {
         string str = e.code + " - " + e.message;
-        foreach (KeyValuePair<string, List<TDAdError>> entry in e.subErrors)
+        if(e.subErrors != null)
         {
-            str += "\n" + entry.Key;
-            foreach(TDAdError subError in entry.Value) {
-                str += "\n" + subError.code + " - " + subError.message;
+            foreach (KeyValuePair<string, List<TDAdError>> entry in e.subErrors)
+            {
+                str += "\n" + entry.Key;
+                foreach (TDAdError subError in entry.Value)
+                {
+                    str += "\n" + subError.code + " - " + subError.message;
+                }
             }
         }
+
         return str;
     }
 
