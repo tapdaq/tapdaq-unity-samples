@@ -34,7 +34,7 @@ public class TDDependencies : AssetPostprocessor
 	//private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
 
 
-    public static string minTargetSDKVersion = "9.0";
+    public static string minTargetSDKVersion = "10.0";
 	public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods.git";
 	//public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
 
@@ -122,7 +122,7 @@ public class TDDependencies : AssetPostprocessor
 
 		dependencies.IosPods.Sources = s;
 
-		FetchiOSPod("Tapdaq", TAPDAQ_IOS_VERSION, "9.0");
+		FetchiOSPod("Tapdaq", TAPDAQ_IOS_VERSION, minTargetSDKVersion);
 	}
 
 	public static void FetchiOSPod(string podName, string version, string minTargetSDK)

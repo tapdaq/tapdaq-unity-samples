@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Tapdaq;
-using Newtonsoft.Json;
+
 #if UNITY_IOS
 using Unity.Advertisement.IosSupport;
 #endif
@@ -153,7 +153,7 @@ public class MediationSample : MonoBehaviour {
 	}
 
     private void RewardVideoValidated(TDVideoReward e) {
-        logMessage("RewardVideoValidated isValud: " + e.RewardValid + " - name: " + e.RewardName + " - Tag: " + e.Tag + " - amount: " + e.RewardAmount + " - CustomJson: " + JsonConvert.SerializeObject(e.RewardJson));
+        logMessage("RewardVideoValidated isValud: " + e.RewardValid + " - name: " + e.RewardName + " - Tag: " + e.Tag + " - amount: " + e.RewardAmount + " - CustomJson: " + JsonUtility.ToJson(e.RewardJson));
 	}
 
 	// Load Ads

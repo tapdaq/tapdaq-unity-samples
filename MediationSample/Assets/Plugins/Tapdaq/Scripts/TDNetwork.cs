@@ -99,7 +99,7 @@ namespace Tapdaq
 				"com.tapdaq.sdk:TapdaqUnityAdsAdapter:",
 				null),
 			new TDNetwork("Vungle",
-				new TDSDKTargetVersion("9.0", "14"),
+				new TDSDKTargetVersion("10.0", "14"),
 				"Vungle",
 				"com.tapdaq.sdk:TapdaqVungleAdapter:",
 				null)
