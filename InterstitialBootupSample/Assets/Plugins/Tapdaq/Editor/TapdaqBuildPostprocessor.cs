@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Tapdaq;
 
 
-using TDEditor.iOS.Xcode;
+using UnityEditor.iOS.Xcode;
 
 
 public class TapdaqBuildPostprocessor : MonoBehaviour{

@@ -26,16 +26,15 @@ using System.IO;
 [InitializeOnLoad]
 public class TDDependencies : AssetPostprocessor
 {
-	private static string TAPDAQ_ANDROID_VERSION = "7.9.0";
-	private static string TAPDAQ_IOS_VERSION = "7.9.0";
+	private static string TAPDAQ_ANDROID_VERSION = "7.10.0";
+	private static string TAPDAQ_IOS_VERSION = "7.10.0";
 
     private static string DEPDENCIES_DIRECTORY = "/Plugins/Tapdaq/Editor/TapdaqDependencies.xml";
-    private static string TAPDAQ_REPOSITORY = "http://android-sdk.tapdaq.com";
+	private static string TAPDAQ_REPOSITORY = "https://android-sdk.tapdaq.com";
 
 
-    public static string minTargetSDKVersion = "9.0";
-
-    public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
+    public static string minTargetSDKVersion = "10.0";
+	public static string cocoapods_respository = "https://github.com/tapdaq/cocoapods-specs.git";
 
 
     public static Dependencies dependencies = new Dependencies();
@@ -121,7 +120,7 @@ public class TDDependencies : AssetPostprocessor
 
 		dependencies.IosPods.Sources = s;
 
-		FetchiOSPod("Tapdaq", TAPDAQ_IOS_VERSION, "9.0");
+		FetchiOSPod("Tapdaq", TAPDAQ_IOS_VERSION, minTargetSDKVersion);
 	}
 
 	public static void FetchiOSPod(string podName, string version, string minTargetSDK)

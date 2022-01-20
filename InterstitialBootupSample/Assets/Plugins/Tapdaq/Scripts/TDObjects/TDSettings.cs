@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace Tapdaq {
 
 	public class TDSettings : ScriptableObject {
 		private static TDSettings instance;
 
-		public const string pluginVersion = "unity_7.9.0";
+		public const string pluginVersion = "unity_7.10.0";
 		
 		public string ios_applicationID = "";
 		public string ios_clientKey = "";
@@ -113,15 +112,15 @@ namespace Tapdaq {
 
 		public override string ToString ()
 		{
-			return JsonConvert.SerializeObject (this);
+			return JsonUtility.ToJson(this);
 		}
 
 		public string GetAdMobListJson() {
-			return JsonConvert.SerializeObject (adMobDevices);
+			return JsonUtility.ToJson(adMobDevices);
 		}
 
 		public string GetFacebookListJson() {
-			return JsonConvert.SerializeObject (facebookDevices);
+			return JsonUtility.ToJson(facebookDevices);
 		}
 	}
 
