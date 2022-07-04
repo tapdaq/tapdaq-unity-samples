@@ -1,3 +1,6 @@
+# DEPRECATED
+Tapdaq is now deprecated and the SDK will no longer intialise.
+
 # Tapdaq Unity Samples
 SDK is available [here](https://tapdaq.com/docs)
 
